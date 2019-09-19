@@ -14,7 +14,7 @@
   },
   "main": "build/Chart.ErrorBars.js",
   "unpkg": "build/Chart.ErrorBars.min.js",
-  "module": "build/Chart.ErrorBars.mjs",
+  "module": "build/Chart.ErrorBars.esm.js",
   "files": [
     "build",
     "src/**/*.js"

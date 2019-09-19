@@ -20,7 +20,7 @@ export default [{
   ]
 }, {
   output: {
-    file: 'build/Chart.Graphs.mjs',
+    file: 'build/Chart.Graphs.esm.js',
     name: 'ChartGraphs',
     format: 'esm',
     globals: {
