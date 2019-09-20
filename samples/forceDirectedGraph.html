@@ -15,12 +15,12 @@
       new Chart(document.getElementById("canvas").getContext("2d"), {
         type: 'forceDirectedGraph',
         data: {
-          labels: data.nodes.map((d) => d.label),
+          labels: data.nodes.map((d) => d.name),
           datasets: [{
             data: data.nodes.map((node) => ({
               v: node.group,
-              x: Math.random(),
-              y: Math.random()
+              x: Math.random() - 0.5,
+              y: Math.random() - 0.5
             })),
             edges: data.links
           }]

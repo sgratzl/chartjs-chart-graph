@@ -4,6 +4,21 @@ import * as Chart from 'chart.js';
 import {listenArrayEvents, unlistenArrayEvents} from '../data';
 
 const defaults = {
+  scales: {
+    xAxes: [{
+      display: false
+    }],
+    yAxes: [{
+      display: false
+    }]
+  },
+  tooltips: {
+    callbacks: {
+      label(item, data) {
+        return data.labels[item.index];
+      }
+    }
+  }
 };
 
 Chart.defaults.forceDirectedGraph = Chart.helpers.merge({}, [Chart.defaults.scatter, defaults]);
@@ -59,6 +74,11 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
 
   updateElement(point, index, reset) {
     Chart.controllers.scatter.prototype.updateElement.call(this, point, index, reset);
+
+    if (reset) {
+      const xScale = this.getScaleForId(this.getMeta().xAxisID);
+      point._model.x = xScale.getBasePixel();
+    }
   },
 
   updateEdgeElement(line, index, _reset) {
@@ -68,7 +88,8 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     const points = meta.data;
 
     line._children = [points[edge.source], points[edge.target]];
-    line._scale = this.getScaleForId(meta.yAxisID);
+    line._xScale = this.getScaleForId(meta.xAxisID);
+    line._scale = line._yScale = this.getScaleForId(meta.yAxisID);
 
     line._datasetIndex = this.index;
     line._model = this._resolveLineOptions(line);
