@@ -2,6 +2,7 @@
 
 import * as Chart from 'chart.js';
 import {listenArrayEvents, unlistenArrayEvents} from '../data';
+import { forceSimulation, forceManyBody, forceLink, forceCenter } from 'd3-force';
 
 const defaults = {
   scales: {
@@ -26,6 +27,19 @@ Chart.defaults.forceDirectedGraph = Chart.helpers.merge({}, [Chart.defaults.scat
 export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.controllers.scatter.extend({
   dataElementType: Chart.elements.Point,
   edgeElementType: Chart.elements.Line,
+
+  initialize(chart, datasetIndex) {
+    this._simulation = forceSimulation()
+      .force('charge', forceManyBody())
+      .force('link', forceLink())
+      .force('center', forceCenter())
+      .on('tick', () => {
+        this.chart.update();
+      }).on('end', () => {
+        this.chart.update();
+      });
+    Chart.controllers.scatter.prototype.initialize.call(this, chart, datasetIndex);
+  },
 
   createEdgeMetaData(index) {
     return this.edgeElementType && new this.edgeElementType({
@@ -52,9 +66,11 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     },
     onDataPop() {
       this.getMeta().edges.pop();
+      this.resyncSimulation();
     },
     onDataShift() {
       this.getMeta().edges.shift();
+      this.resyncSimulation();
     },
     onDataSplice(start, count) {
       this.getMeta().edges.splice(start, count);
@@ -87,7 +103,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     const meta = this.getMeta();
     const points = meta.data;
 
-    line._children = [points[edge.source], points[edge.target]];
+    line._children = [points[edge.source.index], points[edge.target.index]];
     line._xScale = this.getScaleForId(meta.xAxisID);
     line._scale = line._yScale = this.getScaleForId(meta.yAxisID);
 
@@ -157,9 +173,16 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
 
 		if (numData < numMeta) {
 			metaEdges.splice(numData, numMeta - numData);
+      this.resyncSimulation();
 		} else if (numData > numMeta) {
 			this.insertEdgeElements(numMeta, numData - numMeta);
-		}
+    }
+  },
+
+  resyncSimulation() {
+    this._simulation.nodes(this.getDataset().data);
+    this._simulation.force('link').links(this.getDataset().edges || []);
+    this._simulation.restart();
   },
 
   addElements() {
@@ -172,6 +195,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
 		for (let i = 0; i < edges.length; ++i) {
 			metaData[i] = metaData[i] || this.createEdgeMetaData(i);
 		}
+    this.resyncSimulation();
 	},
 
 	addEdgeElementAndReset(index) {
@@ -184,5 +208,6 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
 		for (let i = 0; i < count; ++i) {
 			this.addEdgeElementAndReset(start + i);
 		}
+    this.resyncSimulation();
 	},
 });
