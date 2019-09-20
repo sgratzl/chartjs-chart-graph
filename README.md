@@ -3,6 +3,11 @@
 
 Chart.js module for charting graphs.
 
+force directed link diagram
+
+![node-link](https://user-images.githubusercontent.com/4129778/65296961-4beb3980-db34-11e9-9fe4-20f39878d114.png)
+
+
 **Works only with Chart.js >= 2.8.0**
 
 
