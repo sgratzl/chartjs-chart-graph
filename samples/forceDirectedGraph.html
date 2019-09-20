@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+  <script src="../build/Chart.Graphs.js"></script>
+</head>
+
+<body>
+  <div style="width: 75%;">
+    <canvas id="canvas"></canvas>
+  </div>
+  <script>
+    fetch('./miserables.json').then((r) => r.json()).then((data) => {
+      new Chart(document.getElementById("canvas").getContext("2d"), {
+        type: 'forceDirectedGraph',
+        data: {
+          labels: data.nodes.map((d) => d.label),
+          datasets: [{
+            data: data.nodes.map((node) => ({
+              v: node.group,
+              x: Math.random(),
+              y: Math.random()
+            })),
+            edges: data.links
+          }]
+        },
+        options: {
+          legend: {
+            display: false
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
