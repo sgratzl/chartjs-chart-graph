@@ -8,6 +8,18 @@ Chart.js module for charting graphs. Adding two new chart types: `graph` and `fo
 ![node-link](https://user-images.githubusercontent.com/4129778/65296961-4beb3980-db34-11e9-9fe4-20f39878d114.png)
 
 
+## Install
+
+```bash
+npm install --save chart.js chartjs-chart-graph
+```
+
+## Usage
+see [Samples](https://github.com/sgratzl/chartjs-chart-graph/tree/master/samples) on Github
+
+and [CodePen]()
+
+
 ## Styling
 
 The new chart types are based on the existing `line` controller. Tho, instead of showing a line per dataset it shows edges as lines. Therefore, the styling options for points and lines are the same. See also https://www.chartjs.org/docs/latest/charts/line.html
@@ -143,35 +155,6 @@ interface IRadialForce {
 
 ```
 
-
-## Install
-
-```bash
-npm install --save chart.js chartjs-chart-graph
-```
-
-## Usage
-see [Samples](https://github.com/sgratzl/chartjs-chart-graph/tree/master/samples) on Github
-
-and [CodePen]()
-
-
-## Styling
-Several new styling keys are added to the indiviual chart types
-
-```typescript
-interface IGraphStyling {
-
-}
-```
-
-## Data structure
-
-```typescript
-interface IGraphNodeItem {
-
-}
-```
 
 ## Building
 
