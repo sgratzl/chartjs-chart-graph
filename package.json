@@ -12,9 +12,9 @@
     "type": "git",
     "url": "https://github.com/sgratzl/chartjs-chart-graph.git"
   },
-  "main": "build/Chart.ErrorBars.js",
-  "unpkg": "build/Chart.ErrorBars.min.js",
-  "module": "build/Chart.ErrorBars.esm.js",
+  "main": "build/Chart.Graphs.js",
+  "unpkg": "build/Chart.Graphs.min.js",
+  "module": "build/Chart.Graphs.esm.js",
   "files": [
     "build",
     "src/**/*.js"
