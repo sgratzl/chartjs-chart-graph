@@ -99,8 +99,56 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     line._scale = line._yScale = this.getScaleForId(meta.yAxisID);
 
     line._datasetIndex = this.index;
-    line._model = this._resolveLineOptions(line);
+    line._model = this._resolveEdgeLineOptions(line, index);
   },
+
+	_resolveEdgeLineOptions(element, index) {
+		const chart = this.chart;
+		const dataset = chart.data.datasets[this.index];
+		const custom = element.custom || {};
+		const options = chart.options;
+		const elementOptions = options.elements.line;
+
+    // Scriptable options
+		const context = {
+			chart: chart,
+			edgeIndex: index,
+			dataset: dataset,
+			datasetIndex: this.index
+		};
+
+		const keys = [
+			'backgroundColor',
+			'borderWidth',
+			'borderColor',
+			'borderCapStyle',
+			'borderDash',
+			'borderDashOffset',
+			'borderJoinStyle',
+			'fill',
+			'cubicInterpolationMode'
+		];
+
+    const values = {};
+
+		for (let i = 0; i < keys.length; ++i) {
+			const key = keys[i];
+			values[key] = Chart.helpers.options.resolve([
+				custom[key],
+				dataset[key],
+				elementOptions[key]
+			], context, index);
+		}
+
+		// The default behavior of lines is to break at null values, according
+		// to https://github.com/chartjs/Chart.js/issues/2435#issuecomment-216718158
+		// This option gives lines the ability to span gaps
+		values.spanGaps = Chart.helpers.valueOrDefault(dataset.spanGaps, options.spanGaps);
+		values.tension = Chart.helpers.valueOrDefault(dataset.lineTension, elementOptions.tension);
+		values.steppedLine = Chart.helpers.options.resolve([custom.steppedLine, dataset.steppedLine, elementOptions.stepped]);
+
+		return values;
+	},
 
   getPointForEdge(points, ref) {
     if (typeof ref === 'number') {
