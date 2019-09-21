@@ -1,5 +1,7 @@
 const arrayEvents = ['push', 'pop', 'shift', 'splice', 'unshift'];
 
+// COPIED from chart.js since not exposed
+
 /**
  * Hooks the array methods that add or remove values ('push', pop', 'shift', 'splice',
  * 'unshift') and notify the listener AFTER the array has been altered. Listeners are
@@ -20,17 +22,17 @@ export function listenArrayEvents(array, listener) {
 	});
 
 	arrayEvents.forEach((key)  => {
-		var method = 'onData' + key.charAt(0).toUpperCase() + key.slice(1);
-		var base = array[key];
+		const method = 'onData' + key.charAt(0).toUpperCase() + key.slice(1);
+		const base = array[key];
 
 		Object.defineProperty(array, key, {
 			configurable: true,
 			enumerable: false,
 			value() {
-				var args = Array.prototype.slice.call(arguments);
-				var res = base.apply(this, args);
+				const args = Array.prototype.slice.call(arguments);
+				const res = base.apply(this, args);
 
-				helpers$1.each(array._chartjs.listeners, function(object) {
+				array._chartjs.listeners.forEach((object) => {
 					if (typeof object[method] === 'function') {
 						object[method].apply(object, args);
 					}
@@ -47,7 +49,7 @@ export function listenArrayEvents(array, listener) {
  * the _chartjs stub and overridden methods) if array doesn't have any more listeners.
  */
 export function unlistenArrayEvents(array, listener) {
-	var stub = array._chartjs;
+	const stub = array._chartjs;
 	if (!stub) {
 		return;
 	}
