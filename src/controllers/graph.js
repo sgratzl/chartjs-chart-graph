@@ -48,7 +48,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   _edgeListener: (() => ({
     onDataPush() {
       const count = arguments.length;
-      this.insertEdgeElements(this.getDataset().edges.length - count, count)
+      this.insertEdgeElements(this.getDataset().edges.length - count, count);
     },
     onDataPop() {
       this.getMeta().edges.pop();
@@ -85,7 +85,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     }
   },
 
-  updateEdgeElement(line, index, _reset) {
+  updateEdgeElement(line, index) {
     const dataset = this.getDataset();
     const edge = dataset.edges[index];
     const meta = this.getMeta();
@@ -102,53 +102,53 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     line._model = this._resolveEdgeLineOptions(line, index);
   },
 
-	_resolveEdgeLineOptions(element, index) {
-		const chart = this.chart;
-		const dataset = chart.data.datasets[this.index];
-		const custom = element.custom || {};
-		const options = chart.options;
-		const elementOptions = options.elements.line;
+  _resolveEdgeLineOptions(element, index) {
+    const chart = this.chart;
+    const dataset = chart.data.datasets[this.index];
+    const custom = element.custom || {};
+    const options = chart.options;
+    const elementOptions = options.elements.line;
 
     // Scriptable options
-		const context = {
-			chart: chart,
-			edgeIndex: index,
-			dataset: dataset,
-			datasetIndex: this.index
-		};
+    const context = {
+      chart: chart,
+      edgeIndex: index,
+      dataset: dataset,
+      datasetIndex: this.index
+    };
 
-		const keys = [
-			'backgroundColor',
-			'borderWidth',
-			'borderColor',
-			'borderCapStyle',
-			'borderDash',
-			'borderDashOffset',
-			'borderJoinStyle',
-			'fill',
-			'cubicInterpolationMode'
-		];
+    const keys = [
+      'backgroundColor',
+      'borderWidth',
+      'borderColor',
+      'borderCapStyle',
+      'borderDash',
+      'borderDashOffset',
+      'borderJoinStyle',
+      'fill',
+      'cubicInterpolationMode'
+    ];
 
     const values = {};
 
-		for (let i = 0; i < keys.length; ++i) {
-			const key = keys[i];
-			values[key] = Chart.helpers.options.resolve([
-				custom[key],
-				dataset[key],
-				elementOptions[key]
-			], context, index);
-		}
+    for (let i = 0; i < keys.length; ++i) {
+      const key = keys[i];
+      values[key] = Chart.helpers.options.resolve([
+        custom[key],
+        dataset[key],
+        elementOptions[key]
+      ], context, index);
+    }
 
-		// The default behavior of lines is to break at null values, according
-		// to https://github.com/chartjs/Chart.js/issues/2435#issuecomment-216718158
-		// This option gives lines the ability to span gaps
-		values.spanGaps = Chart.helpers.valueOrDefault(dataset.spanGaps, options.spanGaps);
-		values.tension = Chart.helpers.valueOrDefault(dataset.lineTension, elementOptions.tension);
-		values.steppedLine = Chart.helpers.options.resolve([custom.steppedLine, dataset.steppedLine, elementOptions.stepped]);
+    // The default behavior of lines is to break at null values, according
+    // to https://github.com/chartjs/Chart.js/issues/2435#issuecomment-216718158
+    // This option gives lines the ability to span gaps
+    values.spanGaps = Chart.helpers.valueOrDefault(dataset.spanGaps, options.spanGaps);
+    values.tension = Chart.helpers.valueOrDefault(dataset.lineTension, elementOptions.tension);
+    values.steppedLine = Chart.helpers.options.resolve([custom.steppedLine, dataset.steppedLine, elementOptions.stepped]);
 
-		return values;
-	},
+    return values;
+  },
 
   getPointForEdge(points, ref) {
     if (typeof ref === 'number') {

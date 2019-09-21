@@ -1,7 +1,7 @@
 'use strict';
 
 import * as Chart from 'chart.js';
-import { forceSimulation, forceManyBody, forceLink, forceCenter, forceCollide, forceX, forceRadial, forceY } from 'd3-force';
+import {forceSimulation, forceManyBody, forceLink, forceCenter, forceCollide, forceX, forceRadial, forceY} from 'd3-force';
 
 const defaults = {
   simulation: {
@@ -48,7 +48,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
       const f = fs[key]();
       if (typeof options !== 'boolean') {
         Object.keys(options).forEach((attr) => {
-          f[attr].call(f, options[attr]);
+          f[attr](options[attr]);
         });
       }
       this._simulation.force(key, f);
