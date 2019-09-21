@@ -1,19 +1,39 @@
 # Chart.js Graphs
 [![NPM Package][npm-image]][npm-url] [![Github Actions][github-actions-image]][github-actions-url]
 
-Chart.js module for charting graphs.
+Chart.js module for charting graphs. Adding two new chart types: `graph` and `forceDirectedGraph`.
 
-force directed link diagram
+**Works only with Chart.js >= 2.8.0**
 
 ![node-link](https://user-images.githubusercontent.com/4129778/65296961-4beb3980-db34-11e9-9fe4-20f39878d114.png)
 
 
-**Works only with Chart.js >= 2.8.0**
+## Styling
 
+The new chart types are based on the existing `line` controller. Tho, instead of showing a line per dataset it shows edges as lines. Therefore, the styling options for points and lines are the same. See also https://www.chartjs.org/docs/latest/charts/line.html
+
+## Data Structure
+
+```js
+data: {
+  labels: ['A', 'B', 'C'], // node labels
+  datasets: [{
+    data: [ // nodes as objects
+      { x: 1, y: 2 }, // x, y will be set by the force directed graph and can be omitted
+      { x: 3, y: 1 },
+      { x: 5, y: 3 }
+    ],
+    edges: [ // edge list where source/target refers to the node index
+      { source: 0, target: 1},
+      { source: 0, target: 2}
+    ]
+  }]
+},
+```
 
 ## Force Directed Graph
 
-based on https://github.com/d3/d3-force/
+Automatically computes the x,y posiiton of nodes based on a force simulation. It is baesd on https://github.com/d3/d3-force/.
 
 Options
 ```typescript

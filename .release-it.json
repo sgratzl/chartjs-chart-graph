@@ -12,6 +12,6 @@
   },
   "github": {
     "release": true,
-    "assets": ["build/*.js", "build/*.mjs"]
+    "assets": ["build/*.js"]
   }
 }
