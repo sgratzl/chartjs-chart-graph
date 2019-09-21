@@ -11,6 +11,118 @@ force directed link diagram
 **Works only with Chart.js >= 2.8.0**
 
 
+## Force Directed Graph
+
+based on https://github.com/d3/d3-force/
+
+Options
+```typescript
+interface IForceDirectedOptions {
+  simulation: {
+    forces: {
+      /**
+       * center force
+       * https://github.com/d3/d3-force/#centering
+       *
+       * @default true
+       */
+      center: boolean | ICenterForce,
+
+      /**
+       * collision betweeen nodes
+       * https://github.com/d3/d3-force/#collision
+       *
+       * @default false
+       */
+      collide: boolean | ICollideForce,
+
+      /**
+       * link force
+       * https://github.com/d3/d3-force/#links
+       *
+       * @default true
+       */
+      link: boolean | ILinkForce,
+
+      /**
+       * link force
+       * https://github.com/d3/d3-force/#many-body
+       *
+       * @default true
+       */
+      manyBody: boolean | IManyBodyForce,
+
+      /**
+       * x positioning force
+       * https://github.com/d3/d3-force/#forceX
+       *
+       * @default false
+       */
+      x: boolean | IForceXForce,
+
+      /**
+       * y positioning force
+       * https://github.com/d3/d3-force/#forceY
+       *
+       * @default false
+       */
+      y: boolean | IForceYForce,
+
+      /**
+       * radial positioning force
+       * https://github.com/d3/d3-force/#forceRadial
+       *
+       * @default false
+       */
+      radial: boolean | IRadialForce,
+    }
+  }
+}
+
+declare ID3NodeCallback = (d: IDataNode, i: number) => number;
+declare ID3EdgeCallback = (d: IDataEdge, i: number) => number;
+
+interface ICenterForce {
+  x?: number;
+  y?: number;
+}
+
+interface ICollideForce {
+  radius?: number | ID3NodeCallback;
+  strength?: number | ID3NodeCallback;
+}
+
+interface ILinkForce {
+  distance?: number | ID3EdgeCallback;
+  strength?: number | ID3EdgeCallback;
+}
+
+interface IManyBodyForce {
+  strength?: number | ID3NodeCallback;
+  theta?: number;
+  distanceMin?: number;
+  distanceMax?: number;
+}
+
+interface IForceXForce {
+  x?: number;
+  strength?: number;
+}
+
+interface IForceYForce {
+  y?: number;
+  strength?: number;
+}
+
+interface IRadialForce {
+  x?: number;
+  y?: number;
+  radius?: number;
+  strength?: number;
+}
+
+```
+
 
 ## Install
 
