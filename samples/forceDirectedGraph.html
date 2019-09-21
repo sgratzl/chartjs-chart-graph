@@ -17,6 +17,8 @@
         data: {
           labels: data.nodes.map((d) => d.name),
           datasets: [{
+            pointBackgroundColor: 'steelblue',
+            pointRadius: 5,
             data: data.nodes.map((node) => ({
               v: node.group,
             })),

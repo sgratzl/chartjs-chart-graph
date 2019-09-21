@@ -5,7 +5,8 @@ Chart.js module for charting graphs. Adding two new chart types: `graph` and `fo
 
 **Works only with Chart.js >= 2.8.0**
 
-![node-link](https://user-images.githubusercontent.com/4129778/65296961-4beb3980-db34-11e9-9fe4-20f39878d114.png)
+![image](https://user-images.githubusercontent.com/4129778/65367328-971d4f00-dbfd-11e9-9a16-67c6f8e224e7.png)
+
 
 
 ## Install
