@@ -19,6 +19,7 @@ const defaults = {
 
 Chart.defaults.forceDirectedGraph = Chart.helpers.merge({}, [Chart.defaults.graph, defaults]);
 
+const superClass = Chart.controllers.graph.prototype;
 export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.controllers.graph.extend({
 
   initialize(chart, datasetIndex) {
@@ -54,11 +55,11 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
       this._simulation.force(key, f);
     });
 
-    Chart.controllers.graph.prototype.initialize.call(this, chart, datasetIndex);
+    superClass.initialize.call(this, chart, datasetIndex);
   },
 
   resyncLayout() {
-    Chart.controllers.graph.prototype.resyncLayout.call(this);
+    superClass.resyncLayout.call(this);
     this._simulation.nodes(this.getDataset().data);
     const link = this._simulation.force('link');
     if (link) {
@@ -68,7 +69,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
   },
 
   stopLayout() {
-    Chart.controllers.graph.prototype.stopLayout.call(this);
+    superClass.stopLayout.call(this);
     this._simulation.stop();
   }
 });

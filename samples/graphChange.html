@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+  <script src="../build/Chart.Graphs.js"></script>
+</head>
+
+<body>
+  <div style="width: 75%;">
+    <canvas id="canvas"></canvas>
+  </div>
+  <button id="addNode">Add Node</button>
+  <button id="removeNode">Remove Node</button>
+  <button id="addEdge">Add Edge</button>
+  <button id="removeEdge">Remove Edge</button>
+  <script>
+    fetch('./miserables.json').then((r) => r.json()).then((data) => {
+
+      data.nodes.forEach((n, i) => {
+        n.outgoing = data.links.filter((e) => e.source === i);
+      });
+      const nodes = data.nodes.slice(0, data.nodes.length - 3);
+      const rest = data.nodes.slice(data.nodes.length - 3);
+
+      const labels = nodes.map((d) => d.name);
+      const edges = nodes.reduce((acc, n) => acc.concat(n.outgoing), []);
+
+      const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
+        type: 'forceDirectedGraph',
+        data: {
+          labels,
+          datasets: [{
+            pointBackgroundColor: 'steelblue',
+            pointRadius: 5,
+            data: nodes,
+            edges
+          }]
+        },
+        options: {
+          legend: {
+            display: false
+          }
+        }
+      });
+      document.getElementById('addNode').onclick = () => {
+        if (rest.length === 0) {
+          return;
+        }
+        const n = rest.shift();
+        nodes.push(n);
+        labels.push(n.name);
+        edges.push(...n.outgoing);
+      };
+      document.getElementById('removeNode').onclick = () => {
+        if (nodes.length === 0) {
+          return;
+        }
+        const n = nodes.shift();
+        labels.shift();
+        n.outgoing.forEach((e) => {
+          edges.splice(edges.indexOf(e), 1);
+        });
+        rest.push(n);
+      };
+      document.getElementById('addEdge').onclick = () => {
+
+      };
+      document.getElementById('removeEdge').onclick = () => {
+
+      };
+    });
+
+  </script>
+</body>
+
+</html>

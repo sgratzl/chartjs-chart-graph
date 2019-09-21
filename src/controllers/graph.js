@@ -23,9 +23,37 @@ const defaults = {
 
 Chart.defaults.graph = Chart.helpers.merge({}, [Chart.defaults.scatter, defaults]);
 
+const superClass = Chart.controllers.scatter.prototype;
 export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend({
   dataElementType: Chart.elements.Point,
   edgeElementType: Chart.elements.Line,
+
+  initialize(chart, datasetIndex) {
+    const that = this;
+    this._edgeListener = {
+      onDataPush() {
+        const count = arguments.length;
+        that.insertEdgeElements(that.getDataset().edges.length - count, count);
+      },
+      onDataPop() {
+        that.getMeta().edges.pop();
+        that.resyncLayout();
+      },
+      onDataShift() {
+        that.getMeta().edges.shift();
+        that.resyncLayout();
+      },
+      onDataSplice(start, count) {
+        that.getMeta().edges.splice(start, count);
+        that.insertEdgeElements(start, arguments.length - 2);
+      },
+      onDataUnshift() {
+        that.insertEdgeElements(0, arguments.length);
+      }
+    };
+
+    superClass.initialize.call(this, chart, datasetIndex);
+  },
 
   createEdgeMetaData(index) {
     return this.edgeElementType && new this.edgeElementType({
@@ -36,7 +64,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   },
 
   update(reset) {
-    Chart.controllers.scatter.prototype.update.call(this, reset);
+    superClass.update.call(this, reset);
 
     const meta = this.getMeta();
     const edges = meta.edges || [];
@@ -45,30 +73,8 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     edges.forEach((edge) => edge.pivot());
   },
 
-  _edgeListener: (() => ({
-    onDataPush() {
-      const count = arguments.length;
-      this.insertEdgeElements(this.getDataset().edges.length - count, count);
-    },
-    onDataPop() {
-      this.getMeta().edges.pop();
-      this.resyncLayout();
-    },
-    onDataShift() {
-      this.getMeta().edges.shift();
-      this.resyncLayout();
-    },
-    onDataSplice(start, count) {
-      this.getMeta().edges.splice(start, count);
-      this.insertEdgeElements(start, arguments.length - 2);
-    },
-    onDataUnshift() {
-      this.insertEdgeElements(0, arguments.length);
-    }
-  }))(),
-
   destroy() {
-    Chart.controllers.scatter.destroy.call(this);
+    superClass.destroy.call(this);
     if (this._edges) {
       unlistenArrayEvents(this._edges, this._edgeListener);
     }
@@ -76,7 +82,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   },
 
   updateElement(point, index, reset) {
-    Chart.controllers.scatter.prototype.updateElement.call(this, point, index, reset);
+    superClass.updateElement.call(this, point, index, reset);
 
     if (reset) {
       // start in center also in x
@@ -190,11 +196,11 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       this._edges = edges;
     }
 
-    Chart.controllers.scatter.prototype.buildOrUpdateElements.call(this);
+    superClass.buildOrUpdateElements.call(this);
   },
 
   transition(easingValue) {
-    Chart.controllers.scatter.prototype.transition.call(this, easingValue);
+    superClass.transition.call(this, easingValue);
 
     const meta = this.getMeta();
     const edges = meta.edges || [];
@@ -220,11 +226,11 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       Chart.helpers.canvas.unclipArea(this.chart.ctx);
     }
 
-    Chart.controllers.scatter.prototype.draw.call(this);
+    superClass.draw.call(this);
   },
 
   resyncElements() {
-    Chart.controllers.scatter.prototype.resyncElements.call(this);
+    superClass.resyncElements.call(this);
     const meta = this.getMeta();
     const edges = this.getDataset().edges;
     const metaEdges = meta.edges || (meta.edges = []);
@@ -240,7 +246,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   },
 
   addElements() {
-    Chart.controllers.scatter.prototype.addElements.call(this);
+    superClass.addElements.call(this);
 
     const meta = this.getMeta();
     const edges = this.getDataset().edges || [];
@@ -265,6 +271,26 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     this.resyncLayout();
   },
 
+  onDataPush() {
+    superClass.onDataPush.apply(this, Array.from(arguments));
+    this.resyncLayout();
+  },
+  onDataPop() {
+    superClass.onDataPop.call(this);
+    this.resyncLayout();
+  },
+  onDataShift() {
+    superClass.onDataShift.call(this);
+    this.resyncLayout();
+  },
+  onDataSplice() {
+    superClass.onDataSplice.apply(this, Array.from(arguments));
+    this.resyncLayout();
+  },
+  onDataUnshift() {
+    superClass.onDataUnshift.apply(this, Array.from(arguments));
+    this.resyncLayout();
+  },
 
   stopLayout() {
     // hook
