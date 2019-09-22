@@ -8,10 +8,25 @@ const defaults = {
   tree: {
     mode: 'dendogram', // dendogram, tree
     orientation: 'horizontal' // vertical, horizontal, radial
-  }
+  },
+  scales: {
+    xAxes: [{
+      ticks: {
+        min: -1,
+        max: 1
+      }
+    }],
+    yAxes: [{
+      ticks: {
+        min: -1,
+        max: 1
+      }
+    }]
+  },
+
 };
 
-Chart.defaults.dendogram = Chart.helpers.merge({}, [Chart.defaults.graph, defaults]);
+Chart.defaults.dendogram = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
 
 const superClass = Graph.prototype;
 export const Dendogram = Chart.controllers.dendogram = Graph.extend({
@@ -36,17 +51,19 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
     const layout = options.mode === 'tree' ? tree() : cluster();
 
     if (options.orientation === 'radial') {
-      layout.size([Math.PI * 2, 100]);
+      layout.size([Math.PI * 2, 1]);
+    } else {
+      layout.size([2, 2]);
     }
 
     const orientation = {
       horizontal: (d) => {
-        d.data.x = d.y;
-        d.data.y = -d.x + 0.5;
+        d.data.x = d.y - 1;
+        d.data.y = -d.x + 1;
       },
       vertical: (d) => {
-        d.data.x = d.x - 0.5;
-        d.data.y = -d.y;
+        d.data.x = d.x - 1;
+        d.data.y = -d.y + 1;
       },
       radial: (d) => {
         d.data.x = Math.cos(d.x) * d.y;

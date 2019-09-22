@@ -19,7 +19,7 @@ const defaults = {
   }
 };
 
-Chart.defaults.forceDirectedGraph = Chart.helpers.merge({}, [Chart.defaults.graph, defaults]);
+Chart.defaults.forceDirectedGraph = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
 
 const superClass = Graph.prototype;
 export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.extend({

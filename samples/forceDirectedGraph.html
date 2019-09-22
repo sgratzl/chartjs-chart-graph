@@ -15,17 +15,22 @@
       new Chart(document.getElementById("canvas").getContext("2d"), {
         type: 'forceDirectedGraph',
         data: {
-          labels: data.nodes.map((d) => d.name),
+          labels: data.nodes.map((d) => d.id),
           datasets: [{
             pointBackgroundColor: 'steelblue',
             pointRadius: 5,
-            data: data.nodes.map((node) => ({
-              v: node.group,
-            })),
+            data: data.nodes,
             edges: data.links
           }]
         },
         options: {
+          simulation: {
+            forces: {
+              link: {
+                id: (d) => d.id
+              }
+            }
+          },
           legend: {
             display: false
           }

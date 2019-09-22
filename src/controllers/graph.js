@@ -9,15 +9,9 @@ const defaults = {
   },
   scales: {
     xAxes: [{
-      id: 'x-axis-1', // need an ID so datasets can reference the scale
-      type: 'linear', // scatter should not use a category axis
-      position: 'bottom',
       display: false
     }],
     yAxes: [{
-      id: 'y-axis-1',
-      type: 'linear',
-      position: 'left',
       display: false
     }]
   },
@@ -30,7 +24,7 @@ const defaults = {
   }
 };
 
-Chart.defaults.graph = Chart.helpers.merge({}, [Chart.defaults.scatter, defaults]);
+Chart.defaults.graph = Chart.helpers.configMerge(Chart.defaults.scatter, defaults);
 
 const superClass = Chart.controllers.scatter.prototype;
 export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend({

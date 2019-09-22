@@ -19,8 +19,8 @@
 
       data.nodes.forEach((n, i) => {
         n.outgoing = data.links.filter((e) => e.source === i).map((e) => {
-          e.source = data.nodes[e.source].name;
-          e.target = data.nodes[e.target].name;
+          e.source = data.nodes[e.source].id;
+          e.target = data.nodes[e.target].id;
           return e;
         });
       });
@@ -28,7 +28,7 @@
       const nodes = data.nodes.slice(0, data.nodes.length - sub);
       const rest = data.nodes.slice(data.nodes.length - sub);
 
-      const labels = nodes.map((d) => d.name);
+      const labels = nodes.map((d) => d.id);
       const edges = nodes.reduce((acc, n) => acc.concat(n.outgoing), []).filter((d) => labels.indexOf(d.target) >= 0);
 
       const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
@@ -46,7 +46,7 @@
           simulation: {
             forces: {
               link: {
-                id: (d) => d.name
+                id: (d) => d.id
               }
             }
           },
@@ -65,13 +65,13 @@
         const toAdd = node.outgoing.filter((d) => labels.indexOf(d.target) >= 0 || nodes.indexOf(d.target) >= 0);
         nodes.forEach((n) => {
           n.outgoing.forEach((e) => {
-            if (e.target === node.name || e.target === node) {
+            if (e.target === node.id || e.target === node) {
               toAdd.push(e);
             }
           });
         });
         nodes.push(node);
-        labels.push(node.name);
+        labels.push(node.id);
         edges.push(...toAdd);
 
         // console.log('add', node.name, toAdd.length, edges.length);
