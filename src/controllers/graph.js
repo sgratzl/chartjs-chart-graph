@@ -98,8 +98,8 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     const points = meta.data;
 
     line._children = [
-      this.getPointForEdge(points, edge.source),
-      this.getPointForEdge(points, edge.target)
+      this.resolveNode(points, edge.source),
+      this.resolveNode(points, edge.target)
     ];
     line._xScale = this.getScaleForId(meta.xAxisID);
     line._scale = line._yScale = this.getScaleForId(meta.yAxisID);
@@ -156,22 +156,22 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     return values;
   },
 
-  getPointForEdge(points, ref) {
+  resolveNode(nodes, ref) {
     if (typeof ref === 'number') {
       // index
-      return points[ref];
+      return nodes[ref];
     }
     if (typeof ref === 'string') {
       // label
       const labels = this.chart.data.labels;
-      return points[labels.indexOf(ref)];
+      return nodes[labels.indexOf(ref)];
     }
     if (ref._model) {
       // point
       return ref;
     }
     if (ref && typeof ref.index === 'number') {
-      return points[ref.index];
+      return nodes[ref.index];
     }
     console.warn('cannot resolve edge ref', ref);
     return null;
@@ -179,7 +179,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
 
   buildOrUpdateElements() {
     const dataset = this.getDataset();
-    const edges = dataset.edges || (dataset.edges = []);
+    const edges = dataset.edges || [];
 
     // In order to correctly handle data addition/deletion animation (an thus simulate
     // real-time charts), we need to monitor these data modifications and synchronize
@@ -240,8 +240,13 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
 
   resyncElements() {
     superClass.resyncElements.call(this);
+
+    const ds = this.getDataset();
+
+    this._deriveEdges();
+
     const meta = this.getMeta();
-    const edges = this.getDataset().edges;
+    const edges = ds.edges || [];
     const metaEdges = meta.edges || (meta.edges = []);
     const numMeta = metaEdges.length;
     const numData = edges.length;
@@ -254,11 +259,37 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     }
   },
 
+  _deriveEdges() {
+    const ds = this.getDataset();
+    if (!ds.derivedEdges) {
+      return ds.edges;
+    }
+    const edges = [];
+    ds.derivedEdges = true;
+    // try to derive edges via parent links
+    ds.data.forEach((node) => {
+      if (typeof node.parent !== 'undefined') {
+        // tree edge
+        edges.push({
+          source: node,
+          target: this.resolveNode(ds.data, node.parent)
+        });
+      }
+    });
+    return ds.edges = edges;
+  },
+
   addElements() {
     superClass.addElements.call(this);
 
     const meta = this.getMeta();
-    const edges = this.getDataset().edges || [];
+    const ds = this.getDataset();
+    if (!ds.edges) {
+      ds.derivedEdges = true;
+      this._deriveEdges();
+    }
+
+    const edges = ds.edges;
     const metaData = meta.edges || (meta.edges = []);
 
     for (let i = 0; i < edges.length; ++i) {
@@ -281,22 +312,27 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   },
 
   onDataPush() {
+    this._deriveEdges();
     superClass.onDataPush.apply(this, Array.from(arguments));
     this.resyncLayout();
   },
   onDataPop() {
+    this._deriveEdges();
     superClass.onDataPop.call(this);
     this.resyncLayout();
   },
   onDataShift() {
+    this._deriveEdges();
     superClass.onDataShift.call(this);
     this.resyncLayout();
   },
   onDataSplice() {
+    this._deriveEdges();
     superClass.onDataSplice.apply(this, Array.from(arguments));
     this.resyncLayout();
   },
   onDataUnshift() {
+    this._deriveEdges();
     superClass.onDataUnshift.apply(this, Array.from(arguments));
     this.resyncLayout();
   },
