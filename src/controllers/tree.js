@@ -68,6 +68,7 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
       radial: (d) => {
         d.data.x = Math.cos(d.x) * d.y;
         d.data.y = Math.sin(d.x) * d.y;
+        d.data.angle = d.x;
       }
     };
 
