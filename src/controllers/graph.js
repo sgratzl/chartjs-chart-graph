@@ -301,7 +301,8 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     }
     const edges = [];
     ds.derivedEdges = true;
-    ds.data.forEach((node) => {
+    ds.data.forEach((node, i) => {
+      node.index = i;
       node.children = [];
     });
     // try to derive edges via parent links

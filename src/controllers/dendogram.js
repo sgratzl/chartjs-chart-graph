@@ -17,8 +17,8 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
   resyncLayout() {
     const meta = this.getMeta();
     meta.root = hierarchy(this.getRoot())
-      .count() //sum((d) => d.value)
-      .sort((a, b) => b.height - a.height);
+      .count()
+      .sort((a, b) => b.height - a.height || b.data.index - a.data.index);
 
     this.doLayout(meta.root);
 
