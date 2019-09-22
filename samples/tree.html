@@ -19,44 +19,35 @@
     </select>
   </div>
   <script>
-    const nodes = [
-      { name: 'A' },
-      { name: 'B', parent: 0},
-      { name: 'C', parent: 0 },
-      { name: 'BA', parent: 1 },
-      { name: 'BB', parent: 1 },
-      { name: 'BAA', parent: 3 },
-      { name: 'BAB', parent: 3 },
-      { name: 'CA', parent: 2 },
-      { name: 'CB', parent: 2 },
-    ];
-    const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
-      type: 'dendogram',
-      data: {
-        labels: nodes.map((d) => d.name),
-        datasets: [{
-          pointBackgroundColor: 'steelblue',
-          pointRadius: 5,
-          data: nodes
-        }]
-      },
-      options: {
-        tree: {
-
+    fetch('./tree.json').then((r) => r.json()).then((nodes) => {
+      const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
+        type: 'dendogram',
+        data: {
+          labels: nodes.map((d) => d.name),
+          datasets: [{
+            pointBackgroundColor: 'steelblue',
+            pointRadius: 5,
+            data: nodes
+          }]
         },
-        legend: {
-          display: false
+        options: {
+          tree: {
+
+          },
+          legend: {
+            display: false
+          }
         }
-      }
+      });
+      document.getElementById('mode').onchange = (evt) => {
+        chart.options.tree.mode = evt.currentTarget.value;
+        chart.relayout();
+      };
+      document.getElementById('orientation').onchange = (evt) => {
+        chart.options.tree.orientation = evt.currentTarget.value;
+        chart.relayout();
+      };
     });
-    document.getElementById('mode').onchange = (evt) => {
-      chart.options.tree.mode = evt.currentTarget.value;
-      chart.relayout();
-    };
-    document.getElementById('orientation').onchange = (evt) => {
-      chart.options.tree.orientation = evt.currentTarget.value;
-      chart.relayout();
-    };
   </script>
 </body>
 
