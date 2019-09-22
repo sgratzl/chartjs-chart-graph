@@ -51,12 +51,12 @@ data: {
 
 chart type: `forceDirectedGraph`
 
-Computes the x,y posiiton of nodes based on a force simulation. It is baesd on https://github.com/d3/d3-force/.
+Computes the x,y posiiton of nodes based on a force simulation. It is based on https://github.com/d3/d3-force/.
 
 ![force directed](https://user-images.githubusercontent.com/4129778/65382536-c1dad680-dcd5-11e9-819e-854d654b15b3.png)
 
+### Options
 
-Options
 ```typescript
 interface IForceDirectedOptions {
   simulation: {
@@ -178,14 +178,15 @@ chart types: `dendogram`, `tree`
 
 The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
 
-Dendogram
+**Dendogram**
 ![dendogram](https://user-images.githubusercontent.com/4129778/65382537-c1dad680-dcd5-11e9-974b-b9ad673862e0.png)
 
-Tidy Tree
+**Tidy Tree**
 ![tree](https://user-images.githubusercontent.com/4129778/65382535-c1dad680-dcd5-11e9-9369-d62bfb6656a1.png)
 
 
-Options
+### Options
+
 ```typescript
 interface ITreeOptions {
   tree: {
