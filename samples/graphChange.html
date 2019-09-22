@@ -12,19 +12,22 @@
   </div>
   <button id="addNode">Add Node</button>
   <button id="removeNode">Remove Node</button>
-  <button id="addEdge">Add Edge</button>
-  <button id="removeEdge">Remove Edge</button>
+  <button id="reset">Reset</button>
   <script>
     fetch('./miserables.json').then((r) => r.json()).then((data) => {
 
       data.nodes.forEach((n, i) => {
-        n.outgoing = data.links.filter((e) => e.source === i);
+        n.outgoing = data.links.filter((e) => e.source === i).map((e) => {
+          e.source = data.nodes[e.source].name;
+          e.target = data.nodes[e.target].name;
+          return e;
+        });
       });
       const nodes = data.nodes.slice(0, data.nodes.length - 3);
       const rest = data.nodes.slice(data.nodes.length - 3);
 
       const labels = nodes.map((d) => d.name);
-      const edges = nodes.reduce((acc, n) => acc.concat(n.outgoing), []);
+      const edges = nodes.reduce((acc, n) => acc.concat(n.outgoing), []).filter((d) => labels.indexOf(d.target) >= 0);
 
       const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
         type: 'forceDirectedGraph',
@@ -38,6 +41,13 @@
           }]
         },
         options: {
+          simulation: {
+            forces: {
+              link: {
+                id: (d) => d.name
+              }
+            }
+          },
           legend: {
             display: false
           }
@@ -48,28 +58,47 @@
           return;
         }
         const n = rest.shift();
+        const toAdd = n.outgoing.filter((d) => labels.indexOf(d.target) >= 0 || nodes.indexOf(d.target) >= 0);
+        nodes.forEach((n) => {
+          n.outgoing.forEach((e) => {
+            if (e.target === n.name || e.target === n) {
+              toAdd.push(e);
+            }
+          });
+        });
         nodes.push(n);
         labels.push(n.name);
-        edges.push(...n.outgoing);
+        edges.push(...toAdd);
       };
       document.getElementById('removeNode').onclick = () => {
         if (nodes.length === 0) {
           return;
         }
-        const n = nodes.shift();
-        labels.shift();
-        n.outgoing.forEach((e) => {
-          edges.splice(edges.indexOf(e), 1);
+        const index = Math.min(Math.floor(Math.random() * nodes.length), nodes.length - 1);
+        const n = nodes.splice(index, 1)[0];
+        delete n.x;
+        delete n.y;
+        delete n.vx;
+        delete n.vy;
+
+        labels.splice(index, 1);
+
+        const toRemove = [];
+        edges.forEach((e, i) => {
+          if (e.source === n || e.target === n) {
+            toRemove.push(i);
+          }
         });
+        toRemove.reverse().forEach((i) => {
+          edges.splice(i, 1);
+        })
         rest.push(n);
       };
-      document.getElementById('addEdge').onclick = () => {
-
-      };
-      document.getElementById('removeEdge').onclick = () => {
-
+      document.getElementById('reset').onclick = () => {
+        chart.reset();
       };
     });
+
 
   </script>
 </body>

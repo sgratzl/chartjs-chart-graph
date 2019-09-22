@@ -126,6 +126,7 @@ interface ICollideForce {
 }
 
 interface ILinkForce {
+  id?: (d: IDataEdge) => string | number;
   distance?: number | ID3EdgeCallback;
   strength?: number | ID3EdgeCallback;
 }

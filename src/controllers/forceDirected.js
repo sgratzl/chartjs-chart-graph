@@ -54,18 +54,45 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
       }
       this._simulation.force(key, f);
     });
+    this._simulation.stop();
 
     superClass.initialize.call(this, chart, datasetIndex);
   },
 
+  resetLayout() {
+    superClass.resetLayout.call(this);
+    this._simulation.stop();
+
+    const nodes = this.getDataset().data;
+    nodes.forEach((node) => {
+      if (!node.reset) {
+        return;
+      }
+      delete node.x;
+      delete node.y;
+      delete node.vx;
+      delete node.vy;
+    });
+    this._simulation.nodes(nodes);
+    this._simulation.alpha(1).restart();
+  },
+
   resyncLayout() {
     superClass.resyncLayout.call(this);
-    this._simulation.nodes(this.getDataset().data);
+    this._simulation.stop();
+
+    const nodes = this.getDataset().data;
+    nodes.forEach((node) => {
+      if (typeof node.x == 'undefined' && typeof node.y == 'undefined') {
+        node.reset = true;
+      }
+    });
+    this._simulation.nodes(nodes);
     const link = this._simulation.force('link');
     if (link) {
       link.links(this.getDataset().edges || []);
     }
-    this._simulation.restart();
+    this._simulation.alpha(1).restart();
   },
 
   stopLayout() {

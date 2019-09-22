@@ -30,6 +30,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
 
   initialize(chart, datasetIndex) {
     const that = this;
+    this._initialReset = true;
     this._edgeListener = {
       onDataPush() {
         const count = arguments.length;
@@ -163,7 +164,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     }
     if (typeof ref === 'string') {
       // label
-      const labels = this.getDataset().labels;
+      const labels = this.chart.data.labels;
       return points[labels.indexOf(ref)];
     }
     if (ref._model) {
@@ -229,6 +230,15 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     superClass.draw.call(this);
   },
 
+  reset() {
+    if (this._initialReset) {
+      this._initialReset = false;
+    } else {
+      this.resetLayout();
+    }
+    superClass.reset.call(this);
+  },
+
   resyncElements() {
     superClass.resyncElements.call(this);
     const meta = this.getMeta();
@@ -290,6 +300,10 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   onDataUnshift() {
     superClass.onDataUnshift.apply(this, Array.from(arguments));
     this.resyncLayout();
+  },
+
+  resetLayout() {
+    // hook
   },
 
   stopLayout() {
