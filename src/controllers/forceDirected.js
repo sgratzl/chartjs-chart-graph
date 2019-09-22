@@ -89,7 +89,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     // console.assert(ds.data.length === meta.data.length);
 
     nodes.forEach((node) => {
-      if (typeof node.x === 'undefined' && typeof node.y === 'undefined') {
+      if (node.x == null && node.y == null) {
         node.reset = true;
       }
     });

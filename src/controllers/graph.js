@@ -259,6 +259,24 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     }
   },
 
+  getRoot() {
+    const ds = this.getDataset();
+    const nodes = ds.data;
+    if (ds.derivedEdges) {
+      // find the one with no parent
+      return nodes.find((d) => d.parent == null);
+    }
+    // find the one with no edge
+    const edges = ds.edges || [];
+    const withEdge = new Set();
+    edges.forEach((edge) => {
+      withEdge.add(edge.source);
+      withEdge.add(edge.target);
+    });
+    const labels = this.chart.data.labels;
+    return nodes.find((d, i) => !withEdge.has(d) && withEdge.has(labels[i]));
+  },
+
   _deriveEdges() {
     const ds = this.getDataset();
     if (!ds.derivedEdges) {
@@ -268,11 +286,16 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     ds.derivedEdges = true;
     // try to derive edges via parent links
     ds.data.forEach((node) => {
-      if (typeof node.parent !== 'undefined') {
+      if (node.parent != null) {
         // tree edge
+        const parent = this.resolveNode(ds.data, node.parent);
+
+        const children = parent.children || (parent.children = []);
+        children.push(node);
+
         edges.push({
-          source: node,
-          target: this.resolveNode(ds.data, node.parent)
+          source: parent,
+          target: node
         });
       }
     });
