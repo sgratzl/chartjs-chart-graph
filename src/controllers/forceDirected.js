@@ -5,6 +5,7 @@ import {forceSimulation, forceManyBody, forceLink, forceCenter, forceCollide, fo
 
 const defaults = {
   simulation: {
+    autoRestart: true,
     forces: {
       center: true,
       collide: false,
@@ -81,17 +82,34 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     superClass.resyncLayout.call(this);
     this._simulation.stop();
 
-    const nodes = this.getDataset().data;
+    const ds = this.getDataset();
+    const meta = this.getMeta();
+
+    const nodes = ds.data;
+    console.assert(ds.data.length === meta.data.length);
+
     nodes.forEach((node) => {
       if (typeof node.x == 'undefined' && typeof node.y == 'undefined') {
         node.reset = true;
       }
     });
-    this._simulation.nodes(nodes);
     const link = this._simulation.force('link');
     if (link) {
-      link.links(this.getDataset().edges || []);
+      link.links([]);
     }
+    this._simulation.nodes(nodes);
+    if (link) {
+      console.assert(ds.edges.length === meta.edges.length);
+
+      link.links(ds.edges || []);
+    }
+
+    if (this.chart.options.simulation.autoRestart) {
+      this._simulation.alpha(1).restart();
+    }
+  },
+
+  restartLayout() {
     this._simulation.alpha(1).restart();
   },
 
@@ -100,3 +118,13 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     this._simulation.stop();
   }
 });
+
+Chart.prototype.restart = function () {
+  const numDatasets = this.data.datasets.length;
+  for (let i = 0; i < numDatasets; ++i) {
+    const controller = this.getDatasetMeta(i);
+    if (controller.type === 'forceDirectedGraph') {
+      controller.controller.restartLayout();
+    }
+  }
+};

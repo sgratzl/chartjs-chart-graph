@@ -52,6 +52,13 @@ Options
 ```typescript
 interface IForceDirectedOptions {
   simulation: {
+    /**
+     * auto restarts the simulation upon dataset change, one can manually restart by calling: `chart.restart()`
+     *
+     * @default true
+     */
+    autoRestart: boolean;
+
     forces: {
       /**
        * center force

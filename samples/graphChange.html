@@ -13,6 +13,7 @@
   <button id="addNode">Add Node</button>
   <button id="removeNode">Remove Node</button>
   <button id="reset">Reset</button>
+  <button id="restart">Restart</button>
   <script>
     fetch('./miserables.json').then((r) => r.json()).then((data) => {
 
@@ -23,8 +24,9 @@
           return e;
         });
       });
-      const nodes = data.nodes.slice(0, data.nodes.length - 3);
-      const rest = data.nodes.slice(data.nodes.length - 3);
+      const sub = 3;
+      const nodes = data.nodes.slice(0, data.nodes.length - sub);
+      const rest = data.nodes.slice(data.nodes.length - sub);
 
       const labels = nodes.map((d) => d.name);
       const edges = nodes.reduce((acc, n) => acc.concat(n.outgoing), []).filter((d) => labels.indexOf(d.target) >= 0);
@@ -53,49 +55,64 @@
           }
         }
       });
-      document.getElementById('addNode').onclick = () => {
+      const add = document.getElementById('addNode');
+      const remove = document.getElementById('removeNode');
+      add.onclick = () => {
         if (rest.length === 0) {
           return;
         }
-        const n = rest.shift();
-        const toAdd = n.outgoing.filter((d) => labels.indexOf(d.target) >= 0 || nodes.indexOf(d.target) >= 0);
+        const node = rest.pop();
+        const toAdd = node.outgoing.filter((d) => labels.indexOf(d.target) >= 0 || nodes.indexOf(d.target) >= 0);
         nodes.forEach((n) => {
           n.outgoing.forEach((e) => {
-            if (e.target === n.name || e.target === n) {
+            if (e.target === node.name || e.target === node) {
               toAdd.push(e);
             }
           });
         });
-        nodes.push(n);
-        labels.push(n.name);
+        nodes.push(node);
+        labels.push(node.name);
         edges.push(...toAdd);
+
+        // console.log('add', node.name, toAdd.length, edges.length);
+        add.disabled = rest.length === 0;
+        remove.disabled = false;
+
+        // console.log(nodes.map((d) => d.name), edges.map((d) => `${d.source.name || d.source}-${d.target.name || d.target}`));
       };
-      document.getElementById('removeNode').onclick = () => {
+      remove.onclick = () => {
         if (nodes.length === 0) {
           return;
         }
         const index = Math.min(Math.floor(Math.random() * nodes.length), nodes.length - 1);
-        const n = nodes.splice(index, 1)[0];
-        delete n.x;
-        delete n.y;
-        delete n.vx;
-        delete n.vy;
+        const node = nodes.splice(index, 1)[0];
+        delete node.x;
+        delete node.y;
+        delete node.vx;
+        delete node.vy;
 
         labels.splice(index, 1);
 
         const toRemove = [];
         edges.forEach((e, i) => {
-          if (e.source === n || e.target === n) {
+          if (e.source === node || e.target === node) {
             toRemove.push(i);
           }
         });
         toRemove.reverse().forEach((i) => {
           edges.splice(i, 1);
         })
-        rest.push(n);
+        // console.log('remove', node.name, toRemove.length, edges.length);
+        rest.push(node);
+
+        add.disabled = false;
+        remove.disabled = nodes.length === 0;
       };
       document.getElementById('reset').onclick = () => {
         chart.reset();
+      };
+      document.getElementById('restart').onclick = () => {
+        chart.restart();
       };
     });
 
