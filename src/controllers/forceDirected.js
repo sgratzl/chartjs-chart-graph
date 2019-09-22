@@ -109,7 +109,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.e
     }
   },
 
-  restartLayout() {
+  reLayout() {
     this._simulation.alpha(1).restart();
   },
 
@@ -118,13 +118,3 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.e
     this._simulation.stop();
   }
 });
-
-Chart.prototype.restart = function() {
-  const numDatasets = this.data.datasets.length;
-  for (let i = 0; i < numDatasets; ++i) {
-    const controller = this.getDatasetMeta(i);
-    if (controller.type === 'forceDirectedGraph') {
-      controller.controller.restartLayout();
-    }
-  }
-};

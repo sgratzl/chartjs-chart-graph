@@ -378,6 +378,10 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     this.resyncLayout();
   },
 
+  reLayout() {
+    // hook
+  },
+
   resetLayout() {
     // hook
   },
@@ -390,3 +394,14 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     // hook
   },
 });
+
+Chart.prototype.relayout = function() {
+  const numDatasets = this.data.datasets.length;
+  for (let i = 0; i < numDatasets; ++i) {
+    const controller = this.getDatasetMeta(i);
+    if (typeof controller.controller.reLayout === 'function') {
+      controller.controller.reLayout();
+    }
+  }
+};
+

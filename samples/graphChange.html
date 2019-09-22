@@ -13,7 +13,7 @@
   <button id="addNode">Add Node</button>
   <button id="removeNode">Remove Node</button>
   <button id="reset">Reset</button>
-  <button id="restart">Restart</button>
+  <button id="relayout">Relayout</button>
   <script>
     fetch('./miserables.json').then((r) => r.json()).then((data) => {
 
@@ -111,8 +111,8 @@
       document.getElementById('reset').onclick = () => {
         chart.reset();
       };
-      document.getElementById('restart').onclick = () => {
-        chart.restart();
+      document.getElementById('relayout').onclick = () => {
+        chart.relayout();
       };
     });
 
