@@ -1,12 +1,15 @@
 # Chart.js Graphs
 [![NPM Package][npm-image]][npm-url] [![Github Actions][github-actions-image]][github-actions-url]
 
-Chart.js module for charting graphs. Adding two new chart types: `graph` and `forceDirectedGraph`.
+Chart.js module for charting graphs. Adding new chart types: `graph`, `forceDirectedGraph`, `dendogram`, and `tree`.
 
 **Works only with Chart.js >= 2.8.0**
 
-![image](https://user-images.githubusercontent.com/4129778/65367328-971d4f00-dbfd-11e9-9a16-67c6f8e224e7.png)
+![force directed](https://user-images.githubusercontent.com/4129778/65382536-c1dad680-dcd5-11e9-819e-854d654b15b3.png)
 
+![dendogram](https://user-images.githubusercontent.com/4129778/65382537-c1dad680-dcd5-11e9-974b-b9ad673862e0.png)
+
+![tree](https://user-images.githubusercontent.com/4129778/65382535-c1dad680-dcd5-11e9-9369-d62bfb6656a1.png)
 
 
 ## Install
@@ -46,7 +49,12 @@ data: {
 
 ## Force Directed Graph
 
-Automatically computes the x,y posiiton of nodes based on a force simulation. It is baesd on https://github.com/d3/d3-force/.
+chart type: `forceDirectedGraph`
+
+Computes the x,y posiiton of nodes based on a force simulation. It is baesd on https://github.com/d3/d3-force/.
+
+![force directed](https://user-images.githubusercontent.com/4129778/65382536-c1dad680-dcd5-11e9-819e-854d654b15b3.png)
+
 
 Options
 ```typescript
@@ -162,6 +170,36 @@ interface IRadialForce {
   strength?: number;
 }
 
+```
+
+## Dendogram, Tree
+
+chart types: `dendogram`, `tree`
+
+The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
+
+Dendogram
+![dendogram](https://user-images.githubusercontent.com/4129778/65382537-c1dad680-dcd5-11e9-974b-b9ad673862e0.png)
+
+Tidy Tree
+![tree](https://user-images.githubusercontent.com/4129778/65382535-c1dad680-dcd5-11e9-9369-d62bfb6656a1.png)
+
+
+Options
+```typescript
+interface ITreeOptions {
+  tree: {
+    /**
+     * tree (cluster) or dendogram layout default depends on the chart type
+     */
+    mode: 'dendogram' | 'tree';
+    /**
+     * orientation of the tree layout
+     * @default horizontal
+     */
+    orientation: 'horizontal' | 'vertical' | 'radial';
+  }
+}
 ```
 
 
