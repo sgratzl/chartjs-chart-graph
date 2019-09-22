@@ -83,13 +83,13 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     this._simulation.stop();
 
     const ds = this.getDataset();
-    const meta = this.getMeta();
+    // const meta = this.getMeta();
 
     const nodes = ds.data;
-    console.assert(ds.data.length === meta.data.length);
+    // console.assert(ds.data.length === meta.data.length);
 
     nodes.forEach((node) => {
-      if (typeof node.x == 'undefined' && typeof node.y == 'undefined') {
+      if (typeof node.x === 'undefined' && typeof node.y === 'undefined') {
         node.reset = true;
       }
     });
@@ -99,8 +99,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
     }
     this._simulation.nodes(nodes);
     if (link) {
-      console.assert(ds.edges.length === meta.edges.length);
-
+      // console.assert(ds.edges.length === meta.edges.length);
       link.links(ds.edges || []);
     }
 
@@ -119,7 +118,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.c
   }
 });
 
-Chart.prototype.restart = function () {
+Chart.prototype.restart = function() {
   const numDatasets = this.data.datasets.length;
   for (let i = 0; i < numDatasets; ++i) {
     const controller = this.getDatasetMeta(i);

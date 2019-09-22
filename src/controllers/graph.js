@@ -29,27 +29,26 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   edgeElementType: Chart.elements.Line,
 
   initialize(chart, datasetIndex) {
-    const that = this;
     this._initialReset = true;
     this._edgeListener = {
-      onDataPush() {
-        const count = arguments.length;
-        that.insertEdgeElements(that.getDataset().edges.length - count, count);
+      onDataPush: (...args) => {
+        const count = args.length;
+        this.insertEdgeElements(this.getDataset().edges.length - count, count);
       },
-      onDataPop() {
-        that.getMeta().edges.pop();
-        that.resyncLayout();
+      onDataPop: () => {
+        this.getMeta().edges.pop();
+        this.resyncLayout();
       },
-      onDataShift() {
-        that.getMeta().edges.shift();
-        that.resyncLayout();
+      onDataShift: () => {
+        this.getMeta().edges.shift();
+        this.resyncLayout();
       },
-      onDataSplice(start, count) {
-        that.getMeta().edges.splice(start, count);
-        that.insertEdgeElements(start, arguments.length - 2);
+      onDataSplice: (start, count, ...args) => {
+        this.getMeta().edges.splice(start, count);
+        this.insertEdgeElements(start, args.length);
       },
-      onDataUnshift() {
-        that.insertEdgeElements(0, arguments.length);
+      onDataUnshift: (...args) => {
+        this.insertEdgeElements(0, args.length);
       }
     };
 
