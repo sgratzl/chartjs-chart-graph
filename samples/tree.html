@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+  <script src="../build/Chart.Graphs.js"></script>
+</head>
+
+<body>
+  <div style="width: 75%;">
+    <canvas id="canvas"></canvas>
+  </div>
+  <script>
+    const nodes = [
+      { name: 'A' },
+      { name: 'B', parent: 0},
+      { name: 'C', parent: 0 },
+      { name: 'BA', parent: 1 },
+      { name: 'BB', parent: 1 },
+      { name: 'BAA', parent: 3 },
+      { name: 'BAB', parent: 3 },
+      { name: 'CA', parent: 2 },
+      { name: 'CB', parent: 2 },
+    ];
+    const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
+      type: 'forceDirectedGraph',
+      data: {
+        labels: nodes.map((d) => d.name),
+        datasets: [{
+          pointBackgroundColor: 'steelblue',
+          pointRadius: 5,
+          data: nodes
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
