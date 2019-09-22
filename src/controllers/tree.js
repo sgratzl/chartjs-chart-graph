@@ -35,7 +35,7 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
 
     const layout = options.mode === 'tree' ? tree() : cluster();
 
-    if (orientation.orientation === 'radial') {
+    if (options.orientation === 'radial') {
       layout.size([Math.PI * 2, 100]);
     }
 
@@ -52,7 +52,7 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
         d.data.x = Math.cos(d.x) * d.y;
         d.data.y = Math.sin(d.x) * d.y;
       }
-    }
+    };
 
     layout(root).each(orientation[options.orientation] || orientation.horizontal);
 
