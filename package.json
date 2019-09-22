@@ -21,7 +21,8 @@
   ],
   "dependencies": {
     "chart.js": "^2.8.0",
-    "d3-force": "^2.0.1"
+    "d3-force": "^2.0.1",
+    "d3-hierarchy": "^1.1.8"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",

@@ -4,13 +4,22 @@ import * as Chart from 'chart.js';
 import {listenArrayEvents, unlistenArrayEvents} from '../data';
 
 const defaults = {
+  layout: {
+    padding: 5
+  },
   scales: {
     xAxes: [{
+			id: 'x-axis-1',    // need an ID so datasets can reference the scale
+			type: 'linear',    // scatter should not use a category axis
+      position: 'bottom',
       display: false
-    }],
-    yAxes: [{
+		}],
+		yAxes: [{
+			id: 'y-axis-1',
+			type: 'linear',
+      position: 'left',
       display: false
-    }]
+		}]
   },
   tooltips: {
     callbacks: {
@@ -166,13 +175,21 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       const labels = this.chart.data.labels;
       return nodes[labels.indexOf(ref)];
     }
-    if (ref._model) {
-      // point
+    if (nodes.indexOf(ref) >= 0) {
+      // hit
       return ref;
     }
+
     if (ref && typeof ref.index === 'number') {
       return nodes[ref.index];
     }
+
+    const data = this.getDataset().data;
+    const index = data.indexOf(ref);
+    if (index >= 0) {
+      return nodes[index];
+    }
+
     console.warn('cannot resolve edge ref', ref);
     return null;
   },
@@ -284,15 +301,15 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     }
     const edges = [];
     ds.derivedEdges = true;
+    ds.data.forEach((node) => {
+      node.children = [];
+    });
     // try to derive edges via parent links
     ds.data.forEach((node) => {
       if (node.parent != null) {
         // tree edge
         const parent = this.resolveNode(ds.data, node.parent);
-
-        const children = parent.children || (parent.children = []);
-        children.push(node);
-
+        parent.children.push(node);
         edges.push({
           source: parent,
           target: node

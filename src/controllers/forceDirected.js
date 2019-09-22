@@ -1,6 +1,7 @@
 'use strict';
 
 import * as Chart from 'chart.js';
+import {Graph} from './graph';
 import {forceSimulation, forceManyBody, forceLink, forceCenter, forceCollide, forceX, forceRadial, forceY} from 'd3-force';
 
 const defaults = {
@@ -20,8 +21,8 @@ const defaults = {
 
 Chart.defaults.forceDirectedGraph = Chart.helpers.merge({}, [Chart.defaults.graph, defaults]);
 
-const superClass = Chart.controllers.graph.prototype;
-export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Chart.controllers.graph.extend({
+const superClass = Graph.prototype;
+export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.extend({
 
   initialize(chart, datasetIndex) {
     this._simulation = forceSimulation()
