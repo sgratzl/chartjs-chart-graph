@@ -61,7 +61,7 @@ Computes the x,y posiiton of nodes based on a force simulation. It is based on h
 interface IForceDirectedOptions {
   simulation: {
     /**
-     * auto restarts the simulation upon dataset change, one can manually restart by calling: `chart.restart()`
+     * auto restarts the simulation upon dataset change, one can manually restart by calling: `chart.relayout()`
      *
      * @default true
      */
