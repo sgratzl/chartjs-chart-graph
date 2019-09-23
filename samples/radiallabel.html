@@ -35,7 +35,7 @@
               display: (context) => {
                 const index = context.dataIndex;
                 const value = context.dataset.data[index];
-                return value.children.length === 0;
+                return true; //value.children.length === 0;
               },
               align: (context) => {
                 const index = context.dataIndex;

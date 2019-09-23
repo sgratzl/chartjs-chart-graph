@@ -10,29 +10,29 @@ Chart.defaults.global.elements.edgeLine = {
 };
 
 export const EdgeLine = Chart.elements.EdgeLine = Chart.elements.Line.extend({
-	draw() {
-		const vm = this._view;
-		const ctx = this._chart.ctx;
-		const globalDefaults = Chart.defaults.global;
-		const globalOptionLineElements = globalDefaults.elements.line;
+  draw() {
+    const vm = this._view;
+    const ctx = this._chart.ctx;
+    const globalDefaults = Chart.defaults.global;
+    const globalOptionLineElements = globalDefaults.elements.line;
 
     ctx.save();
 
-		// Stroke Line Options
-		ctx.lineCap = vm.borderCapStyle || globalOptionLineElements.borderCapStyle;
+    // Stroke Line Options
+    ctx.lineCap = vm.borderCapStyle || globalOptionLineElements.borderCapStyle;
 
-		// IE 9 and 10 do not support line dash
-		if (ctx.setLineDash) {
-			ctx.setLineDash(vm.borderDash || globalOptionLineElements.borderDash);
-		}
+    // IE 9 and 10 do not support line dash
+    if (ctx.setLineDash) {
+      ctx.setLineDash(vm.borderDash || globalOptionLineElements.borderDash);
+    }
 
-		ctx.lineDashOffset = Chart.helpers.valueOrDefault(vm.borderDashOffset, globalOptionLineElements.borderDashOffset);
-		ctx.lineJoin = vm.borderJoinStyle || globalOptionLineElements.borderJoinStyle;
-		ctx.lineWidth = Chart.helpers.valueOrDefault(vm.borderWidth, globalOptionLineElements.borderWidth);
-		ctx.strokeStyle = vm.borderColor || globalDefaults.defaultColor;
+    ctx.lineDashOffset = Chart.helpers.valueOrDefault(vm.borderDashOffset, globalOptionLineElements.borderDashOffset);
+    ctx.lineJoin = vm.borderJoinStyle || globalOptionLineElements.borderJoinStyle;
+    ctx.lineWidth = Chart.helpers.valueOrDefault(vm.borderWidth, globalOptionLineElements.borderWidth);
+    ctx.strokeStyle = vm.borderColor || globalDefaults.defaultColor;
 
-		// Stroke Line
-		ctx.beginPath();
+    // Stroke Line
+    ctx.beginPath();
 
     const from = this._from._view;
     const to = this._to._view;
@@ -57,7 +57,7 @@ export const EdgeLine = Chart.elements.EdgeLine = Chart.elements.Line.extend({
         tx: isNaN(to.angle) ? 0 : Math.cos(to.angle) * -angleHelper,
         ty: isNaN(to.angle) ? 0 : Math.sin(to.angle) * angleHelper
       }
-    }
+    };
     const shift = orientations[this._orientation] || orientations.horizontal;
 
     const fromX = {
@@ -81,7 +81,7 @@ export const EdgeLine = Chart.elements.EdgeLine = Chart.elements.Line.extend({
     // Line to next point
     Chart.helpers.canvas.lineTo(ctx, toX, fromX);
 
-		ctx.stroke();
+    ctx.stroke();
     ctx.restore();
 
     // point helper
@@ -97,5 +97,5 @@ export const EdgeLine = Chart.elements.EdgeLine = Chart.elements.Line.extend({
     // ctx.lineTo(to.x + shift.tx, to.y + shift.ty, 3, 3);
     // ctx.stroke();
     // ctx.restore();
-	}
+  }
 });
