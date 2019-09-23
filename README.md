@@ -17,6 +17,7 @@ Chart.js module for charting graphs. Adding new chart types: `graph`, `forceDire
 Works great with https://github.com/chartjs/chartjs-plugin-datalabels
 
 ![data label](https://user-images.githubusercontent.com/4129778/65398517-a0392800-dd85-11e9-800a-144a13ad2ba1.png)
+[CodePen](https://codepen.io/sgratzl/pen/XWrOgpy)
 
 
 ## Install
@@ -28,7 +29,10 @@ npm install --save chart.js chartjs-chart-graph
 ## Usage
 see [Samples](https://github.com/sgratzl/chartjs-chart-graph/tree/master/samples) on Github
 
-and [CodePen]()
+CodePens
+ * [Force Directed Layout](https://codepen.io/sgratzl/pen/bGbzREq)
+ * [Tree Layouts](https://codepen.io/sgratzl/pen/wvwNeWg)
+ * [Tree With Data Labels](https://codepen.io/sgratzl/pen/XWrOgpy)
 
 
 ## Styling
@@ -77,6 +81,8 @@ chart type: `forceDirectedGraph`
 Computes the x,y posiiton of nodes based on a force simulation. It is based on https://github.com/d3/d3-force/.
 
 ![force](https://user-images.githubusercontent.com/4129778/65398353-9bc03f80-dd84-11e9-8f14-339635c1ba4e.png)
+
+[CodePen](https://codepen.io/sgratzl/pen/bGbzREq)
 
 ### Options
 
@@ -205,26 +211,37 @@ The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
 
 ![dend_h](https://user-images.githubusercontent.com/4129778/65398352-9bc03f80-dd84-11e9-9197-ecb66a872736.png)
 
+[CodePen](https://codepen.io/sgratzl/pen/wvwNeWg)
+
 **Dendogram Vertical**
 
 ![dend_v](https://user-images.githubusercontent.com/4129778/65398355-9bc03f80-dd84-11e9-9ea3-9501a79491fb.png)
+
+[CodePen](https://codepen.io/sgratzl/pen/wvwNeWg)
 
 **Dendogram Radial**
 
 ![radial](https://user-images.githubusercontent.com/4129778/65398460-581a0580-dd85-11e9-93b6-b70946f1155f.png)
 
+[CodePen](https://codepen.io/sgratzl/pen/wvwNeWg)
 
 **Tidy Tree Horizontal**
 
 ![tree_h](https://user-images.githubusercontent.com/4129778/65398351-9bc03f80-dd84-11e9-83f9-50b454fa6929.png)
 
+[CodePen](https://codepen.io/sgratzl/pen/wvwNeWg)
+
 **Tidy Tree Vertical**
 
 ![tree_v](https://user-images.githubusercontent.com/4129778/65398350-9bc03f80-dd84-11e9-8c94-e93c07040ee7.png)
 
+[CodePen](https://codepen.io/sgratzl/pen/wvwNeWg)
+
 **Tidy Tree Radial**
 
 ![radial](https://user-images.githubusercontent.com/4129778/65398354-9bc03f80-dd84-11e9-9633-c4c80bd9c384.png)
+
+[CodePen](https://codepen.io/sgratzl/pen/wvwNeWg)
 
 
 ### Options
