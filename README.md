@@ -5,11 +5,18 @@ Chart.js module for charting graphs. Adding new chart types: `graph`, `forceDire
 
 **Works only with Chart.js >= 2.8.0**
 
-![force directed](https://user-images.githubusercontent.com/4129778/65382536-c1dad680-dcd5-11e9-819e-854d654b15b3.png)
+![force](https://user-images.githubusercontent.com/4129778/65398353-9bc03f80-dd84-11e9-8f14-339635c1ba4e.png)
 
-![dendogram](https://user-images.githubusercontent.com/4129778/65382537-c1dad680-dcd5-11e9-974b-b9ad673862e0.png)
+![dend_h](https://user-images.githubusercontent.com/4129778/65398352-9bc03f80-dd84-11e9-9197-ecb66a872736.png)
 
-![tree](https://user-images.githubusercontent.com/4129778/65382535-c1dad680-dcd5-11e9-9369-d62bfb6656a1.png)
+![tree_v](https://user-images.githubusercontent.com/4129778/65398350-9bc03f80-dd84-11e9-8c94-e93c07040ee7.png)
+
+![radial](https://user-images.githubusercontent.com/4129778/65398354-9bc03f80-dd84-11e9-9633-c4c80bd9c384.png)
+
+
+Works great with https://github.com/chartjs/chartjs-plugin-datalabels
+
+![data label](https://user-images.githubusercontent.com/4129778/65398517-a0392800-dd85-11e9-800a-144a13ad2ba1.png)
 
 
 ## Install
@@ -47,13 +54,29 @@ data: {
 },
 ```
 
+Alternative structure for trees
+
+```js
+data: {
+  labels: ['A', 'B', 'C'], // node labels
+  datasets: [{
+    data: [ // nodes as objects
+      { x: 1, y: 2 }, // x, y will be set by the force directed graph and can be omitted
+      { x: 3, y: 1, parent: 0 },
+      { x: 5, y: 3, parent: 0 }
+    ]
+  }]
+},
+```
+
+
 ## Force Directed Graph
 
 chart type: `forceDirectedGraph`
 
 Computes the x,y posiiton of nodes based on a force simulation. It is based on https://github.com/d3/d3-force/.
 
-![force directed](https://user-images.githubusercontent.com/4129778/65382536-c1dad680-dcd5-11e9-819e-854d654b15b3.png)
+![force](https://user-images.githubusercontent.com/4129778/65398353-9bc03f80-dd84-11e9-8f14-339635c1ba4e.png)
 
 ### Options
 
@@ -178,11 +201,30 @@ chart types: `dendogram`, `tree`
 
 The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
 
-**Dendogram**
-![dendogram](https://user-images.githubusercontent.com/4129778/65382537-c1dad680-dcd5-11e9-974b-b9ad673862e0.png)
+**Dendogram Horizontal**
 
-**Tidy Tree**
-![tree](https://user-images.githubusercontent.com/4129778/65382535-c1dad680-dcd5-11e9-9369-d62bfb6656a1.png)
+![dend_h](https://user-images.githubusercontent.com/4129778/65398352-9bc03f80-dd84-11e9-9197-ecb66a872736.png)
+
+**Dendogram Vertical**
+
+![dend_v](https://user-images.githubusercontent.com/4129778/65398355-9bc03f80-dd84-11e9-9ea3-9501a79491fb.png)
+
+**Dendogram Radial**
+
+![radial](https://user-images.githubusercontent.com/4129778/65398460-581a0580-dd85-11e9-93b6-b70946f1155f.png)
+
+
+**Tidy Tree Horizontal**
+
+![tree_h](https://user-images.githubusercontent.com/4129778/65398351-9bc03f80-dd84-11e9-83f9-50b454fa6929.png)
+
+**Tidy Tree Vertical**
+
+![tree_v](https://user-images.githubusercontent.com/4129778/65398350-9bc03f80-dd84-11e9-8c94-e93c07040ee7.png)
+
+**Tidy Tree Radial**
+
+![radial](https://user-images.githubusercontent.com/4129778/65398354-9bc03f80-dd84-11e9-9633-c4c80bd9c384.png)
 
 
 ### Options
@@ -199,6 +241,11 @@ interface ITreeOptions {
      * @default horizontal
      */
     orientation: 'horizontal' | 'vertical' | 'radial';
+    /**
+     * line tension (factor for the bezier control point as distance between the ndoes)
+     * @default 0.4
+     */
+    lineTension: number;
   }
 }
 ```

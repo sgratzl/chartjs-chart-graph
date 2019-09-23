@@ -13,7 +13,7 @@
   <script>
     fetch('./tree.json').then((r) => r.json()).then((nodes) => {
       const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
-        type: 'tree',
+        type: 'dendogram',
         data: {
           labels: nodes.map((d) => d.name),
           datasets: [{
