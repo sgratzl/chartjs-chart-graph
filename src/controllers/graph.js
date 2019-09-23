@@ -109,6 +109,10 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
 
     line._datasetIndex = this.index;
     line._model = this._resolveEdgeLineOptions(line, index);
+
+    if (line._model.tension) {
+      line._children.forEach((n) => n._model.tension = line._model.tension);
+    }
   },
 
   _resolveEdgeLineOptions(element, index) {
@@ -149,12 +153,9 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       ], context, index);
     }
 
-    // The default behavior of lines is to break at null values, according
-    // to https://github.com/chartjs/Chart.js/issues/2435#issuecomment-216718158
-    // This option gives lines the ability to span gaps
-    values.spanGaps = Chart.helpers.valueOrDefault(dataset.spanGaps, options.spanGaps);
-    values.tension = Chart.helpers.valueOrDefault(dataset.lineTension, elementOptions.tension);
-    values.steppedLine = Chart.helpers.options.resolve([custom.steppedLine, dataset.steppedLine, elementOptions.stepped]);
+    values.spanGaps = true;
+    values.tension = Chart.helpers.valueOrDefault(dataset.lineTension, elementOptions.lineTension);
+    values.steppedLine = false;
 
     return values;
   },
@@ -270,7 +271,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     }
   },
 
-  getRoot() {
+  getTreeRoot() {
     const ds = this.getDataset();
     const nodes = ds.data;
     if (ds.derivedEdges) {
@@ -288,6 +289,19 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     return nodes.find((d, i) => !withEdge.has(d) && withEdge.has(labels[i]));
   },
 
+  getTreeChildren(node) {
+    const ds = this.getDataset();
+    const nodes = ds.data;
+    const edges = ds.edges;
+    return edges.filter((d) => {
+      d.source = this.resolveNode(nodes, d.source);
+      return d.source === node;
+    }).map((d) => {
+      d.target = this.resolveNode(nodes, d.target);
+      return d.target;
+    });
+  },
+
   _deriveEdges() {
     const ds = this.getDataset();
     if (!ds.derivedEdges) {
@@ -297,14 +311,12 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     ds.derivedEdges = true;
     ds.data.forEach((node, i) => {
       node.index = i;
-      node.children = [];
     });
     // try to derive edges via parent links
     ds.data.forEach((node) => {
       if (node.parent != null) {
         // tree edge
         const parent = this.resolveNode(ds.data, node.parent);
-        parent.children.push(node);
         edges.push({
           source: parent,
           target: node
