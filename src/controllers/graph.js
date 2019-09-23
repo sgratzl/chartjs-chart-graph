@@ -108,10 +108,6 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
 
     line._datasetIndex = this.index;
     line._model = this._resolveEdgeLineOptions(line, index);
-
-    if (line._model.tension) {
-      line._children.forEach((n) => n._model.tension = line._model.tension);
-    }
   },
 
   _resolveEdgeLineOptions(element, index) {
@@ -151,8 +147,6 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
         elementOptions[key]
       ], context, index);
     }
-
-    values.tension = Chart.helpers.valueOrDefault(dataset.lineTension, elementOptions.lineTension);
 
     return values;
   },

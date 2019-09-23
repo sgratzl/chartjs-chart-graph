@@ -7,6 +7,7 @@ import {hierarchy, cluster, tree} from 'd3-hierarchy';
 const defaults = {
   tree: {
     mode: 'dendogram', // dendogram, tree
+    lineTension: 0.4,
     orientation: 'horizontal' // vertical, horizontal, radial
   },
   scales: {
@@ -34,6 +35,9 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
     superClass.updateEdgeElement.call(this, line, index);
 
     line._orientation = this.chart.options.tree.orientation;
+    const options = this.chart.options;
+    line._model.tension = Chart.helpers.valueOrDefault(this.getDataset().lineTension, options.tree.lineTension, options.elements.line.lineTension);
+
   },
 
   resyncLayout() {

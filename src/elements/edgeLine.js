@@ -37,9 +37,33 @@ export const EdgeLine = Chart.elements.EdgeLine = Chart.elements.Line.extend({
     const from = this._from._view;
     const to = this._to._view;
 
-    ctx.moveTo(from.x, from.y);
+    const orientations = {
+      horizontal: {x: to.x - from.x, y: 0},
+      vertical: {x: 0, y: to.y - from.y},
+      radial: {x: 0, y: 0}
+    }
+    const shift = orientations[this._orientation] || orientations.horizontal;
+
+    const fromX = {
+      x: from.x,
+      y: from.y,
+      tension: vm.tension,
+      steppedLine: from.steppedLine,
+      controlPointPreviousX: from.x + shift.x * vm.tension,
+      controlPointPreviousY: from.y + shift.y * vm.tension
+    };
+    const toX = {
+      x: to.x,
+      y: to.y,
+      tension: vm.tension,
+      steppedLine: to.steppedLine,
+      controlPointNextX: to.x - shift.x * vm.tension,
+      controlPointNextY: to.y - shift.y * vm.tension
+    };
+
+    ctx.moveTo(to.x, to.y);
     // Line to next point
-		Chart.helpers.canvas.lineTo(ctx, from, to);
+    Chart.helpers.canvas.lineTo(ctx, toX, fromX);
 
 		ctx.stroke();
 		ctx.restore();
