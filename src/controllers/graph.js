@@ -29,7 +29,7 @@ Chart.defaults.graph = Chart.helpers.configMerge(Chart.defaults.scatter, default
 const superClass = Chart.controllers.scatter.prototype;
 export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend({
   dataElementType: Chart.elements.Point,
-  edgeElementType: Chart.elements.Line,
+  edgeElementType: Chart.elements.EdgeLine,
 
   initialize(chart, datasetIndex) {
     this._initialReset = true;
@@ -100,10 +100,9 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     const meta = this.getMeta();
     const points = meta.data;
 
-    line._children = [
-      this.resolveNode(points, edge.source),
-      this.resolveNode(points, edge.target)
-    ];
+    line._from = this.resolveNode(points, edge.source);
+    line._to = this.resolveNode(points, edge.target);
+
     line._xScale = this.getScaleForId(meta.xAxisID);
     line._scale = line._yScale = this.getScaleForId(meta.yAxisID);
 
@@ -153,9 +152,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       ], context, index);
     }
 
-    values.spanGaps = true;
     values.tension = Chart.helpers.valueOrDefault(dataset.lineTension, elementOptions.lineTension);
-    values.steppedLine = false;
 
     return values;
   },

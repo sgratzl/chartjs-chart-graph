@@ -33,28 +33,7 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
   updateEdgeElement(line, index) {
     superClass.updateEdgeElement.call(this, line, index);
 
-    // if (line._model.tension === 0) {
-    //   return;
-    // }
-
-    // // update bezier points
-    // const orientations = {
-    //   horizontal: {x: -20, y: 0},
-    //   vertical: {x: 0, y: -20},
-    //   radial: {x: 0, y: 0}
-    // };
-
-    // const control = orientations[this.chart.options.tree.orientation] || orientations.horizontal;
-
-    // line._children.forEach((n) => {
-    //   const model = n._model;
-
-    //   const cx = model.x + control.x;
-    //   const cy = model.y + control.y;
-
-    //   model.controlPointNextX = model.controlPointPreviousX = cx;
-    //   model.controlPointNextY = model.controlPointPreviousY = cy;
-    // });
+    line._orientation = this.chart.options.tree.orientation;
   },
 
   resyncLayout() {
