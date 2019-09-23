@@ -40,6 +40,14 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
 
   },
 
+  updateElement(point, index, reset) {
+    superClass.updateElement.call(this, point, index, reset);
+
+    // propagate angle
+    const node = this.getDataset().data[index];
+    point._model.angle = node.angle;
+  },
+
   resyncLayout() {
     const meta = this.getMeta();
 
@@ -79,7 +87,7 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
       radial: (d) => {
         d.data.x = Math.cos(d.x) * d.y;
         d.data.y = Math.sin(d.x) * d.y;
-        d.data.angle = d.x;
+        d.data.angle = d.y === 0 ? NaN : d.x;
       }
     };
 
