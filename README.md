@@ -14,9 +14,10 @@ Chart.js module for charting graphs. Adding new chart types: `graph`, `forceDire
 ![radial](https://user-images.githubusercontent.com/4129778/65398354-9bc03f80-dd84-11e9-9633-c4c80bd9c384.png)
 
 
-Works great with https://github.com/chartjs/chartjs-plugin-datalabels
+Works great with https://github.com/chartjs/chartjs-plugin-datalabels or https://github.com/chrispahm/chartjs-plugin-dragdata
 
 ![data label](https://user-images.githubusercontent.com/4129778/65398517-a0392800-dd85-11e9-800a-144a13ad2ba1.png)
+
 [CodePen](https://codepen.io/sgratzl/pen/XWrOgpy)
 
 

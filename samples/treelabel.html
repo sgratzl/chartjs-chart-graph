@@ -4,6 +4,7 @@
 <head>
   <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
   <script src="https://unpkg.com/chartjs-plugin-datalabels"></script>
+  <script src="https://unpkg.com/chartjs-plugin-dragdata"></script>
   <script src="../build/Chart.Graphs.js"></script>
 </head>
 
@@ -32,6 +33,8 @@
           }]
         },
         options: {
+          dragData: true,
+          dragX: true,
           tree: {
 
           },
