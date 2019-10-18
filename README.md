@@ -260,7 +260,7 @@ interface ITreeOptions {
      */
     orientation: 'horizontal' | 'vertical' | 'radial';
     /**
-     * line tension (factor for the bezier control point as distance between the ndoes)
+     * line tension (factor for the bezier control point as distance between the nodes)
      * @default 0.4
      */
     lineTension: number;
