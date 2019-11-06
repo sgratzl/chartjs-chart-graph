@@ -26,6 +26,10 @@ const defaults = {
 
 Chart.defaults.graph = Chart.helpers.configMerge(Chart.defaults.scatter, defaults);
 
+if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.scatter) {
+  Chart.defaults.global.datasets.graph = {...Chart.defaults.global.datasets.scatter};
+}
+
 const superClass = Chart.controllers.scatter.prototype;
 export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend({
   dataElementType: Chart.elements.Point,

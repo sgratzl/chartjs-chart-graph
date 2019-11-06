@@ -21,6 +21,10 @@ const defaults = {
 
 Chart.defaults.forceDirectedGraph = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
 
+if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.graph) {
+  Chart.defaults.global.datasets.forceDirectedGraph = {...Chart.defaults.global.datasets.graph};
+}
+
 const superClass = Graph.prototype;
 export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.extend({
 

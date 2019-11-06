@@ -29,6 +29,10 @@ const defaults = {
 
 Chart.defaults.dendogram = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
 
+if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.graph) {
+  Chart.defaults.global.datasets.dendogram = {...Chart.defaults.global.datasets.graph};
+}
+
 const superClass = Graph.prototype;
 export const Dendogram = Chart.controllers.dendogram = Graph.extend({
   updateEdgeElement(line, index) {
