@@ -1,5 +1,3 @@
-'use strict';
-
 import * as Chart from 'chart.js';
 
 const defaults = {};
