@@ -17,8 +17,8 @@ export function listenArrayEvents(array, listener) {
     configurable: true,
     enumerable: false,
     value: {
-      listeners: [listener]
-    }
+      listeners: [listener],
+    },
   });
 
   arrayEvents.forEach((key) => {
@@ -39,7 +39,7 @@ export function listenArrayEvents(array, listener) {
         });
 
         return res;
-      }
+      },
     });
   });
 }

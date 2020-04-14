@@ -1,43 +1,45 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="../build/Chart.Graphs.js"></script>
+  </head>
 
-<head>
-  <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
-  <script src="../build/Chart.Graphs.js"></script>
-</head>
-
-<body>
-  <div style="width: 75%;">
-    <canvas id="canvas"></canvas>
-  </div>
-  <script>
-    fetch('./miserables.json').then((r) => r.json()).then((data) => {
-      new Chart(document.getElementById("canvas").getContext("2d"), {
-        type: 'forceDirectedGraph',
-        data: {
-          labels: data.nodes.map((d) => d.id),
-          datasets: [{
-            pointBackgroundColor: 'steelblue',
-            pointRadius: 5,
-            data: data.nodes,
-            edges: data.links
-          }]
-        },
-        options: {
-          simulation: {
-            forces: {
-              link: {
-                id: (d) => d.id
-              }
-            }
-          },
-          legend: {
-            display: false
-          }
-        }
-      });
-    });
-  </script>
-</body>
-
+  <body>
+    <div style="width: 75%;">
+      <canvas id="canvas"></canvas>
+    </div>
+    <script>
+      fetch('./miserables.json')
+        .then((r) => r.json())
+        .then((data) => {
+          new Chart(document.getElementById('canvas').getContext('2d'), {
+            type: 'forceDirectedGraph',
+            data: {
+              labels: data.nodes.map((d) => d.id),
+              datasets: [
+                {
+                  pointBackgroundColor: 'steelblue',
+                  pointRadius: 5,
+                  data: data.nodes,
+                  edges: data.links,
+                },
+              ],
+            },
+            options: {
+              simulation: {
+                forces: {
+                  link: {
+                    id: (d) => d.id,
+                  },
+                },
+              },
+              legend: {
+                display: false,
+              },
+            },
+          });
+        });
+    </script>
+  </body>
 </html>

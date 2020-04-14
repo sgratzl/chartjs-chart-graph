@@ -1,8 +1,17 @@
 'use strict';
 
 import * as Chart from 'chart.js';
-import {Graph} from './graph';
-import {forceSimulation, forceManyBody, forceLink, forceCenter, forceCollide, forceX, forceRadial, forceY} from 'd3-force';
+import { Graph } from './graph';
+import {
+  forceSimulation,
+  forceManyBody,
+  forceLink,
+  forceCenter,
+  forceCollide,
+  forceX,
+  forceRadial,
+  forceY,
+} from 'd3-force';
 
 const defaults = {
   simulation: {
@@ -14,25 +23,25 @@ const defaults = {
       manyBody: true,
       x: false,
       y: false,
-      radial: false
-    }
-  }
+      radial: false,
+    },
+  },
 };
 
 Chart.defaults.forceDirectedGraph = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
 
 if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.graph) {
-  Chart.defaults.global.datasets.forceDirectedGraph = {...Chart.defaults.global.datasets.graph};
+  Chart.defaults.global.datasets.forceDirectedGraph = { ...Chart.defaults.global.datasets.graph };
 }
 
 const superClass = Graph.prototype;
-export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.extend({
-
+export const ForceDirectedGraph = (Chart.controllers.forceDirectedGraph = Graph.extend({
   initialize(chart, datasetIndex) {
     this._simulation = forceSimulation()
       .on('tick', () => {
         this.chart.update();
-      }).on('end', () => {
+      })
+      .on('end', () => {
         this.chart.update();
       });
     const sim = chart.options.simulation;
@@ -44,7 +53,7 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.e
       manyBody: forceManyBody,
       x: forceX,
       y: forceY,
-      radial: forceRadial
+      radial: forceRadial,
     };
 
     Object.keys(fs).forEach((key) => {
@@ -120,5 +129,5 @@ export const ForceDirectedGraph = Chart.controllers.forceDirectedGraph = Graph.e
   stopLayout() {
     superClass.stopLayout.call(this);
     this._simulation.stop();
-  }
-});
+  },
+}));

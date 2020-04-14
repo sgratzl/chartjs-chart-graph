@@ -1,121 +1,124 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="../build/Chart.Graphs.js"></script>
+  </head>
 
-<head>
-  <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
-  <script src="../build/Chart.Graphs.js"></script>
-</head>
-
-<body>
-  <div style="width: 75%;">
-    <canvas id="canvas"></canvas>
-  </div>
-  <button id="addNode">Add Node</button>
-  <button id="removeNode">Remove Node</button>
-  <button id="reset">Reset</button>
-  <button id="relayout">Relayout</button>
-  <script>
-    fetch('./miserables.json').then((r) => r.json()).then((data) => {
-
-      const outgoingMap = new Map();
-      data.nodes.forEach((n) => {
-        const outgoing = data.links.filter((e) => e.source === n.id);
-        outgoingMap.set(n.id, outgoing);
-      });
-      const sub = 3;
-      const nodes = data.nodes.slice(0, data.nodes.length - sub);
-      const rest = data.nodes.slice(data.nodes.length - sub);
-
-      const labels = nodes.map((d) => d.id);
-      const edges = nodes.reduce((acc, n) => acc.concat(outgoingMap.get(n.id)), []).filter((d) => labels.indexOf(d.target) >= 0);
-
-      const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
-        type: 'forceDirectedGraph',
-        data: {
-          labels,
-          datasets: [{
-            pointBackgroundColor: 'steelblue',
-            pointRadius: 5,
-            data: nodes,
-            edges
-          }]
-        },
-        options: {
-          simulation: {
-            forces: {
-              link: {
-                id: (d) => d.id
-              }
-            }
-          },
-          legend: {
-            display: false
-          }
-        }
-      });
-      const add = document.getElementById('addNode');
-      const remove = document.getElementById('removeNode');
-      add.onclick = () => {
-        if (rest.length === 0) {
-          return;
-        }
-        const node = rest.pop();
-        const toAdd = outgoingMap.get(node.id).filter((d) => labels.indexOf(d.target) >= 0 || nodes.indexOf(d.target) >= 0);
-        nodes.forEach((n) => {
-          outgoingMap.get(n.id).forEach((e) => {
-            if (e.target === node.id || e.target === node) {
-              toAdd.push(e);
-            }
+  <body>
+    <div style="width: 75%;">
+      <canvas id="canvas"></canvas>
+    </div>
+    <button id="addNode">Add Node</button>
+    <button id="removeNode">Remove Node</button>
+    <button id="reset">Reset</button>
+    <button id="relayout">Relayout</button>
+    <script>
+      fetch('./miserables.json')
+        .then((r) => r.json())
+        .then((data) => {
+          const outgoingMap = new Map();
+          data.nodes.forEach((n) => {
+            const outgoing = data.links.filter((e) => e.source === n.id);
+            outgoingMap.set(n.id, outgoing);
           });
+          const sub = 3;
+          const nodes = data.nodes.slice(0, data.nodes.length - sub);
+          const rest = data.nodes.slice(data.nodes.length - sub);
+
+          const labels = nodes.map((d) => d.id);
+          const edges = nodes
+            .reduce((acc, n) => acc.concat(outgoingMap.get(n.id)), [])
+            .filter((d) => labels.indexOf(d.target) >= 0);
+
+          const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
+            type: 'forceDirectedGraph',
+            data: {
+              labels,
+              datasets: [
+                {
+                  pointBackgroundColor: 'steelblue',
+                  pointRadius: 5,
+                  data: nodes,
+                  edges,
+                },
+              ],
+            },
+            options: {
+              simulation: {
+                forces: {
+                  link: {
+                    id: (d) => d.id,
+                  },
+                },
+              },
+              legend: {
+                display: false,
+              },
+            },
+          });
+          const add = document.getElementById('addNode');
+          const remove = document.getElementById('removeNode');
+          add.onclick = () => {
+            if (rest.length === 0) {
+              return;
+            }
+            const node = rest.pop();
+            const toAdd = outgoingMap
+              .get(node.id)
+              .filter((d) => labels.indexOf(d.target) >= 0 || nodes.indexOf(d.target) >= 0);
+            nodes.forEach((n) => {
+              outgoingMap.get(n.id).forEach((e) => {
+                if (e.target === node.id || e.target === node) {
+                  toAdd.push(e);
+                }
+              });
+            });
+            nodes.push(node);
+            labels.push(node.id);
+            edges.push(...toAdd);
+
+            // console.log('add', node.name, toAdd.length, edges.length);
+            add.disabled = rest.length === 0;
+            remove.disabled = false;
+
+            // console.log(nodes.map((d) => d.name), edges.map((d) => `${d.source.name || d.source}-${d.target.name || d.target}`));
+          };
+          remove.onclick = () => {
+            if (nodes.length === 0) {
+              return;
+            }
+            const index = Math.min(Math.floor(Math.random() * nodes.length), nodes.length - 1);
+            const node = nodes.splice(index, 1)[0];
+            delete node.x;
+            delete node.y;
+            delete node.vx;
+            delete node.vy;
+
+            labels.splice(index, 1);
+
+            const toRemove = [];
+            edges.forEach((e, i) => {
+              if (e.source === node || e.target === node) {
+                toRemove.push(i);
+              }
+            });
+            toRemove.reverse().forEach((i) => {
+              edges.splice(i, 1);
+            });
+            // console.log('remove', node.name, toRemove.length, edges.length);
+            rest.push(node);
+
+            add.disabled = false;
+            remove.disabled = nodes.length === 0;
+          };
+          document.getElementById('reset').onclick = () => {
+            chart.reset();
+          };
+          document.getElementById('relayout').onclick = () => {
+            chart.relayout();
+          };
         });
-        nodes.push(node);
-        labels.push(node.id);
-        edges.push(...toAdd);
-
-        // console.log('add', node.name, toAdd.length, edges.length);
-        add.disabled = rest.length === 0;
-        remove.disabled = false;
-
-        // console.log(nodes.map((d) => d.name), edges.map((d) => `${d.source.name || d.source}-${d.target.name || d.target}`));
-      };
-      remove.onclick = () => {
-        if (nodes.length === 0) {
-          return;
-        }
-        const index = Math.min(Math.floor(Math.random() * nodes.length), nodes.length - 1);
-        const node = nodes.splice(index, 1)[0];
-        delete node.x;
-        delete node.y;
-        delete node.vx;
-        delete node.vy;
-
-        labels.splice(index, 1);
-
-        const toRemove = [];
-        edges.forEach((e, i) => {
-          if (e.source === node || e.target === node) {
-            toRemove.push(i);
-          }
-        });
-        toRemove.reverse().forEach((i) => {
-          edges.splice(i, 1);
-        })
-        // console.log('remove', node.name, toRemove.length, edges.length);
-        rest.push(node);
-
-        add.disabled = false;
-        remove.disabled = nodes.length === 0;
-      };
-      document.getElementById('reset').onclick = () => {
-        chart.reset();
-      };
-      document.getElementById('relayout').onclick = () => {
-        chart.relayout();
-      };
-    });
-
-
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

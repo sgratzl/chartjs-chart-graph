@@ -1,37 +1,41 @@
 'use strict';
 
 import * as Chart from 'chart.js';
-import {listenArrayEvents, unlistenArrayEvents} from '../data';
+import { listenArrayEvents, unlistenArrayEvents } from '../data';
 
 const defaults = {
   layout: {
-    padding: 5
+    padding: 5,
   },
   scales: {
-    xAxes: [{
-      display: false
-    }],
-    yAxes: [{
-      display: false
-    }]
+    xAxes: [
+      {
+        display: false,
+      },
+    ],
+    yAxes: [
+      {
+        display: false,
+      },
+    ],
   },
   tooltips: {
     callbacks: {
       label(item, data) {
         return data.labels[item.index];
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 Chart.defaults.graph = Chart.helpers.configMerge(Chart.defaults.scatter, defaults);
 
 if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.scatter) {
-  Chart.defaults.global.datasets.graph = {...Chart.defaults.global.datasets.scatter};
+  Chart.defaults.global.datasets.graph = { ...Chart.defaults.global.datasets.scatter };
 }
 
 const superClass = Chart.controllers.scatter.prototype;
-export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend({
+export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend({
   dataElementType: Chart.elements.Point,
   edgeElementType: Chart.elements.EdgeLine,
 
@@ -56,18 +60,21 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       },
       onDataUnshift: (...args) => {
         this.insertEdgeElements(0, args.length);
-      }
+      },
     };
 
     superClass.initialize.call(this, chart, datasetIndex);
   },
 
   createEdgeMetaData(index) {
-    return this.edgeElementType && new this.edgeElementType({
-      _chart: this.chart,
-      _datasetIndex: this.index,
-      _index: index
-    });
+    return (
+      this.edgeElementType &&
+      new this.edgeElementType({
+        _chart: this.chart,
+        _datasetIndex: this.index,
+        _index: index,
+      })
+    );
   },
 
   update(reset) {
@@ -126,7 +133,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       chart: chart,
       edgeIndex: index,
       dataset: dataset,
-      datasetIndex: this.index
+      datasetIndex: this.index,
     };
 
     const keys = [
@@ -138,18 +145,14 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
       'borderDashOffset',
       'borderJoinStyle',
       'fill',
-      'cubicInterpolationMode'
+      'cubicInterpolationMode',
     ];
 
     const values = {};
 
     for (let i = 0; i < keys.length; ++i) {
       const key = keys[i];
-      values[key] = Chart.helpers.options.resolve([
-        custom[key],
-        dataset[key],
-        elementOptions[key]
-      ], context, index);
+      values[key] = Chart.helpers.options.resolve([custom[key], dataset[key], elementOptions[key]], context, index);
     }
 
     return values;
@@ -225,7 +228,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
         left: area.left,
         right: area.right,
         top: area.top,
-        bottom: area.bottom
+        bottom: area.bottom,
       });
 
       edges.forEach((edge) => edge.draw());
@@ -288,13 +291,15 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
     const ds = this.getDataset();
     const nodes = ds.data;
     const edges = ds.edges;
-    return edges.filter((d) => {
-      d.source = this.resolveNode(nodes, d.source);
-      return d.source === node;
-    }).map((d) => {
-      d.target = this.resolveNode(nodes, d.target);
-      return d.target;
-    });
+    return edges
+      .filter((d) => {
+        d.source = this.resolveNode(nodes, d.source);
+        return d.source === node;
+      })
+      .map((d) => {
+        d.target = this.resolveNode(nodes, d.target);
+        return d.target;
+      });
   },
 
   _deriveEdges() {
@@ -314,7 +319,7 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
         const parent = this.resolveNode(ds.data, node.parent);
         edges.push({
           source: parent,
-          target: node
+          target: node,
         });
       }
     });
@@ -395,9 +400,9 @@ export const Graph = Chart.controllers.graph = Chart.controllers.scatter.extend(
   resyncLayout() {
     // hook
   },
-});
+}));
 
-Chart.prototype.relayout = function() {
+Chart.prototype.relayout = function () {
   const numDatasets = this.data.datasets.length;
   for (let i = 0; i < numDatasets; ++i) {
     const controller = this.getDatasetMeta(i);
@@ -406,4 +411,3 @@ Chart.prototype.relayout = function() {
     }
   }
 };
-

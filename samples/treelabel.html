@@ -1,76 +1,76 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="https://unpkg.com/chartjs-plugin-datalabels"></script>
+    <script src="https://unpkg.com/chartjs-plugin-dragdata"></script>
+    <script src="../build/Chart.Graphs.js"></script>
+  </head>
 
-<head>
-  <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
-  <script src="https://unpkg.com/chartjs-plugin-datalabels"></script>
-  <script src="https://unpkg.com/chartjs-plugin-dragdata"></script>
-  <script src="../build/Chart.Graphs.js"></script>
-</head>
-
-<body>
-  <div style="width: 75%;">
-    <canvas id="canvas"></canvas>
-    <select id="mode" value="dendogram">
-      <option>dendogram</option>
-      <option>tree</option>
-    </select>
-    <select id="orientation" value="horizontal">
-      <option>horizontal</option>
-      <option>vertical</option>
-    </select>
-  </div>
-  <script>
-    fetch('./tree.json').then((r) => r.json()).then((nodes) => {
-      const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
-        type: 'dendogram',
-        data: {
-          labels: nodes.map((d) => d.name),
-          datasets: [{
-            pointBackgroundColor: 'steelblue',
-            pointRadius: 5,
-            data: nodes
-          }]
-        },
-        options: {
-          dragData: true,
-          dragX: true,
-          tree: {
-
-          },
-          layout: {
-            padding: {
-              top: 5,
-              left: 5,
-              right: 40,
-              bottom: 5
-            }
-          },
-          plugins: {
-            datalabels: {
-              align: 'right',
-              offset: 6,
-              backgroundColor: 'white',
-              formatter: (v) => {
-                return v.name;
-              }
-            }
-          },
-          legend: {
-            display: false
-          }
-        }
-      });
-      document.getElementById('mode').onchange = (evt) => {
-        chart.options.tree.mode = evt.currentTarget.value;
-        chart.relayout();
-      };
-      document.getElementById('orientation').onchange = (evt) => {
-        chart.options.tree.orientation = evt.currentTarget.value;
-        chart.relayout();
-      };
-    });
-  </script>
-</body>
-
+  <body>
+    <div style="width: 75%;">
+      <canvas id="canvas"></canvas>
+      <select id="mode" value="dendogram">
+        <option>dendogram</option>
+        <option>tree</option>
+      </select>
+      <select id="orientation" value="horizontal">
+        <option>horizontal</option>
+        <option>vertical</option>
+      </select>
+    </div>
+    <script>
+      fetch('./tree.json')
+        .then((r) => r.json())
+        .then((nodes) => {
+          const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
+            type: 'dendogram',
+            data: {
+              labels: nodes.map((d) => d.name),
+              datasets: [
+                {
+                  pointBackgroundColor: 'steelblue',
+                  pointRadius: 5,
+                  data: nodes,
+                },
+              ],
+            },
+            options: {
+              dragData: true,
+              dragX: true,
+              tree: {},
+              layout: {
+                padding: {
+                  top: 5,
+                  left: 5,
+                  right: 40,
+                  bottom: 5,
+                },
+              },
+              plugins: {
+                datalabels: {
+                  align: 'right',
+                  offset: 6,
+                  backgroundColor: 'white',
+                  formatter: (v) => {
+                    return v.name;
+                  },
+                },
+              },
+              legend: {
+                display: false,
+              },
+            },
+          });
+          document.getElementById('mode').onchange = (evt) => {
+            chart.options.tree.mode = evt.currentTarget.value;
+            chart.relayout();
+          };
+          document.getElementById('orientation').onchange = (evt) => {
+            chart.options.tree.orientation = evt.currentTarget.value;
+            chart.relayout();
+          };
+        });
+    </script>
+  </body>
 </html>

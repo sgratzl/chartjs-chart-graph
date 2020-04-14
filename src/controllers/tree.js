@@ -1,47 +1,53 @@
 'use strict';
 
 import * as Chart from 'chart.js';
-import {Graph} from './graph';
-import {hierarchy, cluster, tree} from 'd3-hierarchy';
+import { Graph } from './graph';
+import { hierarchy, cluster, tree } from 'd3-hierarchy';
 
 const defaults = {
   tree: {
     mode: 'dendogram', // dendogram, tree
     lineTension: 0.4,
-    orientation: 'horizontal' // vertical, horizontal, radial
+    orientation: 'horizontal', // vertical, horizontal, radial
   },
   scales: {
-    xAxes: [{
-      ticks: {
-        min: -1,
-        max: 1
-      }
-    }],
-    yAxes: [{
-      ticks: {
-        min: -1,
-        max: 1
-      }
-    }]
+    xAxes: [
+      {
+        ticks: {
+          min: -1,
+          max: 1,
+        },
+      },
+    ],
+    yAxes: [
+      {
+        ticks: {
+          min: -1,
+          max: 1,
+        },
+      },
+    ],
   },
-
 };
 
 Chart.defaults.dendogram = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
 
 if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.graph) {
-  Chart.defaults.global.datasets.dendogram = {...Chart.defaults.global.datasets.graph};
+  Chart.defaults.global.datasets.dendogram = { ...Chart.defaults.global.datasets.graph };
 }
 
 const superClass = Graph.prototype;
-export const Dendogram = Chart.controllers.dendogram = Graph.extend({
+export const Dendogram = (Chart.controllers.dendogram = Graph.extend({
   updateEdgeElement(line, index) {
     superClass.updateEdgeElement.call(this, line, index);
 
     line._orientation = this.chart.options.tree.orientation;
     const options = this.chart.options;
-    line._model.tension = Chart.helpers.valueOrDefault(this.getDataset().lineTension, options.tree.lineTension, options.elements.line.lineTension);
-
+    line._model.tension = Chart.helpers.valueOrDefault(
+      this.getDataset().lineTension,
+      options.tree.lineTension,
+      options.elements.line.lineTension
+    );
   },
 
   updateElement(point, index, reset) {
@@ -92,22 +98,21 @@ export const Dendogram = Chart.controllers.dendogram = Graph.extend({
         d.data.x = Math.cos(d.x) * d.y;
         d.data.y = Math.sin(d.x) * d.y;
         d.data.angle = d.y === 0 ? NaN : d.x;
-      }
+      },
     };
 
     layout(root).each(orientation[options.orientation] || orientation.horizontal);
 
     requestAnimationFrame(() => this.chart.update());
-  }
-});
-
+  },
+}));
 
 const treeDefaults = {
   tree: {
-    mode: 'tree'
-  }
+    mode: 'tree',
+  },
 };
 
 Chart.defaults.tree = Chart.helpers.merge({}, [Chart.defaults.dendogram, treeDefaults]);
 
-export const Tree = Chart.controllers.tree = Dendogram;
+export const Tree = (Chart.controllers.tree = Dendogram);

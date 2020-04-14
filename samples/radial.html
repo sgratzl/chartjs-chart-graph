@@ -1,39 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="../build/Chart.Graphs.js"></script>
+  </head>
 
-<head>
-  <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
-  <script src="../build/Chart.Graphs.js"></script>
-</head>
-
-<body>
-  <div style="width: 50vw; height: 50vw; position: absolute;">
-    <canvas id="canvas" style="width: 50vw; height: 50vw; position: absolute;"></canvas>
-  </div>
-  <script>
-    fetch('./tree.json').then((r) => r.json()).then((nodes) => {
-      const chart = new Chart(document.getElementById("canvas").getContext("2d"), {
-        type: 'dendogram',
-        data: {
-          labels: nodes.map((d) => d.name),
-          datasets: [{
-            pointBackgroundColor: 'steelblue',
-            pointRadius: 5,
-            data: nodes
-          }]
-        },
-        options: {
-
-          tree: {
-            orientation: 'radial'
-          },
-          legend: {
-            display: false
-          }
-        }
-      });
-    });
-  </script>
-</body>
-
+  <body>
+    <div style="width: 50vw; height: 50vw; position: absolute;">
+      <canvas id="canvas" style="width: 50vw; height: 50vw; position: absolute;"></canvas>
+    </div>
+    <script>
+      fetch('./tree.json')
+        .then((r) => r.json())
+        .then((nodes) => {
+          const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
+            type: 'dendogram',
+            data: {
+              labels: nodes.map((d) => d.name),
+              datasets: [
+                {
+                  pointBackgroundColor: 'steelblue',
+                  pointRadius: 5,
+                  data: nodes,
+                },
+              ],
+            },
+            options: {
+              tree: {
+                orientation: 'radial',
+              },
+              legend: {
+                display: false,
+              },
+            },
+          });
+        });
+    </script>
+  </body>
 </html>
