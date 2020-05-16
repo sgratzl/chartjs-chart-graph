@@ -1,48 +1,16 @@
-import * as Chart from 'chart.js';
+import { controllers, defaults, helpers } from 'chart.js';
 import { listenArrayEvents, unlistenArrayEvents } from '../data';
+import { EdgeLine } from '../elements';
 
-const defaults = {
-  layout: {
-    padding: 5,
-  },
-  scales: {
-    xAxes: [
-      {
-        display: false,
-      },
-    ],
-    yAxes: [
-      {
-        display: false,
-      },
-    ],
-  },
-  tooltips: {
-    callbacks: {
-      label(item, data) {
-        return data.labels[item.index];
-      },
-    },
-  },
-};
+export class Graph extends controllers.scatter {
+  constructor(chart, datasetIndex) {
+    super(chart, datasetIndex);
 
-Chart.defaults.graph = Chart.helpers.configMerge(Chart.defaults.scatter, defaults);
-
-if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.scatter) {
-  Chart.defaults.global.datasets.graph = { ...Chart.defaults.global.datasets.scatter };
-}
-
-const superClass = Chart.controllers.scatter.prototype;
-export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend({
-  dataElementType: Chart.elements.Point,
-  edgeElementType: Chart.elements.EdgeLine,
-
-  initialize(chart, datasetIndex) {
     this._initialReset = true;
     this._edgeListener = {
       onDataPush: (...args) => {
         const count = args.length;
-        this.insertEdgeElements(this.getDataset().edges.length - count, count);
+        this._insertEdgeElements(this.getDataset().edges.length - count, count);
       },
       onDataPop: () => {
         this.getMeta().edges.pop();
@@ -54,107 +22,112 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
       },
       onDataSplice: (start, count, ...args) => {
         this.getMeta().edges.splice(start, count);
-        this.insertEdgeElements(start, args.length);
+        this._insertEdgeElements(start, args.length);
       },
       onDataUnshift: (...args) => {
-        this.insertEdgeElements(0, args.length);
+        this._insertEdgeElements(0, args.length);
       },
     };
 
-    superClass.initialize.call(this, chart, datasetIndex);
-  },
+    this.resyncLayout();
+  }
 
-  createEdgeMetaData(index) {
-    return (
-      this.edgeElementType &&
-      new this.edgeElementType({
-        _chart: this.chart,
-        _datasetIndex: this.index,
-        _index: index,
-      })
-    );
-  },
+  reset() {
+    console.log('reset');
+    if (this._initialReset) {
+      this._initialReset = false;
+    } else {
+      this.resetLayout();
+    }
+    super.reset();
+  }
 
-  update(reset) {
-    superClass.update.call(this, reset);
+  update(mode) {
+    super.update(mode);
 
     const meta = this.getMeta();
     const edges = meta.edges || [];
 
-    edges.forEach((edge, i) => this.updateEdgeElement(edge, i, reset));
-    edges.forEach((edge) => edge.pivot());
-  },
+    this.updateEdgeElements(edges, 0, mode);
+  }
 
   destroy() {
-    superClass.destroy.call(this);
+    super.destroy();
     if (this._edges) {
       unlistenArrayEvents(this._edges, this._edgeListener);
     }
     this.stopLayout();
-  },
+  }
 
-  updateElement(point, index, reset) {
-    superClass.updateElement.call(this, point, index, reset);
+  updateEdgeElements(edges, start, count) {
+    // TODO
+  }
 
-    if (reset) {
+  updateEdgeElement(edge, index, properties, mode) {
+    super.updateElement(edge, index, properties, mode);
+  }
+
+  updateElement(point, index, properties, mode) {
+    if (mode === 'reset') {
       // start in center also in x
-      const xScale = this.getScaleForId(this.getMeta().xAxisID);
-      point._model.x = xScale.getBasePixel();
+      const xScale = this.getMeta().xScale;
+      properties.x = xScale.getBasePixel();
     }
-  },
+    super.updateElement(point, index, properties, mode);
+  }
 
-  updateEdgeElement(line, index) {
-    const dataset = this.getDataset();
-    const edge = dataset.edges[index];
-    const meta = this.getMeta();
-    const points = meta.data;
+  // updateEdgeElement(line, index) {
+  //   const dataset = this.getDataset();
+  //   const edge = dataset.edges[index];
+  //   const meta = this.getMeta();
+  //   const points = meta.data;
 
-    line._from = this.resolveNode(points, edge.source);
-    line._to = this.resolveNode(points, edge.target);
+  //   line._from = this.resolveNode(points, edge.source);
+  //   line._to = this.resolveNode(points, edge.target);
 
-    line._xScale = this.getScaleForId(meta.xAxisID);
-    line._scale = line._yScale = this.getScaleForId(meta.yAxisID);
+  //   line._xScale = this.getScaleForId(meta.xAxisID);
+  //   line._scale = line._yScale = this.getScaleForId(meta.yAxisID);
 
-    line._datasetIndex = this.index;
-    line._model = this._resolveEdgeLineOptions(line, index);
-  },
+  //   line._datasetIndex = this.index;
+  //   line._model = this._resolveEdgeLineOptions(line, index);
+  // },
 
-  _resolveEdgeLineOptions(element, index) {
-    const chart = this.chart;
-    const dataset = chart.data.datasets[this.index];
-    const custom = element.custom || {};
-    const options = chart.options;
-    const elementOptions = options.elements.line;
+  // _resolveEdgeLineOptions(element, index) {
+  //   const chart = this.chart;
+  //   const dataset = chart.data.datasets[this.index];
+  //   const custom = element.custom || {};
+  //   const options = chart.options;
+  //   const elementOptions = options.elements.line;
 
-    // Scriptable options
-    const context = {
-      chart: chart,
-      edgeIndex: index,
-      dataset: dataset,
-      datasetIndex: this.index,
-    };
+  //   // Scriptable options
+  //   const context = {
+  //     chart: chart,
+  //     edgeIndex: index,
+  //     dataset: dataset,
+  //     datasetIndex: this.index,
+  //   };
 
-    const keys = [
-      'backgroundColor',
-      'borderWidth',
-      'borderColor',
-      'borderCapStyle',
-      'borderDash',
-      'borderDashOffset',
-      'borderJoinStyle',
-      'fill',
-      'cubicInterpolationMode',
-    ];
+  //   const keys = [
+  //     'backgroundColor',
+  //     'borderWidth',
+  //     'borderColor',
+  //     'borderCapStyle',
+  //     'borderDash',
+  //     'borderDashOffset',
+  //     'borderJoinStyle',
+  //     'fill',
+  //     'cubicInterpolationMode',
+  //   ];
 
-    const values = {};
+  //   const values = {};
 
-    for (let i = 0; i < keys.length; ++i) {
-      const key = keys[i];
-      values[key] = Chart.helpers.options.resolve([custom[key], dataset[key], elementOptions[key]], context, index);
-    }
+  //   for (let i = 0; i < keys.length; ++i) {
+  //     const key = keys[i];
+  //     values[key] = Chart.helpers.options.resolve([custom[key], dataset[key], elementOptions[key]], context, index);
+  //   }
 
-    return values;
-  },
+  //   return values;
+  // },
 
   resolveNode(nodes, ref) {
     if (typeof ref === 'number') {
@@ -183,7 +156,7 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
 
     console.warn('cannot resolve edge ref', ref);
     return null;
-  },
+  }
 
   buildOrUpdateElements() {
     const dataset = this.getDataset();
@@ -203,51 +176,32 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
       }
       this._edges = edges;
     }
-
-    superClass.buildOrUpdateElements.call(this);
-  },
-
-  transition(easingValue) {
-    superClass.transition.call(this, easingValue);
-
-    const meta = this.getMeta();
-    const edges = meta.edges || [];
-
-    edges.forEach((edge) => edge.transition(easingValue));
-  },
+    super.buildOrUpdateElements();
+  }
 
   draw() {
     const meta = this.getMeta();
     const edges = meta.edges || [];
+    const elements = meta.data || [];
+
     const area = this.chart.chartArea;
+    const ctx = this._ctx;
 
     if (edges.length > 0) {
-      Chart.helpers.canvas.clipArea(this.chart.ctx, {
-        left: area.left,
-        right: area.right,
-        top: area.top,
-        bottom: area.bottom,
-      });
-
-      edges.forEach((edge) => edge.draw());
-
-      Chart.helpers.canvas.unclipArea(this.chart.ctx);
+      helpers.canvas.clipArea(ctx, area);
+      // for (const edge of edges) {
+      //   edge.draw(ctx);
+      // }
+      helpers.canvas.unclipArea(ctx);
     }
 
-    superClass.draw.call(this);
-  },
-
-  reset() {
-    if (this._initialReset) {
-      this._initialReset = false;
-    } else {
-      this.resetLayout();
+    for (const elem of elements) {
+      elem.draw(ctx);
     }
-    superClass.reset.call(this);
-  },
+  }
 
-  resyncElements() {
-    superClass.resyncElements.call(this);
+  _resyncElements(changed) {
+    super._resyncElements(changed);
 
     const ds = this.getDataset();
 
@@ -263,9 +217,9 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
       metaEdges.splice(numData, numMeta - numData);
       this.resyncLayout();
     } else if (numData > numMeta) {
-      this.insertEdgeElements(numMeta, numData - numMeta);
+      this._insertEdgeElements(numMeta, numData - numMeta);
     }
-  },
+  }
 
   getTreeRoot() {
     const ds = this.getDataset();
@@ -283,7 +237,7 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
     });
     const labels = this.chart.data.labels;
     return nodes.find((d, i) => !withEdge.has(d) && withEdge.has(labels[i]));
-  },
+  }
 
   getTreeChildren(node) {
     const ds = this.getDataset();
@@ -298,7 +252,7 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
         d.target = this.resolveNode(nodes, d.target);
         return d.target;
       });
-  },
+  }
 
   _deriveEdges() {
     const ds = this.getDataset();
@@ -323,10 +277,28 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
     });
     ds.edges = edges;
     return edges;
-  },
+  }
 
   addElements() {
-    superClass.addElements.call(this);
+    super.addElements();
+
+    const meta = this._cachedMeta;
+    const ds = this.getDataset();
+    if (!ds.edges) {
+      ds.derivedEdges = true;
+      this._deriveEdges();
+    }
+
+    const edges = ds.edges;
+    const metaData = (meta.edges = new Array(edges.length));
+
+    for (let i = 0; i < edges.length; ++i) {
+      metaData[i] = new this.datasetElementType();
+    }
+  }
+
+  _insertElements(start, count) {
+    super._insertElements(start, count);
 
     const meta = this.getMeta();
     const ds = this.getDataset();
@@ -339,73 +311,92 @@ export const Graph = (Chart.controllers.graph = Chart.controllers.scatter.extend
     const metaData = meta.edges || (meta.edges = []);
 
     for (let i = 0; i < edges.length; ++i) {
-      metaData[i] = metaData[i] || this.createEdgeMetaData(i);
+      metaData[i] = metaData[i] || new this.datasetElementType();
     }
-    this.resyncLayout();
-  },
+  }
 
-  addEdgeElementAndReset(index) {
-    const element = this.createEdgeMetaData(index);
-    this.getMeta().edges.splice(index, 0, element);
-    this.updateEdgeElement(element, index, true);
-  },
-
-  insertEdgeElements(start, count) {
-    for (let i = 0; i < count; ++i) {
-      this.addEdgeElementAndReset(start + i);
+  _insertEdgeElements(start, count) {
+    const elements = [];
+    for (let i = 0; i < count; i++) {
+      elements.push(new this.datasetElementType());
     }
+    this.getMeta().edges.splice(start, 0, ...elements);
+    this.updateEdgeElements(elements, start, 'reset');
     this.resyncLayout();
-  },
+  }
 
-  onDataPush() {
+  _onDataPush() {
     this._deriveEdges();
-    superClass.onDataPush.apply(this, Array.from(arguments));
+    super._onDataPush.apply(this, Array.from(arguments));
     this.resyncLayout();
-  },
-  onDataPop() {
+  }
+  _onDataPop() {
     this._deriveEdges();
-    superClass.onDataPop.call(this);
+    super._onDataPop();
     this.resyncLayout();
-  },
-  onDataShift() {
+  }
+  _onDataShift() {
     this._deriveEdges();
-    superClass.onDataShift.call(this);
+    super._onDataShift();
     this.resyncLayout();
-  },
-  onDataSplice() {
+  }
+  _onDataSplice() {
     this._deriveEdges();
-    superClass.onDataSplice.apply(this, Array.from(arguments));
+    super._onDataSplice.apply(this, Array.from(arguments));
     this.resyncLayout();
-  },
-  onDataUnshift() {
+  }
+  _onDataUnshift() {
     this._deriveEdges();
-    superClass.onDataUnshift.apply(this, Array.from(arguments));
+    super._onDataUnshift.apply(this, Array.from(arguments));
     this.resyncLayout();
-  },
+  }
 
   reLayout() {
     // hook
-  },
+  }
 
   resetLayout() {
     // hook
-  },
+  }
 
   stopLayout() {
     // hook
-  },
+  }
 
   resyncLayout() {
     // hook
-  },
-}));
-
-Chart.prototype.relayout = function () {
-  const numDatasets = this.data.datasets.length;
-  for (let i = 0; i < numDatasets; ++i) {
-    const controller = this.getDatasetMeta(i);
-    if (typeof controller.controller.reLayout === 'function') {
-      controller.controller.reLayout();
-    }
   }
+}
+
+Graph.id = 'graph';
+Graph.register = () => {
+  Graph.prototype.datasetElementType = EdgeLine.register();
+  defaults.set(
+    Graph.id,
+    helpers.merge({}, [
+      defaults.scatter,
+      {
+        layout: {
+          padding: 5,
+        },
+        scales: {
+          x: {
+            display: false,
+          },
+          y: {
+            display: false,
+          },
+        },
+        tooltips: {
+          callbacks: {
+            label(item, data) {
+              return data.labels[item.index];
+            },
+          },
+        },
+      },
+    ])
+  );
+  controllers[Graph.id] = Graph;
+  return Graph;
 };

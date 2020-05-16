@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
-    <script src="https://unpkg.com/chartjs-plugin-datalabels"></script>
-    <script src="https://unpkg.com/chartjs-plugin-dragdata"></script>
+    <script src="https://unpkg.com/chart.js@3.0.0-alpha/dist/Chart.js"></script>
+    <!-- <script src="https://unpkg.com/chartjs-plugin-datalabels"></script>
+    <script src="https://unpkg.com/chartjs-plugin-dragdata"></script> -->
     <script src="../build/Chart.Graphs.js"></script>
   </head>
 
@@ -48,14 +48,14 @@
                 },
               },
               plugins: {
-                datalabels: {
-                  align: 'right',
-                  offset: 6,
-                  backgroundColor: 'white',
-                  formatter: (v) => {
-                    return v.name;
-                  },
-                },
+                // datalabels: {
+                //   align: 'right',
+                //   offset: 6,
+                //   backgroundColor: 'white',
+                //   formatter: (v) => {
+                //     return v.name;
+                //   },
+                // },
               },
               legend: {
                 display: false,

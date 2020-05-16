@@ -1,60 +1,28 @@
-import * as Chart from 'chart.js';
+import { helpers, defaults, controllers } from 'chart.js';
 import { Graph } from './graph';
 import { hierarchy, cluster, tree } from 'd3-hierarchy';
 
-const defaults = {
-  tree: {
-    mode: 'dendogram', // dendogram, tree
-    lineTension: 0.4,
-    orientation: 'horizontal', // vertical, horizontal, radial
-  },
-  scales: {
-    xAxes: [
-      {
-        ticks: {
-          min: -1,
-          max: 1,
-        },
-      },
-    ],
-    yAxes: [
-      {
-        ticks: {
-          min: -1,
-          max: 1,
-        },
-      },
-    ],
-  },
-};
-
-Chart.defaults.dendogram = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
-
-if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.graph) {
-  Chart.defaults.global.datasets.dendogram = { ...Chart.defaults.global.datasets.graph };
-}
-
-const superClass = Graph.prototype;
-export const Dendogram = (Chart.controllers.dendogram = Graph.extend({
+export class Dendogram extends Graph {
   updateEdgeElement(line, index) {
-    superClass.updateEdgeElement.call(this, line, index);
+    super.updateEdgeElement(line, index);
 
     line._orientation = this.chart.options.tree.orientation;
     const options = this.chart.options;
-    line._model.tension = Chart.helpers.valueOrDefault(
+    line._model.tension = helpers.valueOrDefault(
       this.getDataset().lineTension,
       options.tree.lineTension,
       options.elements.line.lineTension
     );
-  },
+  }
 
-  updateElement(point, index, reset) {
-    superClass.updateElement.call(this, point, index, reset);
+  // TODO
+  // updateElement(point, index, reset) {
+  //   super.updateElement.call(this, point, index, reset);
 
-    // propagate angle
-    const node = this.getDataset().data[index];
-    point._model.angle = node.angle;
-  },
+  //   // propagate angle
+  //   const node = this.getDataset().data[index];
+  //   point._model.angle = node.angle;
+  // },
 
   resyncLayout() {
     const meta = this.getMeta();
@@ -65,12 +33,12 @@ export const Dendogram = (Chart.controllers.dendogram = Graph.extend({
 
     this.doLayout(meta.root);
 
-    superClass.resyncLayout.call(this);
-  },
+    super.resyncLayout();
+  }
 
   reLayout() {
     this.doLayout(this.getMeta().root);
-  },
+  }
 
   doLayout(root) {
     const options = this.chart.options.tree;
@@ -95,22 +63,65 @@ export const Dendogram = (Chart.controllers.dendogram = Graph.extend({
       radial: (d) => {
         d.data.x = Math.cos(d.x) * d.y;
         d.data.y = Math.sin(d.x) * d.y;
-        d.data.angle = d.y === 0 ? NaN : d.x;
+        d.data.angle = d.y === 0 ? Number.NaN : d.x;
       },
     };
 
     layout(root).each(orientation[options.orientation] || orientation.horizontal);
 
     requestAnimationFrame(() => this.chart.update());
-  },
-}));
+  }
+}
 
-const treeDefaults = {
-  tree: {
-    mode: 'tree',
-  },
+Dendogram.id = 'dendogram';
+Dendogram.register = () => {
+  Graph.register();
+  defaults.set(
+    Dendogram.id,
+    helpers.merge({}, [
+      defaults[Graph.id],
+      {
+        tree: {
+          mode: 'dendogram', // dendogram, tree
+          lineTension: 0.4,
+          orientation: 'horizontal', // vertical, horizontal, radial
+        },
+        scales: {
+          x: {
+            ticks: {
+              min: -1,
+              max: 1,
+            },
+          },
+          y: {
+            ticks: {
+              min: -1,
+              max: 1,
+            },
+          },
+        },
+      },
+    ])
+  );
+  controllers[Dendogram.id] = Dendogram;
+  return Dendogram;
 };
 
-Chart.defaults.tree = Chart.helpers.merge({}, [Chart.defaults.dendogram, treeDefaults]);
-
-export const Tree = (Chart.controllers.tree = Dendogram);
+export class Tree extends Dendogram {}
+Tree.id = 'tree';
+Tree.register = () => {
+  Dendogram.register();
+  defaults.set(
+    Tree.id,
+    helpers.merge({}, [
+      defaults[Dendogram.id],
+      {
+        tree: {
+          mode: 'tree',
+        },
+      },
+    ])
+  );
+  controllers[Tree.id] = Tree;
+  return Tree;
+};

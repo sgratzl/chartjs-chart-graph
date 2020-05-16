@@ -1,4 +1,4 @@
-import * as Chart from 'chart.js';
+import { defaults, helpers, controllers } from 'chart.js';
 import { Graph } from './graph';
 import {
   forceSimulation,
@@ -11,30 +11,9 @@ import {
   forceY,
 } from 'd3-force';
 
-const defaults = {
-  simulation: {
-    autoRestart: true,
-    forces: {
-      center: true,
-      collide: false,
-      link: true,
-      manyBody: true,
-      x: false,
-      y: false,
-      radial: false,
-    },
-  },
-};
-
-Chart.defaults.forceDirectedGraph = Chart.helpers.configMerge(Chart.defaults.graph, defaults);
-
-if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.graph) {
-  Chart.defaults.global.datasets.forceDirectedGraph = { ...Chart.defaults.global.datasets.graph };
-}
-
-const superClass = Graph.prototype;
-export const ForceDirectedGraph = (Chart.controllers.forceDirectedGraph = Graph.extend({
-  initialize(chart, datasetIndex) {
+export class ForceDirectedGraph extends Graph {
+  constructor(chart, datasetIndex) {
+    super(chart, datasetIndex);
     this._simulation = forceSimulation()
       .on('tick', () => {
         this.chart.update();
@@ -68,12 +47,10 @@ export const ForceDirectedGraph = (Chart.controllers.forceDirectedGraph = Graph.
       this._simulation.force(key, f);
     });
     this._simulation.stop();
-
-    superClass.initialize.call(this, chart, datasetIndex);
-  },
+  }
 
   resetLayout() {
-    superClass.resetLayout.call(this);
+    super.resetLayout();
     this._simulation.stop();
 
     const nodes = this.getDataset().data;
@@ -88,10 +65,10 @@ export const ForceDirectedGraph = (Chart.controllers.forceDirectedGraph = Graph.
     });
     this._simulation.nodes(nodes);
     this._simulation.alpha(1).restart();
-  },
+  }
 
   resyncLayout() {
-    superClass.resyncLayout.call(this);
+    super.resyncLayout();
     this._simulation.stop();
 
     const ds = this.getDataset();
@@ -118,14 +95,41 @@ export const ForceDirectedGraph = (Chart.controllers.forceDirectedGraph = Graph.
     if (this.chart.options.simulation.autoRestart) {
       this._simulation.alpha(1).restart();
     }
-  },
+  }
 
   reLayout() {
     this._simulation.alpha(1).restart();
-  },
+  }
 
   stopLayout() {
-    superClass.stopLayout.call(this);
+    super.stopLayout();
     this._simulation.stop();
-  },
-}));
+  }
+}
+
+ForceDirectedGraph.id = 'forceDirectedGraph';
+ForceDirectedGraph.register = () => {
+  Graph.register();
+  defaults.set(
+    ForceDirectedGraph.id,
+    helpers.merge({}, [
+      defaults[Graph.id],
+      {
+        simulation: {
+          autoRestart: true,
+          forces: {
+            center: true,
+            collide: false,
+            link: true,
+            manyBody: true,
+            x: false,
+            y: false,
+            radial: false,
+          },
+        },
+      },
+    ])
+  );
+  controllers[ForceDirectedGraph.id] = ForceDirectedGraph;
+  return ForceDirectedGraph;
+};

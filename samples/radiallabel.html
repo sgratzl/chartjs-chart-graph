@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
-    <script src="https://unpkg.com/chartjs-plugin-datalabels"></script>
+    <script src="https://unpkg.com/chart.js@3.0.0-alpha/dist/Chart.js"></script>
+    <!-- <script src="https://unpkg.com/chartjs-plugin-datalabels"></script> -->
     <script src="../build/Chart.Graphs.js"></script>
   </head>
 
@@ -33,29 +33,29 @@
               layout: {
                 padding: 40,
               },
-              plugins: {
-                datalabels: {
-                  display: (context) => {
-                    const index = context.dataIndex;
-                    const value = context.dataset.data[index];
-                    return true; //value.children.length === 0;
-                  },
-                  align: (context) => {
-                    const index = context.dataIndex;
-                    const value = context.dataset.data[index];
-                    return (-value.angle / Math.PI) * 180;
-                  },
-                  rotation: (context) => {
-                    const index = context.dataIndex;
-                    const value = context.dataset.data[index];
-                    return (-value.angle / Math.PI) * 180;
-                  },
-                  backgroundColor: 'white',
-                  formatter: (v) => {
-                    return v.name;
-                  },
-                },
-              },
+              // plugins: {
+              //   datalabels: {
+              //     display: (context) => {
+              //       const index = context.dataIndex;
+              //       const value = context.dataset.data[index];
+              //       return true; //value.children.length === 0;
+              //     },
+              //     align: (context) => {
+              //       const index = context.dataIndex;
+              //       const value = context.dataset.data[index];
+              //       return (-value.angle / Math.PI) * 180;
+              //     },
+              //     rotation: (context) => {
+              //       const index = context.dataIndex;
+              //       const value = context.dataset.data[index];
+              //       return (-value.angle / Math.PI) * 180;
+              //     },
+              //     backgroundColor: 'white',
+              //     formatter: (v) => {
+              //       return v.name;
+              //     },
+              //   },
+              // },
               legend: {
                 display: false,
               },

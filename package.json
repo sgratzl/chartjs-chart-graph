@@ -24,6 +24,7 @@
     "chart.js": "^3.0.0-alpha"
   },
   "dependencies": {
+    "@babel/runtime": "^7.9.6",
     "d3-force": "^2.0.1",
     "d3-hierarchy": "^1.1.9"
   },
