@@ -1,10 +1,12 @@
 // rollup.config.js
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import babel from 'rollup-plugin-babel';
+import pnp from 'rollup-plugin-pnp-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import babel from '@rollup/plugin-babel';
 
 export default [
   {
+    input: 'src/bundle.js',
     output: {
       file: 'build/Chart.Graphs.js',
       name: 'ChartGraphs',
@@ -14,9 +16,10 @@ export default [
       },
     },
     external: ['chart.js'],
-    plugins: [resolve(), commonjs(), babel()],
+    plugins: [commonjs(), pnp(), resolve(), babel({ babelHelpers: 'runtime' })],
   },
   {
+    input: 'src/index.js',
     output: {
       file: 'build/Chart.Graphs.esm.js',
       name: 'ChartGraphs',
@@ -25,7 +28,7 @@ export default [
         'chart.js': 'Chart',
       },
     },
-    external: ['chart.js'],
-    plugins: [resolve(), commonjs(), babel()],
+    external: ['chart.js', '@babel/runtime', 'd3-force', 'd3-hierarchy'],
+    plugins: [commonjs(), pnp(), resolve()],
   },
 ];
