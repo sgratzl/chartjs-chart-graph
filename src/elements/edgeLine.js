@@ -90,10 +90,12 @@ export class EdgeLine extends elements.Line {
   }
 }
 
-EdgeLine.id = 'edgeLine';
+EdgeLine._type = 'edgeLine';
 EdgeLine.register = () => {
   defaults.set('elements', {
-    [EdgeLine.id]: defaults.elements.line,
+    [EdgeLine._type]: Object.assign({}, defaults.elements.line, {
+      tension: 0,
+    }),
   });
   return EdgeLine;
 };
