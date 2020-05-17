@@ -1,7 +1,5 @@
 import { defaults, elements } from 'chart.js';
 
-//borderCapStyle,borderDash
-
 export class EdgeLine extends elements.Line {
   draw(ctx) {
     const options = this.options;
@@ -10,11 +8,7 @@ export class EdgeLine extends elements.Line {
 
     // Stroke Line Options
     ctx.lineCap = options.borderCapStyle;
-    // IE 9 and 10 do not support line dash
-    if (ctx.setLineDash) {
-      ctx.setLineDash(options.borderDash);
-    }
-
+    ctx.setLineDash(options.borderDash || []);
     ctx.lineDashOffset = options.borderDashOffsetborderDash;
     ctx.lineJoin = options.borderJoinStyle;
     ctx.lineWidth = options.borderWidth;
@@ -23,8 +17,8 @@ export class EdgeLine extends elements.Line {
     // Stroke Line
     ctx.beginPath();
 
-    const from = this._from.getProps(['x', 'y', 'angle', 'steppedLine']);
-    const to = this._to.getProps(['x', 'y', 'angle', 'steppedLine']);
+    const from = this.source.getProps(['x', 'y', 'angle']);
+    const to = this.target.getProps(['x', 'y', 'angle']);
     const angleHelper = Math.hypot(to.x - from.x, to.y - from.y) * options.tension;
 
     const orientations = {
@@ -41,34 +35,41 @@ export class EdgeLine extends elements.Line {
         ty: (from.y - to.y) * options.tension,
       },
       radial: {
-        fx: isNaN(from.angle) ? 0 : Math.cos(from.angle) * angleHelper,
-        fy: isNaN(from.angle) ? 0 : Math.sin(from.angle) * -angleHelper,
-        tx: isNaN(to.angle) ? 0 : Math.cos(to.angle) * -angleHelper,
-        ty: isNaN(to.angle) ? 0 : Math.sin(to.angle) * angleHelper,
+        fx: Number.isNaN(from.angle) ? 0 : Math.cos(from.angle) * angleHelper,
+        fy: Number.isNaN(from.angle) ? 0 : Math.sin(from.angle) * -angleHelper,
+        tx: Number.isNaN(to.angle) ? 0 : Math.cos(to.angle) * -angleHelper,
+        ty: Number.isNaN(to.angle) ? 0 : Math.sin(to.angle) * angleHelper,
       },
     };
     const shift = orientations[this._orientation] || orientations.horizontal;
 
     const fromX = {
-      x: from.x,
-      y: from.y,
-      tension: options.tension,
-      steppedLine: from.steppedLine,
-      controlPointPreviousX: from.x + shift.fx,
-      controlPointPreviousY: from.y + shift.fy,
+      cpx: from.x + shift.fx,
+      cpy: from.y + shift.fy,
     };
     const toX = {
-      x: to.x,
-      y: to.y,
-      tension: options.tension,
-      steppedLine: to.steppedLine,
-      controlPointNextX: to.x + shift.tx,
-      controlPointNextY: to.y + shift.ty,
+      cpx: to.x + shift.tx,
+      cpy: to.y + shift.ty,
     };
 
-    ctx.moveTo(to.x, to.y);
+    ctx.moveTo(from.x, from.y);
     // Line to next point
-    helpers.canvas.lineTo(ctx, toX, fromX);
+    if (options.stepped === 'middle') {
+      const midpoint = (from.x + to.x) / 2.0;
+      ctx.lineTo(midpoint, from.y);
+      ctx.lineTo(midpoint, to.y);
+      ctx.lineTo(to.x, to.y);
+    } else if (options.stepped === 'after') {
+      ctx.lineTo(from.x, to.y);
+      ctx.lineTo(to.x, to.y);
+    } else if (options.stepped) {
+      ctx.lineTo(to.x, from.y);
+      ctx.lineTo(to.x, to.y);
+    } else if (options.tension) {
+      ctx.bezierCurveTo(fromX.cpx, fromX.cpy, toX.cpx, toX.cpy, to.x, to.y);
+    } else {
+      ctx.lineTo(to.x, to.y);
+    }
 
     ctx.stroke();
     ctx.restore();

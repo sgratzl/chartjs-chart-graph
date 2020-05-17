@@ -3,29 +3,13 @@ import { Graph } from './graph';
 import { hierarchy, cluster, tree } from 'd3-hierarchy';
 
 export class Dendogram extends Graph {
-  updateEdgeElement(line, index) {
-    super.updateEdgeElement(line, index);
-
-    line._orientation = this.chart.options.tree.orientation;
-    const options = this.chart.options;
-    line._model.tension = helpers.valueOrDefault(
-      this.getDataset().lineTension,
-      options.tree.lineTension,
-      options.elements.line.lineTension
-    );
+  updateEdgeElement(line, index, properties, mode) {
+    properties._orientation = this.chart.options.tree.orientation;
+    super.updateEdgeElement(line, index, properties, mode);
   }
 
-  // TODO
-  // updateElement(point, index, reset) {
-  //   super.updateElement.call(this, point, index, reset);
-
-  //   // propagate angle
-  //   const node = this.getDataset().data[index];
-  //   point._model.angle = node.angle;
-  // },
-
   resyncLayout() {
-    const meta = this.getMeta();
+    const meta = this._cachedMeta;
 
     meta.root = hierarchy(this.getTreeRoot(), (d) => this.getTreeChildren(d))
       .count()
@@ -37,7 +21,7 @@ export class Dendogram extends Graph {
   }
 
   reLayout() {
-    this.doLayout(this.getMeta().root);
+    this.doLayout(this._cachedMeta.root);
   }
 
   doLayout(root) {
@@ -88,16 +72,12 @@ Dendogram.register = () => {
         },
         scales: {
           x: {
-            ticks: {
-              min: -1,
-              max: 1,
-            },
+            min: -1,
+            max: 1,
           },
           y: {
-            ticks: {
-              min: -1,
-              max: 1,
-            },
+            min: -1,
+            max: 1,
           },
         },
       },

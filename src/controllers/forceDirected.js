@@ -72,7 +72,7 @@ export class ForceDirectedGraph extends Graph {
     this._simulation.stop();
 
     const ds = this.getDataset();
-    // const meta = this.getMeta();
+    // const meta = this._cachedMeta;
 
     const nodes = ds.data;
     // console.assert(ds.data.length === meta.data.length);
