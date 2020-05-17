@@ -78,7 +78,7 @@ data: {
 
 chart type: `forceDirectedGraph`
 
-Computes the x,y posiiton of nodes based on a force simulation. It is based on https://github.com/d3/d3-force/.
+Computes the x,y position of nodes based on a force simulation. It is based on https://github.com/d3/d3-force/.
 
 ![force](https://user-images.githubusercontent.com/4129778/65398353-9bc03f80-dd84-11e9-8f14-339635c1ba4e.png)
 
@@ -257,11 +257,6 @@ interface ITreeOptions {
      * @default horizontal
      */
     orientation: 'horizontal' | 'vertical' | 'radial';
-    /**
-     * line tension (factor for the bezier control point as distance between the nodes)
-     * @default 0.4
-     */
-    lineTension: number;
   };
 }
 ```
