@@ -8,6 +8,11 @@ export class Dendogram extends Graph {
     super.updateEdgeElement(line, index, properties, mode);
   }
 
+  updateElement(point, index, properties, mode) {
+    properties.angle = this.getParsed(index).angle;
+    super.updateElement(point, index, properties, mode);
+  }
+
   resyncLayout() {
     const meta = this._cachedMeta;
 
@@ -70,6 +75,12 @@ Dendogram.register = () => {
           orientation: 'horizontal', // vertical, horizontal, radial
         },
         datasets: {
+          animations: {
+            numbers: {
+              type: 'number',
+              properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],
+            },
+          },
           tension: 0.4,
         },
         scales: {
