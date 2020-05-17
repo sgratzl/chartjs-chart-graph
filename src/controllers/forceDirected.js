@@ -49,12 +49,19 @@ export class ForceDirectedGraph extends Graph {
     this._simulation.stop();
   }
 
+  parse(start, count) {
+    super.parse(start, count);
+    // since generated
+    this._cachedMeta._sorted = false;
+  }
+
   resetLayout() {
     super.resetLayout();
     this._simulation.stop();
 
-    const nodes = this.getDataset().data;
-    nodes.forEach((node) => {
+    const nodes = this._cachedMeta._parsed;
+    nodes.forEach((node, i) => {
+      node.index = i;
       if (!node.reset) {
         return;
       }
@@ -71,13 +78,17 @@ export class ForceDirectedGraph extends Graph {
     super.resyncLayout();
     this._simulation.stop();
 
-    const ds = this.getDataset();
-    // const meta = this._cachedMeta;
+    const meta = this._cachedMeta;
 
-    const nodes = ds.data;
-    // console.assert(ds.data.length === meta.data.length);
-
-    nodes.forEach((node) => {
+    const nodes = meta._parsed;
+    nodes.forEach((node, i) => {
+      node.index = i;
+      if (node.x === null) {
+        delete node.x;
+      }
+      if (node.y === null) {
+        delete node.y;
+      }
       if (node.x == null && node.y == null) {
         node.reset = true;
       }
@@ -87,9 +98,11 @@ export class ForceDirectedGraph extends Graph {
       link.links([]);
     }
     this._simulation.nodes(nodes);
+    console.log(JSON.stringify(nodes));
     if (link) {
       // console.assert(ds.edges.length === meta.edges.length);
-      link.links(ds.edges || []);
+      // console.log(JSON.stringify(meta._parsedEdges));
+      link.links(meta._parsedEdges || []);
     }
 
     if (this.chart.options.simulation.autoRestart) {
