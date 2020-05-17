@@ -64,11 +64,11 @@
           });
           document.getElementById('mode').onchange = (evt) => {
             chart.options.tree.mode = evt.currentTarget.value;
-            chart.relayout();
+            chart.getDatasetMeta(0).controller.reLayout();
           };
           document.getElementById('orientation').onchange = (evt) => {
             chart.options.tree.orientation = evt.currentTarget.value;
-            chart.relayout();
+            chart.getDatasetMeta(0).controller.reLayout();
           };
         });
     </script>
