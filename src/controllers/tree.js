@@ -67,7 +67,6 @@ Dendogram.register = () => {
       {
         tree: {
           mode: 'dendogram', // dendogram, tree
-          lineTension: 0.4,
           orientation: 'horizontal', // vertical, horizontal, radial
         },
         scales: {

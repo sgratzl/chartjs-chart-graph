@@ -386,7 +386,10 @@ export class Graph extends controllers.scatter {
 Graph.id = 'graph';
 Graph.register = () => {
   Graph.prototype.edgeElementType = EdgeLine.register();
-  Graph.prototype.edgeElementOptions = controllers.scatter.prototype.datasetElementOptions;
+  Graph.prototype.edgeElementOptions = controllers.scatter.prototype.datasetElementOptions.concat([
+    'tension',
+    'stepped',
+  ]);
   defaults.set(
     Graph.id,
     helpers.merge({}, [
