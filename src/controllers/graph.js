@@ -11,26 +11,49 @@ export class Graph extends controllers.scatter {
     this._edgeListener = {
       onDataPush: (...args) => {
         const count = args.length;
-        this._insertEdgeElements(this.getDataset().edges.length - count, count);
+        const start = this.getDataset().edges.length - count;
+        const parsed = this._cachedMeta._parsedEdges;
+        args.forEach((edge) => {
+          parsed.push(this._parseDefinedEdge(edge));
+        });
+        this._insertEdgeElements(start, count);
       },
       onDataPop: () => {
         this._cachedMeta.edges.pop();
-        this.resyncLayout();
+        this._cachedMeta._parsedEdges.pop();
+        this._scheduleResyncLayout();
       },
       onDataShift: () => {
         this._cachedMeta.edges.shift();
-        this.resyncLayout();
+        this._cachedMeta._parsedEdges.shift();
+        this._scheduleResyncLayout();
       },
       onDataSplice: (start, count, ...args) => {
         this._cachedMeta.edges.splice(start, count);
-        this._insertEdgeElements(start, args.length);
+        this._cachedMeta._parsedEdges.splice(start, count);
+        if (args.length > 0) {
+          const parsed = this._cachedMeta._parsedEdges;
+          parsed.splice(start, 0, ...args.map((edge) => this._parseDefinedEdge(edge)));
+          this._insertEdgeElements(start, args.length);
+        } else {
+          this._scheduleResyncLayout();
+        }
       },
       onDataUnshift: (...args) => {
+        const parsed = this._cachedMeta._parsedEdges;
+        parsed.unshift(...args.map((edge) => this._parseDefinedEdge(edge)));
         this._insertEdgeElements(0, args.length);
       },
     };
 
     // this.resyncLayout();
+  }
+
+  parse(start, count) {
+    super.parse(start, count);
+    // since generated
+    this._cachedMeta._sorted = false;
+    this._parseEdges();
   }
 
   reset() {
@@ -171,33 +194,29 @@ export class Graph extends controllers.scatter {
 
     if (edges.length > 0) {
       helpers.canvas.clipArea(ctx, area);
-      for (const edge of edges) {
-        edge.draw(ctx, area);
-      }
+      edges.forEach((edge) => edge.draw(ctx, area));
       helpers.canvas.unclipArea(ctx);
     }
 
-    for (const elem of elements) {
-      elem.draw(ctx, area);
-    }
+    elements.forEach((elem) => elem.draw(ctx, area));
   }
 
   _resyncElements(changed) {
     super._resyncElements(changed);
 
-    const edges = this._parseEdges();
     const meta = this._cachedMeta;
+    const edges = meta._parsedEdges;
     const metaEdges = meta.edges || (meta.edges = []);
     const numMeta = metaEdges.length;
     const numData = edges.length;
 
     if (numData < numMeta) {
       metaEdges.splice(numData, numMeta - numData);
-      this.resyncLayout();
+      this._scheduleResyncLayout();
     } else if (numData > numMeta) {
       this._insertEdgeElements(numMeta, numData - numMeta);
     } else if (changed) {
-      this.resyncLayout();
+      this._scheduleResyncLayout();
     }
   }
 
@@ -225,7 +244,6 @@ export class Graph extends controllers.scatter {
   }
 
   getTreeChildren(node) {
-    const ds = this.getDataset();
     const edges = this._cachedMeta._parsedEdges;
     return edges
       .filter((d) => d.source === node.index)
@@ -236,15 +254,21 @@ export class Graph extends controllers.scatter {
       });
   }
 
+  _parseDefinedEdge(edge) {
+    const ds = this.getDataset();
+    const data = ds.data;
+    return {
+      source: this.resolveNodeIndex(data, edge.source),
+      target: this.resolveNodeIndex(data, edge.target),
+    };
+  }
+
   _parseEdges() {
     const ds = this.getDataset();
     const data = ds.data;
     const meta = this._cachedMeta;
     if (ds.edges) {
-      return (meta._parsedEdges = ds.edges.map((edge) => ({
-        source: this.resolveNodeIndex(data, edge.source),
-        target: this.resolveNodeIndex(data, edge.target),
-      })));
+      return (meta._parsedEdges = ds.edges.map((edge) => this._parseDefinedEdge(edge)));
     }
 
     const edges = (meta._parsedEdges = []);
@@ -282,16 +306,23 @@ export class Graph extends controllers.scatter {
     for (let i = 0; i < edges.length; ++i) {
       metaData[i] = metaData[i] || new this.edgeElementType();
     }
+    if (edges.length < metaData.length) {
+      metaData.splice(edges.length, metaData.length);
+    }
   }
 
   _insertElements(start, count) {
     super._insertElements(start, count);
-    this._resyncEdgeElements();
+    if (count > 0) {
+      this._resyncEdgeElements();
+    }
   }
 
   _removeElements(start, count) {
     super._removeElements(start, count);
-    this._resyncEdgeElements();
+    if (count > 0) {
+      this._resyncEdgeElements();
+    }
   }
 
   _insertEdgeElements(start, count) {
@@ -301,28 +332,28 @@ export class Graph extends controllers.scatter {
     }
     this._cachedMeta.edges.splice(start, 0, ...elements);
     this.updateEdgeElements(elements, start, 'reset');
-    this.resyncLayout();
+    this._scheduleResyncLayout();
   }
 
   _onDataPush() {
     super._onDataPush.apply(this, Array.from(arguments));
-    this.resyncLayout();
+    this._scheduleResyncLayout();
   }
   _onDataPop() {
     super._onDataPop();
-    this.resyncLayout();
+    this._scheduleResyncLayout();
   }
   _onDataShift() {
     super._onDataShift();
-    this.resyncLayout();
+    this._scheduleResyncLayout();
   }
   _onDataSplice() {
     super._onDataSplice.apply(this, Array.from(arguments));
-    this.resyncLayout();
+    this._scheduleResyncLayout();
   }
   _onDataUnshift() {
     super._onDataUnshift.apply(this, Array.from(arguments));
-    this.resyncLayout();
+    this._scheduleResyncLayout();
   }
 
   reLayout() {
@@ -335,6 +366,16 @@ export class Graph extends controllers.scatter {
 
   stopLayout() {
     // hook
+  }
+
+  _scheduleResyncLayout() {
+    if (this._scheduleResyncLayoutId != null) {
+      return;
+    }
+    this._scheduleResyncLayoutId = requestAnimationFrame(() => {
+      this._scheduleResyncLayoutId = null;
+      this.resyncLayout();
+    });
   }
 
   resyncLayout() {

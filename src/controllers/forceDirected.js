@@ -49,12 +49,6 @@ export class ForceDirectedGraph extends Graph {
     this._simulation.stop();
   }
 
-  parse(start, count) {
-    super.parse(start, count);
-    // since generated
-    this._cachedMeta._sorted = false;
-  }
-
   resetLayout() {
     super.resetLayout();
     this._simulation.stop();
@@ -98,11 +92,10 @@ export class ForceDirectedGraph extends Graph {
       link.links([]);
     }
     this._simulation.nodes(nodes);
-    console.log(JSON.stringify(nodes));
     if (link) {
       // console.assert(ds.edges.length === meta.edges.length);
-      // console.log(JSON.stringify(meta._parsedEdges));
-      link.links(meta._parsedEdges || []);
+      // work on copy to avoid change
+      link.links((meta._parsedEdges || []).map((link) => Object.assign({}, link)));
     }
 
     if (this.chart.options.simulation.autoRestart) {

@@ -45,13 +45,6 @@
               ],
             },
             options: {
-              simulation: {
-                forces: {
-                  link: {
-                    id: (d) => d.id,
-                  },
-                },
-              },
               legend: {
                 display: false,
               },
@@ -99,7 +92,7 @@
 
             const toRemove = [];
             edges.forEach((e, i) => {
-              if (e.source === node || e.target === node) {
+              if (e.source === node.id || e.target === node.id) {
                 toRemove.push(i);
               }
             });
@@ -116,7 +109,7 @@
             chart.reset();
           };
           document.getElementById('relayout').onclick = () => {
-            chart.relayout();
+            chart.getDatasetMeta(0).controller.reLayout();
           };
         });
     </script>
