@@ -56,7 +56,7 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "posttest": "npm run lint",
-    "build:dev": "rollup -c.js",
+    "build:dev": "rollup -c",
     "build:prod": "npm run build:dev && uglifyjs build/Chart.Graphs.js -c -m -o build/Chart.Graphs.min.js",
     "prebuild": "npm run clean && npm test",
     "build": "npm run build:prod",
