@@ -4,7 +4,7 @@
 
 Chart.js module for charting graphs. Adding new chart types: `graph`, `forceDirectedGraph`, `dendogram`, and `tree`.
 
-**Works only with Chart.js >= 2.8.0**
+**Works only with Chart.js >= 3.0.0**
 
 ![force](https://user-images.githubusercontent.com/4129778/65398353-9bc03f80-dd84-11e9-8f14-339635c1ba4e.png)
 
@@ -23,7 +23,7 @@ Works great with https://github.com/chartjs/chartjs-plugin-datalabels or https:/
 ## Install
 
 ```bash
-npm install --save chart.js chartjs-chart-graph
+npm install --save chart.js@next chartjs-chart-graph@next
 ```
 
 ## Usage
@@ -261,11 +261,20 @@ interface ITreeOptions {
 }
 ```
 
-## Building
+## Development Environment
 
 ```sh
-npm install
-npm run build
+npm i -g yarn
+yarn set version 2
+yarn
+yarn pnpify --sdk
+```
+
+### Building
+
+```sh
+yarn install
+yarn build
 ```
 
 [npm-image]: https://badge.fury.io/js/chartjs-chart-graph.svg
