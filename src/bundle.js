@@ -1,8 +1,8 @@
 export * from '.';
 
-import { Dendogram, ForceDirectedGraph, Graph, Tree } from './controllers';
+import { DendogramController, ForceDirectedGraphController, GraphController, TreeController } from './controllers';
 
-Graph.register();
-ForceDirectedGraph.register();
-Dendogram.register();
-Tree.register();
+GraphController.register();
+ForceDirectedGraphController.register();
+DendogramController.register();
+TreeController.register();

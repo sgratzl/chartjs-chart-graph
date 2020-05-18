@@ -1,8 +1,9 @@
-import { controllers, defaults, helpers } from 'chart.js';
+import { Chart, controllers, defaults, ScatterController, clipArea, unclipArea, merge } from '../chart';
 import { listenArrayEvents, unlistenArrayEvents } from '../data';
 import { EdgeLine } from '../elements';
+import { patchControllerConfig } from './utils';
 
-export class Graph extends controllers.scatter {
+export class GraphController extends ScatterController {
   constructor(chart, datasetIndex) {
     super(chart, datasetIndex);
 
@@ -193,9 +194,9 @@ export class Graph extends controllers.scatter {
     const ctx = this._ctx;
 
     if (edges.length > 0) {
-      helpers.canvas.clipArea(ctx, area);
+      clipArea(ctx, area);
       edges.forEach((edge) => edge.draw(ctx, area));
-      helpers.canvas.unclipArea(ctx);
+      unclipArea(ctx);
     }
 
     elements.forEach((elem) => elem.draw(ctx, area));
@@ -383,16 +384,16 @@ export class Graph extends controllers.scatter {
   }
 }
 
-Graph.id = 'graph';
-Graph.register = () => {
-  Graph.prototype.edgeElementType = EdgeLine.register();
-  Graph.prototype.edgeElementOptions = controllers.scatter.prototype.datasetElementOptions.concat([
+GraphController.id = 'graph';
+GraphController.register = () => {
+  GraphController.prototype.edgeElementType = EdgeLine.register();
+  GraphController.prototype.edgeElementOptions = ScatterController.prototype.datasetElementOptions.concat([
     'tension',
     'stepped',
   ]);
   defaults.set(
-    Graph.id,
-    helpers.merge({}, [
+    GraphController.id,
+    merge({}, [
       defaults.scatter,
       {
         layout: {
@@ -416,6 +417,13 @@ Graph.register = () => {
       },
     ])
   );
-  controllers[Graph.id] = Graph;
-  return Graph;
+  controllers[GraphController.id] = GraphController;
+  return GraphController;
 };
+
+export class GraphChart extends Chart {
+  constructor(item, config) {
+    super(item, patchControllerConfig(config, GraphController));
+  }
+}
+GraphChart.id = GraphController.id;

@@ -1,8 +1,9 @@
-import { helpers, defaults, controllers } from 'chart.js';
-import { Graph } from './graph';
+import { Chart, defaults, controllers, merge } from '../chart';
+import { GraphController } from './graph';
 import { hierarchy, cluster, tree } from 'd3-hierarchy';
+import { patchControllerConfig } from './utils';
 
-export class Dendogram extends Graph {
+export class DendogramController extends GraphController {
   updateEdgeElement(line, index, properties, mode) {
     properties._orientation = this.chart.options.tree.orientation;
     super.updateEdgeElement(line, index, properties, mode);
@@ -62,13 +63,13 @@ export class Dendogram extends Graph {
   }
 }
 
-Dendogram.id = 'dendogram';
-Dendogram.register = () => {
-  Graph.register();
+DendogramController.id = 'dendogram';
+DendogramController.register = () => {
+  GraphController.register();
   defaults.set(
-    Dendogram.id,
-    helpers.merge({}, [
-      defaults[Graph.id],
+    DendogramController.id,
+    merge({}, [
+      defaults[GraphController.id],
       {
         tree: {
           mode: 'dendogram', // dendogram, tree
@@ -96,18 +97,25 @@ Dendogram.register = () => {
       },
     ])
   );
-  controllers[Dendogram.id] = Dendogram;
-  return Dendogram;
+  controllers[DendogramController.id] = DendogramController;
+  return DendogramController;
 };
 
-export class Tree extends Dendogram {}
-Tree.id = 'tree';
-Tree.register = () => {
-  Dendogram.register();
+export class DendogramChart extends Chart {
+  constructor(item, config) {
+    super(item, patchControllerConfig(config, DendogramController));
+  }
+}
+DendogramChart.id = DendogramController.id;
+
+export class TreeController extends DendogramController {}
+TreeController.id = 'tree';
+TreeController.register = () => {
+  DendogramController.register();
   defaults.set(
-    Tree.id,
-    helpers.merge({}, [
-      defaults[Dendogram.id],
+    TreeController.id,
+    merge({}, [
+      defaults[DendogramController.id],
       {
         tree: {
           mode: 'tree',
@@ -115,6 +123,13 @@ Tree.register = () => {
       },
     ])
   );
-  controllers[Tree.id] = Tree;
-  return Tree;
+  controllers[TreeController.id] = TreeController;
+  return TreeController;
 };
+
+export class TreeChart extends Chart {
+  constructor(item, config) {
+    super(item, patchControllerConfig(config, TreeController));
+  }
+}
+TreeChart.id = TreeController.id;

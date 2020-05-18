@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Graph Chart</title>
+  </head>
+  <body>
+    <div id="container" style="width: 75%;">
+      <canvas id="canvas"></canvas>
+    </div>
+    <script defer src="https://unpkg.com/es-module-shims"></script>
+    <script type="importmap-shim">
+      {
+        "imports": {
+          "chart.js": "https://unpkg.com/chart.js@3.0.0-alpha/dist/Chart.esm.js",
+          "chartjs-chart-graph": "../build/Chart.Graphs.esm.js",
+          "d3-force": "https://unpkg.com/d3-force?module",
+          "d3-hierarchy": "https://unpkg.com/d3-hierarchy?module"
+        }
+      }
+    </script>
+    <script type="module-shim">
+      import { ForceDirectedGraphChart } from 'chartjs-chart-graph';
+
+      fetch('./miserables.json')
+        .then((r) => r.json())
+        .then((data) => {
+          new ForceDirectedGraphChart(document.getElementById('canvas').getContext('2d'), {
+            data: {
+              labels: data.nodes.map((d) => d.id),
+              datasets: [
+                {
+                  pointBackgroundColor: 'steelblue',
+                  pointRadius: 5,
+                  data: data.nodes,
+                  edges: data.links,
+                },
+              ],
+            },
+            options: {
+              legend: {
+                display: false,
+              },
+            },
+          });
+        });
+    </script>
+  </body>
+</html>

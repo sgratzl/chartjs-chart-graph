@@ -1,6 +1,6 @@
-import { defaults, elements } from 'chart.js';
+import { defaults, Line } from '../chart';
 
-export class EdgeLine extends elements.Line {
+export class EdgeLine extends Line {
   draw(ctx) {
     const options = this.options;
 

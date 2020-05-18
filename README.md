@@ -261,6 +261,36 @@ interface ITreeOptions {
 }
 ```
 
+### ESM and Tree Shaking
+
+The ESM build of the library supports tree shaking thus having no side effects. As a consequence the chart.js library won't be automatically manipulated nor new controllers automatically registered. One has to manually import and register them.
+
+Variant A:
+
+```js
+import Chart from 'chart.js';
+import { ForceDirectedGraphController } from 'chartjs-chart-graph';
+
+// register controller in chart.js and ensure the defaults are set
+ForceDirectedGraphController.register();
+...
+
+new Chart(ctx, {
+  type: ForceDirectedGraphController.id,
+  data: [...],
+});
+```
+
+Variant B:
+
+```js
+import { ForceDirectedGraphChart } from 'chartjs-chart-graph';
+
+new ForceDirectedGraphChart(ctx, {
+  data: [...],
+});
+```
+
 ## Development Environment
 
 ```sh
