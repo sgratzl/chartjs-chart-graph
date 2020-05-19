@@ -4,7 +4,7 @@ import { hierarchy, cluster, tree } from 'd3-hierarchy';
 
 export class DendogramController extends GraphController {
   updateEdgeElement(line, index, properties, mode) {
-    properties._orientation = this.chart.options.tree.orientation;
+    properties._orientation = this._config.tree.orientation;
     super.updateEdgeElement(line, index, properties, mode);
   }
 
