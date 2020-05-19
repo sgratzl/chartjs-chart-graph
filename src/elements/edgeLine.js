@@ -9,7 +9,7 @@ export class EdgeLine extends Line {
     // Stroke Line Options
     ctx.lineCap = options.borderCapStyle;
     ctx.setLineDash(options.borderDash || []);
-    ctx.lineDashOffset = options.borderDashOffsetborderDash;
+    ctx.lineDashOffset = options.borderDashOffset;
     ctx.lineJoin = options.borderJoinStyle;
     ctx.lineWidth = options.borderWidth;
     ctx.strokeStyle = options.borderColor;
