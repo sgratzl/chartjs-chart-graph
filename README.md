@@ -36,6 +36,11 @@ CodePens
 - [Tree Layouts](https://codepen.io/sgratzl/pen/wvwNeWg)
 - [Tree With Data Labels](https://codepen.io/sgratzl/pen/XWrOgpy)
 
+## Graphviz Dot File Parsing
+
+A Graphviz Dot File parsing package is located at https://github.com/sgratzl/chartjs-chart-graph-dot-parser.
+It creates compatible data structures to be consumed by this plugin.
+
 ## Styling
 
 The new chart types are based on the existing `line` controller. Tho, instead of showing a line per dataset it shows edges as lines. Therefore, the styling options for points and lines are the same. See also https://www.chartjs.org/docs/latest/charts/line.html
