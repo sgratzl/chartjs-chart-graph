@@ -406,15 +406,30 @@ GraphController.register = () => {
   GraphController.defaults = merge({}, [
     defaults.scatter,
     {
+      datasets: {
+        clip: 10, // some space in combination with padding
+      },
       layout: {
-        padding: 5,
+        padding: 10,
       },
       scales: {
         x: {
           display: false,
+          ticks: {
+            maxTicksLimit: 2,
+            precision: 100,
+            minRotation: 0,
+            maxRotation: 0,
+          },
         },
         y: {
           display: false,
+          ticks: {
+            maxTicksLimit: 2,
+            precision: 100,
+            minRotation: 0,
+            maxRotation: 0,
+          },
         },
       },
       tooltips: {

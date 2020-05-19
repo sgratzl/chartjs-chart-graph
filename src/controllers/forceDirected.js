@@ -16,9 +16,11 @@ export class ForceDirectedGraphController extends GraphController {
     super(chart, datasetIndex);
     this._simulation = forceSimulation()
       .on('tick', () => {
+        this._copyPosition();
         this.chart.update();
       })
       .on('end', () => {
+        this._copyPosition();
         this.chart.update();
       });
     const sim = this._config.simulation;
@@ -49,20 +51,64 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation.stop();
   }
 
+  _copyPosition() {
+    const nodes = this._cachedMeta._parsed;
+
+    const minmax = nodes.reduce(
+      (acc, v) => {
+        const s = v._sim;
+        if (!s) {
+          return acc;
+        }
+        if (s.x < acc.minX) {
+          acc.minX = s.x;
+        }
+        if (s.x > acc.maxX) {
+          acc.maxX = s.x;
+        }
+        if (s.y < acc.minY) {
+          acc.minY = s.y;
+        }
+        if (s.y > acc.maxY) {
+          acc.maxY = s.y;
+        }
+        return acc;
+      },
+      {
+        minX: Number.POSITIVE_INFINITY,
+        maxX: Number.NEGATIVE_INFINITY,
+        minY: Number.POSITIVE_INFINITY,
+        maxY: Number.NEGATIVE_INFINITY,
+      }
+    );
+
+    const xScale = (v) => ((v - minmax.minX) / (minmax.maxX - minmax.minX)) * 2 - 1;
+    const yScale = (v) => ((v - minmax.minY) / (minmax.maxY - minmax.minY)) * 2 - 1;
+
+    nodes.forEach((node) => {
+      if (node._sim) {
+        node.x = xScale(node._sim.x);
+        node.y = yScale(node._sim.y);
+      }
+    });
+  }
+
   resetLayout() {
     super.resetLayout();
     this._simulation.stop();
 
-    const nodes = this._cachedMeta._parsed;
-    nodes.forEach((node, i) => {
-      node.index = i;
+    const nodes = this._cachedMeta._parsed.map((node, i) => {
+      const simNode = Object.assign({}, node);
+      simNode.index = i;
+      node._sim = simNode;
       if (!node.reset) {
         return;
       }
-      delete node.x;
-      delete node.y;
-      delete node.vx;
-      delete node.vy;
+      delete simNode.x;
+      delete simNode.y;
+      delete simNode.vx;
+      delete simNoe.vy;
+      return simNode;
     });
     this._simulation.nodes(nodes);
     this._simulation.alpha(1).restart();
@@ -74,18 +120,20 @@ export class ForceDirectedGraphController extends GraphController {
 
     const meta = this._cachedMeta;
 
-    const nodes = meta._parsed;
-    nodes.forEach((node, i) => {
-      node.index = i;
-      if (node.x === null) {
-        delete node.x;
+    const nodes = meta._parsed.map((node, i) => {
+      const simNode = Object.assign({}, node);
+      simNode.index = i;
+      node._sim = simNode;
+      if (simNode.x === null) {
+        delete simNode.x;
       }
-      if (node.y === null) {
-        delete node.y;
+      if (simNode.y === null) {
+        delete simNode.y;
       }
-      if (node.x == null && node.y == null) {
+      if (simNode.x == null && simNode.y == null) {
         node.reset = true;
       }
+      return simNode;
     });
     const link = this._simulation.force('link');
     if (link) {
@@ -131,6 +179,16 @@ ForceDirectedGraphController.register = () => {
             y: false,
             radial: false,
           },
+        },
+      },
+      scales: {
+        x: {
+          min: -1,
+          max: 1,
+        },
+        y: {
+          min: -1,
+          max: 1,
         },
       },
     },
