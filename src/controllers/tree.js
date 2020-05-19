@@ -25,7 +25,16 @@ export class DendogramController extends GraphController {
     super.resyncLayout();
   }
 
-  reLayout() {
+  reLayout(newOptions) {
+    if (newOptions) {
+      Object.assign(this._config.tree, newOptions);
+      const ds = this.getDataset();
+      if (ds.tree) {
+        Object.assign(ds.tree, newOptions);
+      } else {
+        ds.tree = newOptions;
+      }
+    }
     this.doLayout(this._cachedMeta.root);
   }
 

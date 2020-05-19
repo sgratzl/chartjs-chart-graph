@@ -17,20 +17,19 @@
       <select id="orientation" value="horizontal">
         <option>horizontal</option>
         <option>vertical</option>
+        <option>radial</option>
       </select>
     </div>
     <script>
       fetch('./tree.json')
         .then((r) => r.json())
         .then((nodes) => {
-          const treeOptions = {};
           const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
             type: 'dendogram',
             data: {
               labels: nodes.map((d) => d.name),
               datasets: [
                 {
-                  tree: treeOptions,
                   pointBackgroundColor: 'steelblue',
                   pointRadius: 5,
                   data: nodes,
@@ -64,12 +63,14 @@
             },
           });
           document.getElementById('mode').onchange = (evt) => {
-            treeOptions.mode = evt.currentTarget.value;
-            chart.getDatasetMeta(0).controller.reLayout();
+            chart.getDatasetMeta(0).controller.reLayout({
+              mode: evt.currentTarget.value,
+            });
           };
           document.getElementById('orientation').onchange = (evt) => {
-            treeOptions.orientation = evt.currentTarget.value;
-            chart.getDatasetMeta(0).controller.reLayout();
+            chart.getDatasetMeta(0).controller.reLayout({
+              orientation: evt.currentTarget.value,
+            });
           };
         });
     </script>
