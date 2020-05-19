@@ -21,12 +21,14 @@
       fetch('./tree.json')
         .then((r) => r.json())
         .then((nodes) => {
+          const treeOptions = {};
           const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
             type: 'dendogram',
             data: {
               labels: nodes.map((d) => d.name),
               datasets: [
                 {
+                  tree: treeOptions,
                   pointBackgroundColor: 'steelblue',
                   pointRadius: 5,
                   // stepped: 'middle',
@@ -35,18 +37,17 @@
               ],
             },
             options: {
-              tree: {},
               legend: {
                 display: false,
               },
             },
           });
           document.getElementById('mode').onchange = (evt) => {
-            chart.options.tree.mode = evt.currentTarget.value;
+            treeOptions.mode = evt.currentTarget.value;
             chart.getDatasetMeta(0).controller.reLayout();
           };
           document.getElementById('orientation').onchange = (evt) => {
-            chart.options.tree.orientation = evt.currentTarget.value;
+            treeOptions.orientation = evt.currentTarget.value;
             chart.getDatasetMeta(0).controller.reLayout();
           };
         });

@@ -21,7 +21,7 @@ export class ForceDirectedGraphController extends GraphController {
       .on('end', () => {
         this.chart.update();
       });
-    const sim = chart.options.simulation;
+    const sim = this._config.simulation;
 
     const fs = {
       center: forceCenter,
@@ -98,7 +98,7 @@ export class ForceDirectedGraphController extends GraphController {
       link.links((meta._parsedEdges || []).map((link) => Object.assign({}, link)));
     }
 
-    if (this.chart.options.simulation.autoRestart) {
+    if (this._config.simulation.autoRestart) {
       this._simulation.alpha(1).restart();
     }
   }
@@ -119,16 +119,18 @@ ForceDirectedGraphController.register = () => {
   ForceDirectedGraphController.defaults = merge({}, [
     GraphController.defaults,
     {
-      simulation: {
-        autoRestart: true,
-        forces: {
-          center: true,
-          collide: false,
-          link: true,
-          manyBody: true,
-          x: false,
-          y: false,
-          radial: false,
+      datasets: {
+        simulation: {
+          autoRestart: true,
+          forces: {
+            center: true,
+            collide: false,
+            link: true,
+            manyBody: true,
+            x: false,
+            y: false,
+            radial: false,
+          },
         },
       },
     },

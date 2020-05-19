@@ -30,7 +30,7 @@ export class DendogramController extends GraphController {
   }
 
   doLayout(root) {
-    const options = this.chart.options.tree;
+    const options = this._config.tree;
 
     const layout = options.mode === 'tree' ? tree() : cluster();
 
@@ -68,11 +68,11 @@ DendogramController.register = () => {
   DendogramController.defaults = merge({}, [
     GraphController.defaults,
     {
-      tree: {
-        mode: 'dendogram', // dendogram, tree
-        orientation: 'horizontal', // vertical, horizontal, radial
-      },
       datasets: {
+        tree: {
+          mode: 'dendogram', // dendogram, tree
+          orientation: 'horizontal', // vertical, horizontal, radial
+        },
         animations: {
           numbers: {
             type: 'number',
@@ -111,8 +111,10 @@ TreeController.register = () => {
   TreeController.defaults = merge({}, [
     DendogramController.defaults,
     {
-      tree: {
-        mode: 'tree',
+      datasets: {
+        tree: {
+          mode: 'tree',
+        },
       },
     },
   ]);

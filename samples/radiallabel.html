@@ -20,6 +20,9 @@
               labels: nodes.map((d) => d.name),
               datasets: [
                 {
+                  tree: {
+                    orientation: 'radial',
+                  },
                   pointBackgroundColor: 'steelblue',
                   pointRadius: 5,
                   data: nodes,
@@ -27,9 +30,6 @@
               ],
             },
             options: {
-              tree: {
-                orientation: 'radial',
-              },
               layout: {
                 padding: 40,
               },
