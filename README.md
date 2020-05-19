@@ -38,7 +38,7 @@ CodePens
 
 ## Styling
 
-The new chart types are based on the existing `line` controller. Tho, instead of showing a line per dataset it shows edges as lines. Therefore, the styling options for points and lines are the same. See also https://www.chartjs.org/docs/latest/charts/line.html
+The new chart types are based on the existing `line` controller. Tho, instead of showing a line per dataset it shows edges as lines. Therefore, the styling options for points and lines are the same. See also https://www.chartjs.org/docs/latest/charts/line.html. However, to avoid confusion, the line options have a default `line` prefix, e..g `lineBorderColor` to specify the edge border color and `pointBorderColor` to specify the node border color.
 
 ## Data Structure
 

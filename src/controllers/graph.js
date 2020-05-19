@@ -395,10 +395,14 @@ export class GraphController extends ScatterController {
 GraphController.id = 'graph';
 GraphController.register = () => {
   GraphController.prototype.edgeElementType = EdgeLine.register();
-  GraphController.prototype.edgeElementOptions = ScatterController.prototype.datasetElementOptions.concat([
-    'tension',
-    'stepped',
-  ]);
+  const options = {
+    tension: 'lineTension',
+    stepped: 'lineStepped',
+  };
+  GraphController.prototype.edgeElementOptions = options;
+  ScatterController.prototype.datasetElementOptions.forEach((attr) => {
+    options[attr] = `line${attr[0].toUpperCase()}${attr.slice(1)}`;
+  });
   GraphController.defaults = merge({}, [
     defaults.scatter,
     {
