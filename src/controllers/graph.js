@@ -1,7 +1,15 @@
-import { Chart, controllers, defaults, ScatterController, clipArea, unclipArea, merge } from '../chart';
+import {
+  Chart,
+  defaults,
+  ScatterController,
+  clipArea,
+  unclipArea,
+  merge,
+  registerController,
+  patchControllerConfig,
+} from '../chart';
 import { listenArrayEvents, unlistenArrayEvents } from '../data';
 import { EdgeLine } from '../elements';
-import { patchControllerConfig } from './utils';
 
 export class GraphController extends ScatterController {
   constructor(chart, datasetIndex) {
@@ -391,34 +399,30 @@ GraphController.register = () => {
     'tension',
     'stepped',
   ]);
-  defaults.set(
-    GraphController.id,
-    merge({}, [
-      defaults.scatter,
-      {
-        layout: {
-          padding: 5,
+  GraphController.defaults = merge({}, [
+    defaults.scatter,
+    {
+      layout: {
+        padding: 5,
+      },
+      scales: {
+        x: {
+          display: false,
         },
-        scales: {
-          x: {
-            display: false,
-          },
-          y: {
-            display: false,
-          },
+        y: {
+          display: false,
         },
-        tooltips: {
-          callbacks: {
-            label(item, data) {
-              return data.labels[item.index];
-            },
+      },
+      tooltips: {
+        callbacks: {
+          label(item, data) {
+            return data.labels[item.index];
           },
         },
       },
-    ])
-  );
-  controllers[GraphController.id] = GraphController;
-  return GraphController;
+    },
+  ]);
+  return registerController(GraphController);
 };
 
 export class GraphChart extends Chart {

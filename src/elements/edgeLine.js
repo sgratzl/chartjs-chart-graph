@@ -1,4 +1,4 @@
-import { defaults, Line } from '../chart';
+import { defaults, Line, registerElement } from '../chart';
 
 export class EdgeLine extends Line {
   draw(ctx) {
@@ -90,12 +90,8 @@ export class EdgeLine extends Line {
   }
 }
 
-EdgeLine._type = 'edgeLine';
-EdgeLine.register = () => {
-  defaults.set('elements', {
-    [EdgeLine._type]: Object.assign({}, defaults.elements.line, {
-      tension: 0,
-    }),
-  });
-  return EdgeLine;
-};
+EdgeLine.id = EdgeLine._type = 'edgeLine';
+EdgeLine.defaults = Object.assign({}, defaults.elements.line, {
+  tension: 0,
+});
+EdgeLine.register = () => registerElement(EdgeLine);

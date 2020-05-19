@@ -1,7 +1,6 @@
-import { Chart, defaults, controllers, merge } from '../chart';
+import { Chart, merge, patchControllerConfig, registerController } from '../chart';
 import { GraphController } from './graph';
 import { hierarchy, cluster, tree } from 'd3-hierarchy';
-import { patchControllerConfig } from './utils';
 
 export class DendogramController extends GraphController {
   updateEdgeElement(line, index, properties, mode) {
@@ -66,39 +65,35 @@ export class DendogramController extends GraphController {
 DendogramController.id = 'dendogram';
 DendogramController.register = () => {
   GraphController.register();
-  defaults.set(
-    DendogramController.id,
-    merge({}, [
-      defaults[GraphController.id],
-      {
-        tree: {
-          mode: 'dendogram', // dendogram, tree
-          orientation: 'horizontal', // vertical, horizontal, radial
+  DendogramController.defaults = merge({}, [
+    GraphController.defaults,
+    {
+      tree: {
+        mode: 'dendogram', // dendogram, tree
+        orientation: 'horizontal', // vertical, horizontal, radial
+      },
+      datasets: {
+        animations: {
+          numbers: {
+            type: 'number',
+            properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],
+          },
         },
-        datasets: {
-          animations: {
-            numbers: {
-              type: 'number',
-              properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],
-            },
-          },
-          tension: 0.4,
+        tension: 0.4,
+      },
+      scales: {
+        x: {
+          min: -1,
+          max: 1,
         },
-        scales: {
-          x: {
-            min: -1,
-            max: 1,
-          },
-          y: {
-            min: -1,
-            max: 1,
-          },
+        y: {
+          min: -1,
+          max: 1,
         },
       },
-    ])
-  );
-  controllers[DendogramController.id] = DendogramController;
-  return DendogramController;
+    },
+  ]);
+  return registerController(DendogramController);
 };
 
 export class DendogramChart extends Chart {
@@ -109,22 +104,19 @@ export class DendogramChart extends Chart {
 DendogramChart.id = DendogramController.id;
 
 export class TreeController extends DendogramController {}
+
 TreeController.id = 'tree';
 TreeController.register = () => {
   DendogramController.register();
-  defaults.set(
-    TreeController.id,
-    merge({}, [
-      defaults[DendogramController.id],
-      {
-        tree: {
-          mode: 'tree',
-        },
+  TreeController.defaults = merge({}, [
+    DendogramController.defaults,
+    {
+      tree: {
+        mode: 'tree',
       },
-    ])
-  );
-  controllers[TreeController.id] = TreeController;
-  return TreeController;
+    },
+  ]);
+  return registerController(TreeController);
 };
 
 export class TreeChart extends Chart {

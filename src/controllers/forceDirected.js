@@ -1,4 +1,4 @@
-import { Chart, defaults, controllers, merge } from '../chart';
+import { Chart, merge, patchControllerConfig, registerController } from '../chart';
 import { GraphController } from './graph';
 import {
   forceSimulation,
@@ -10,7 +10,6 @@ import {
   forceRadial,
   forceY,
 } from 'd3-force';
-import { patchControllerConfig } from './utils';
 
 export class ForceDirectedGraphController extends GraphController {
   constructor(chart, datasetIndex) {
@@ -117,28 +116,24 @@ export class ForceDirectedGraphController extends GraphController {
 ForceDirectedGraphController.id = 'forceDirectedGraph';
 ForceDirectedGraphController.register = () => {
   GraphController.register();
-  defaults.set(
-    ForceDirectedGraphController.id,
-    merge({}, [
-      defaults[GraphController.id],
-      {
-        simulation: {
-          autoRestart: true,
-          forces: {
-            center: true,
-            collide: false,
-            link: true,
-            manyBody: true,
-            x: false,
-            y: false,
-            radial: false,
-          },
+  ForceDirectedGraphController.defaults = merge({}, [
+    GraphController.defaults,
+    {
+      simulation: {
+        autoRestart: true,
+        forces: {
+          center: true,
+          collide: false,
+          link: true,
+          manyBody: true,
+          x: false,
+          y: false,
+          radial: false,
         },
       },
-    ])
-  );
-  controllers[ForceDirectedGraphController.id] = ForceDirectedGraphController;
-  return ForceDirectedGraphController;
+    },
+  ]);
+  return registerController(ForceDirectedGraphController);
 };
 
 export class ForceDirectedGraphChart extends Chart {
