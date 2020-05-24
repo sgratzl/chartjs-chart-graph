@@ -10,6 +10,7 @@ import {
 } from '../chart';
 import { listenArrayEvents, unlistenArrayEvents } from '../data';
 import { EdgeLine } from '../elements';
+import { interpolatePoints } from './utils';
 
 export class GraphController extends ScatterController {
   constructor(chart, datasetIndex) {
@@ -105,19 +106,34 @@ export class GraphController extends ScatterController {
     const nodes = meta.data;
     const data = meta._parsedEdges;
 
-    // const reset = mode === 'reset';
+    const reset = mode === 'reset';
 
     const firstOpts = this.resolveDataElementOptions(start, mode);
     const sharedOptions = this.getSharedOptions(mode || 'normal', edges[start], firstOpts);
     const includeOptions = this.includeOptions(mode, sharedOptions);
 
+    const xScale = meta.xScale;
+    const yScale = meta.yScale;
+
+    function copyPoint(point) {
+      const x = reset ? xScale.getBasePixel() : xScale.getPixelForValue(point.x);
+      const y = reset ? yScale.getBasePixel() : yScale.getPixelForValue(point.y);
+      return {
+        x,
+        y,
+        angle: point.angle,
+      };
+    }
+
     for (let i = 0; i < edges.length; i++) {
       const edge = edges[i];
       const index = start + i;
-      var parsed = data[index];
-      var properties = {
+      const parsed = data[index];
+
+      const properties = {
         source: nodes[parsed.source],
         target: nodes[parsed.target],
+        points: Array.isArray(parsed.points) ? parsed.points.map(copyPoint) : [],
       };
       if (includeOptions) {
         properties.options = this.resolveDataElementOptions(index, mode);
@@ -269,6 +285,7 @@ export class GraphController extends ScatterController {
     return {
       source: this.resolveNodeIndex(data, edge.source),
       target: this.resolveNodeIndex(data, edge.target),
+      points: [],
     };
   }
 
@@ -289,6 +306,7 @@ export class GraphController extends ScatterController {
         edges.push({
           source: parent,
           target: i,
+          points: [],
         });
       }
     });
@@ -408,6 +426,12 @@ GraphController.register = () => {
     {
       datasets: {
         clip: 10, // some space in combination with padding
+        animation: {
+          points: {
+            fn: interpolatePoints,
+            properties: ['points'],
+          },
+        },
       },
       layout: {
         padding: 10,
