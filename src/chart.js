@@ -43,7 +43,7 @@ export const merge = ChartNS.helpers.merge;
 export const clipArea = ChartNS.helpers.canvas.clipArea;
 export const unclipArea = ChartNS.helpers.canvas.unclipArea;
 export function requestAnimFrame(cb) {
-  ChartNS.helpers.requestAnimFrame(cb);
+  return ChartNS.helpers.requestAnimFrame.call(this, cb);
 }
 
 export function patchControllerConfig(config, controller) {
