@@ -171,38 +171,38 @@ export class ForceDirectedGraphController extends GraphController {
 }
 
 ForceDirectedGraphController.id = 'forceDirectedGraph';
-ForceDirectedGraphController.register = () => {
-  GraphController.register();
-  ForceDirectedGraphController.defaults = merge({}, [
-    GraphController.defaults,
-    {
-      datasets: {
-        simulation: {
-          initialIterations: 0,
-          autoRestart: true,
-          forces: {
-            center: true,
-            collide: false,
-            link: true,
-            manyBody: true,
-            x: false,
-            y: false,
-            radial: false,
-          },
-        },
-      },
-      scales: {
-        x: {
-          min: -1,
-          max: 1,
-        },
-        y: {
-          min: -1,
-          max: 1,
+ForceDirectedGraphController.defaults = /*#__PURE__*/ merge({}, [
+  GraphController.defaults,
+  {
+    datasets: {
+      simulation: {
+        initialIterations: 0,
+        autoRestart: true,
+        forces: {
+          center: true,
+          collide: false,
+          link: true,
+          manyBody: true,
+          x: false,
+          y: false,
+          radial: false,
         },
       },
     },
-  ]);
+    scales: {
+      x: {
+        min: -1,
+        max: 1,
+      },
+      y: {
+        min: -1,
+        max: 1,
+      },
+    },
+  },
+]);
+ForceDirectedGraphController.register = (transitive = true) => {
+  GraphController.register(transitive);
   return registerController(ForceDirectedGraphController);
 };
 

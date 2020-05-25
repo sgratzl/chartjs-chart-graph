@@ -115,7 +115,7 @@ export class EdgeLine extends Line {
 }
 
 EdgeLine.id = EdgeLine._type = 'edgeLine';
-EdgeLine.defaults = Object.assign({}, defaults.elements.line, {
+EdgeLine.defaults = /*#__PURE__*/ Object.assign({}, defaults.elements.line, {
   tension: 0,
 });
 EdgeLine.register = () => registerElement(EdgeLine);

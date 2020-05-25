@@ -72,36 +72,36 @@ export class DendogramController extends GraphController {
 }
 
 DendogramController.id = 'dendogram';
-DendogramController.register = () => {
-  GraphController.register();
-  DendogramController.defaults = merge({}, [
-    GraphController.defaults,
-    {
-      datasets: {
-        tree: {
-          mode: 'dendogram', // dendogram, tree
-          orientation: 'horizontal', // vertical, horizontal, radial
-        },
-        animations: {
-          numbers: {
-            type: 'number',
-            properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],
-          },
-        },
-        tension: 0.4,
+DendogramController.defaults = /*#__PURE__*/ merge({}, [
+  GraphController.defaults,
+  {
+    datasets: {
+      tree: {
+        mode: 'dendogram', // dendogram, tree
+        orientation: 'horizontal', // vertical, horizontal, radial
       },
-      scales: {
-        x: {
-          min: -1,
-          max: 1,
+      animations: {
+        numbers: {
+          type: 'number',
+          properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],
         },
-        y: {
-          min: -1,
-          max: 1,
-        },
+      },
+      tension: 0.4,
+    },
+    scales: {
+      x: {
+        min: -1,
+        max: 1,
+      },
+      y: {
+        min: -1,
+        max: 1,
       },
     },
-  ]);
+  },
+]);
+DendogramController.register = (transitive = true) => {
+  GraphController.register(transitive);
   return registerController(DendogramController);
 };
 
@@ -115,18 +115,18 @@ DendogramChart.id = DendogramController.id;
 export class TreeController extends DendogramController {}
 
 TreeController.id = 'tree';
-TreeController.register = () => {
-  DendogramController.register();
-  TreeController.defaults = merge({}, [
-    DendogramController.defaults,
-    {
-      datasets: {
-        tree: {
-          mode: 'tree',
-        },
+TreeController.defaults = /*#__PURE__*/ merge({}, [
+  DendogramController.defaults,
+  {
+    datasets: {
+      tree: {
+        mode: 'tree',
       },
     },
-  ]);
+  },
+]);
+TreeController.register = (transitive = true) => {
+  DendogramController.register(transitive);
   return registerController(TreeController);
 };
 

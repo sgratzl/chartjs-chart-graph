@@ -412,6 +412,50 @@ export class GraphController extends ScatterController {
 }
 
 GraphController.id = 'graph';
+GraphController.defaults = /*#__PURE__*/ merge({}, [
+  defaults.scatter,
+  {
+    datasets: {
+      clip: 10, // some space in combination with padding
+      animation: {
+        points: {
+          fn: interpolatePoints,
+          properties: ['points'],
+        },
+      },
+    },
+    layout: {
+      padding: 10,
+    },
+    scales: {
+      x: {
+        display: false,
+        ticks: {
+          maxTicksLimit: 2,
+          precision: 100,
+          minRotation: 0,
+          maxRotation: 0,
+        },
+      },
+      y: {
+        display: false,
+        ticks: {
+          maxTicksLimit: 2,
+          precision: 100,
+          minRotation: 0,
+          maxRotation: 0,
+        },
+      },
+    },
+    tooltips: {
+      callbacks: {
+        label(item, data) {
+          return data.labels[item.index];
+        },
+      },
+    },
+  },
+]);
 GraphController.register = () => {
   GraphController.prototype.edgeElementType = EdgeLine.register();
   const options = {
@@ -422,50 +466,6 @@ GraphController.register = () => {
   ScatterController.prototype.datasetElementOptions.forEach((attr) => {
     options[attr] = `line${attr[0].toUpperCase()}${attr.slice(1)}`;
   });
-  GraphController.defaults = merge({}, [
-    defaults.scatter,
-    {
-      datasets: {
-        clip: 10, // some space in combination with padding
-        animation: {
-          points: {
-            fn: interpolatePoints,
-            properties: ['points'],
-          },
-        },
-      },
-      layout: {
-        padding: 10,
-      },
-      scales: {
-        x: {
-          display: false,
-          ticks: {
-            maxTicksLimit: 2,
-            precision: 100,
-            minRotation: 0,
-            maxRotation: 0,
-          },
-        },
-        y: {
-          display: false,
-          ticks: {
-            maxTicksLimit: 2,
-            precision: 100,
-            minRotation: 0,
-            maxRotation: 0,
-          },
-        },
-      },
-      tooltips: {
-        callbacks: {
-          label(item, data) {
-            return data.labels[item.index];
-          },
-        },
-      },
-    },
-  ]);
   return registerController(GraphController);
 };
 
