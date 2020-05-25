@@ -1,4 +1,4 @@
-import { Chart, merge, patchControllerConfig, registerController } from '../chart';
+import { Chart, merge, patchControllerConfig, registerController, requestAnimFrame } from '../chart';
 import { GraphController } from './graph';
 import { hierarchy, cluster, tree } from 'd3-hierarchy';
 
@@ -67,7 +67,7 @@ export class DendogramController extends GraphController {
 
     layout(root).each(orientation[options.orientation] || orientation.horizontal);
 
-    requestAnimationFrame(() => this.chart.update());
+    requestAnimFrame(() => this.chart.update());
   }
 }
 

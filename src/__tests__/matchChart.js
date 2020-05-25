@@ -1,4 +1,4 @@
-import { Chart } from './chart';
+import { Chart } from '../chart';
 const { toMatchImageSnapshot } = require('jest-image-snapshot');
 
 expect.extend({ toMatchImageSnapshot });
@@ -22,14 +22,14 @@ export async function expectMatchSnapshot(canvas) {
   expect(image).toMatchImageSnapshot();
 }
 
-export async function matchChart(config, width = 300, height = 300) {
+export default async function matchChart(config, width = 300, height = 300) {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   config.options = Object.assign(
     {
       responsive: false,
-      animations: false,
+      animation: false,
     },
     config.options || {}
   );

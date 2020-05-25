@@ -1,4 +1,4 @@
-import { matchChart } from '../test_utils';
+import matchChart from './matchChart';
 
 describe('test', () => {
   test('t', () => {

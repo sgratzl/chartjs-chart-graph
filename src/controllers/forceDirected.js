@@ -1,4 +1,4 @@
-import { Chart, merge, patchControllerConfig, registerController } from '../chart';
+import { Chart, merge, patchControllerConfig, registerController, requestAnimFrame } from '../chart';
 import { GraphController } from './graph';
 import {
   forceSimulation,
@@ -146,7 +146,16 @@ export class ForceDirectedGraphController extends GraphController {
       link.links((meta._parsedEdges || []).map((link) => Object.assign({}, link)));
     }
 
-    if (this._config.simulation.autoRestart) {
+    if (this._config.simulation.initialIterations > 0) {
+      this._simulation.alpha(1);
+      this._simulation.tick(this._config.simulation.initialIterations);
+      this._copyPosition();
+      if (this._config.simulation.autoRestart) {
+        this._simulation.restart();
+      } else {
+        requestAnimFrame(() => this.chart.update());
+      }
+    } else if (this._config.simulation.autoRestart) {
       this._simulation.alpha(1).restart();
     }
   }
@@ -169,6 +178,7 @@ ForceDirectedGraphController.register = () => {
     {
       datasets: {
         simulation: {
+          initialIterations: 0,
           autoRestart: true,
           forces: {
             center: true,

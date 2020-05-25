@@ -7,6 +7,7 @@ import {
   merge,
   registerController,
   patchControllerConfig,
+  requestAnimFrame,
 } from '../chart';
 import { listenArrayEvents, unlistenArrayEvents } from '../data';
 import { EdgeLine } from '../elements';
@@ -399,7 +400,7 @@ export class GraphController extends ScatterController {
     if (this._scheduleResyncLayoutId != null) {
       return;
     }
-    this._scheduleResyncLayoutId = requestAnimationFrame(() => {
+    this._scheduleResyncLayoutId = requestAnimFrame(() => {
       this._scheduleResyncLayoutId = null;
       this.resyncLayout();
     });
