@@ -30,6 +30,7 @@ export default async function matchChart(config, width = 300, height = 300) {
     {
       responsive: false,
       animation: false,
+      fontFamily: "'Arial', sans-serif",
     },
     config.options || {}
   );
