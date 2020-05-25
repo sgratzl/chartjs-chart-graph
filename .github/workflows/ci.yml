@@ -32,3 +32,8 @@ jobs:
       - run: yarn test
         env:
           CI: true
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: diff outputs
+          path: src/**/__diff_output__/*.png
