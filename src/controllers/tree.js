@@ -80,7 +80,7 @@ DendogramController.defaults = /*#__PURE__*/ merge({}, [
         mode: 'dendogram', // dendogram, tree
         orientation: 'horizontal', // vertical, horizontal, radial
       },
-      animations: {
+      animation: {
         numbers: {
           type: 'number',
           properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],

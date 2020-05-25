@@ -91,7 +91,7 @@ export class EdgeLine extends Line {
     let from = source;
     ctx.moveTo(from.x, from.y);
     if (points && points.length > 0) {
-      from = points.forEach(renderLine(from, point), from);
+      from = points.reduce(renderLine, from);
     }
     renderLine(from, target);
 
