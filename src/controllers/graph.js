@@ -116,9 +116,14 @@ export class GraphController extends ScatterController {
     const xScale = meta.xScale;
     const yScale = meta.yScale;
 
+    const basePoint = {
+      x: xScale.getBasePixel(),
+      y: yScale.getBasePixel(),
+    };
+
     function copyPoint(point) {
-      const x = reset ? xScale.getBasePixel() : xScale.getPixelForValue(point.x);
-      const y = reset ? yScale.getBasePixel() : yScale.getPixelForValue(point.y);
+      const x = reset ? base.x : xScale.getPixelForValue(point.x);
+      const y = reset ? base.y : yScale.getPixelForValue(point.y);
       return {
         x,
         y,
@@ -136,6 +141,7 @@ export class GraphController extends ScatterController {
         target: nodes[parsed.target],
         points: Array.isArray(parsed.points) ? parsed.points.map(copyPoint) : [],
       };
+      properties.points._source = nodes[parsed.source];
       if (includeOptions) {
         properties.options = this.resolveDataElementOptions(index, mode);
       }

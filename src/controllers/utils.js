@@ -5,7 +5,8 @@ function interpolateNumber(from, to, factor) {
   return from + (to - from) * factor;
 }
 
-function interpolatorPoint(from, to, factor) {
+function interpolatorPoint(fromArray, i, to, factor) {
+  const from = fromArray[i] || fromArray[i - 1] || fromArray._source;
   if (!from) {
     return to;
   }
@@ -17,7 +18,7 @@ function interpolatorPoint(from, to, factor) {
 
 export function interpolatePoints(from, to, factor) {
   if (Array.isArray(from) && Array.isArray(to) && to.length > 0) {
-    return to.map((t, i) => interpolatorPoint(from[i], t, factor));
+    return to.map((t, i) => interpolatorPoint(from, i, t, factor));
   }
   return to;
 }
