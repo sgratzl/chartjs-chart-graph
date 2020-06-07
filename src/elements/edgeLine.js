@@ -96,6 +96,46 @@ export class EdgeLine extends Line {
     renderLine(from, target);
 
     ctx.stroke();
+
+    if (options.directed) {
+      const to = target;
+      // compute the rotation based on from and to
+      const shift = layout(from, to, options);
+      const s = options.arrowHeadSize;
+      const offset = options.arrowHeadOffset;
+      ctx.save();
+      ctx.translate(to.x, target.y);
+      if (options.stepped === 'middle') {
+        const midpoint = (from.x + to.x) / 2.0;
+        ctx.rotate(Math.atan2(to.y - to.y, to.x - midpoint));
+      } else if (options.stepped === 'after') {
+        ctx.rotate(Math.atan2(to.y - to.y, to.x - from.x));
+      } else if (options.stepped) {
+        ctx.rotate(Math.atan2(to.y - from.y, to.x - to.x));
+      } else if (options.tension) {
+        const toX = {
+          x: to.x + shift.tx,
+          y: to.y + shift.ty,
+        };
+        const f = 0.1;
+        ctx.rotate(Math.atan2(to.y - toX.y * (1 - f) - from.y * f, to.x - toX.x * (1 - f) - from.x * f));
+      } else {
+        ctx.rotate(Math.atan2(to.y - from.y, to.x - from.x));
+      }
+      ctx.translate(-offset, 0);
+      ctx.beginPath();
+
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-s, -s / 2);
+      ctx.lineTo(-s * 0.9, 0);
+      ctx.lineTo(-s, s / 2);
+      ctx.closePath();
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+
+      ctx.restore();
+    }
+
     ctx.restore();
 
     // point helper
@@ -117,5 +157,8 @@ export class EdgeLine extends Line {
 EdgeLine.id = EdgeLine._type = 'edgeLine';
 EdgeLine.defaults = /*#__PURE__*/ Object.assign({}, defaults.elements.line, {
   tension: 0,
+  directed: false,
+  arrowHeadSize: 15,
+  arrowHeadOffset: 5,
 });
 EdgeLine.register = () => registerElement(EdgeLine);

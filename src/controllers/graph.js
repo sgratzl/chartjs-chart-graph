@@ -467,6 +467,9 @@ GraphController.register = () => {
   const options = {
     tension: 'lineTension',
     stepped: 'lineStepped',
+    directed: 'directed',
+    arrowHeadSize: 'arrowHeadSize',
+    arrowHeadOffset: 'pointRadius',
   };
   GraphController.prototype.edgeElementOptions = options;
   ScatterController.prototype.datasetElementOptions.forEach((attr) => {

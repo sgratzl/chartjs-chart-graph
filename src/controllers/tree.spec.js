@@ -150,4 +150,26 @@ describe('dendogram', () => {
       },
     });
   });
+  test('directed', () => {
+    return matchChart({
+      type: DendogramController.id,
+      data: {
+        labels: nodes.map((d) => d.name),
+        datasets: [
+          {
+            pointBackgroundColor: 'steelblue',
+            pointRadius: 5,
+            directed: true,
+            // stepped: 'middle',
+            data: nodes,
+          },
+        ],
+      },
+      options: {
+        legend: {
+          display: false,
+        },
+      },
+    });
+  });
 });
