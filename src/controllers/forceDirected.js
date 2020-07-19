@@ -1,4 +1,4 @@
-import { Chart, merge, requestAnimFrame } from '@sgratzl/chartjs-esm-facade';
+import { Chart, merge, requestAnimFrame, LinearScale, Point } from '@sgratzl/chartjs-esm-facade';
 import { GraphController } from './graph';
 import {
   forceSimulation,
@@ -216,7 +216,7 @@ ForceDirectedGraphController.defaults = /*#__PURE__*/ merge({}, [
 
 export class ForceDirectedGraphChart extends Chart {
   constructor(item, config) {
-    super(item, patchController(config, ForceDirectedGraphController, EdgeLine));
+    super(item, patchController(config, ForceDirectedGraphController, [EdgeLine, Point], LinearScale));
   }
 }
 ForceDirectedGraphChart.id = ForceDirectedGraphController.id;

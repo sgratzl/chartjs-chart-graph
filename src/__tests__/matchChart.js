@@ -1,4 +1,4 @@
-import { Chart } from '../chart';
+import { Chart } from '@sgratzl/chartjs-esm-facade';
 const { toMatchImageSnapshot } = require('jest-image-snapshot');
 
 expect.extend({ toMatchImageSnapshot });
@@ -36,10 +36,9 @@ export default async function matchChart(config, width = 300, height = 300) {
   );
   const ctx = canvas.getContext('2d');
 
-  // sync
-  Chart.helpers.requestAnimFrame = (c) => c();
-
   const t = new Chart(ctx, config);
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   const image = await toBuffer(canvas);
   expect(image).toMatchImageSnapshot();

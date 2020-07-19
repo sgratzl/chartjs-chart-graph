@@ -8,6 +8,8 @@ import {
   merge,
   requestAnimFrame,
   LineController,
+  LinearScale,
+  Point,
 } from '@sgratzl/chartjs-esm-facade';
 // not part of facade since not part of UMD build
 import { listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers/collection';
@@ -506,7 +508,7 @@ GraphController.defaults = /*#__PURE__*/ merge({}, [
 
 export class GraphChart extends Chart {
   constructor(item, config) {
-    super(item, patchController(config, GraphController, EdgeLine));
+    super(item, patchController(config, GraphController, [EdgeLine, Point], LinearScale));
   }
 }
 GraphChart.id = GraphController.id;

@@ -268,11 +268,11 @@ The ESM build of the library supports tree shaking thus having no side effects. 
 Variant A:
 
 ```js
-import Chart from 'chart.js';
+import { Chart, LinearScale, Point } from 'chart.js';
 import { ForceDirectedGraphController, EdgeLine } from 'chartjs-chart-graph';
 
 // register controller in chart.js and ensure the defaults are set
-Chart.register(ForceDirectedGraphController, EdgeLine);
+Chart.register(ForceDirectedGraphController, EdgeLine, LinearScale, Point);
 ...
 
 new Chart(ctx, {

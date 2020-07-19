@@ -1,4 +1,4 @@
-import { Chart, merge, requestAnimFrame } from '@sgratzl/chartjs-esm-facade';
+import { Chart, merge, requestAnimFrame, LinearScale, Point } from '@sgratzl/chartjs-esm-facade';
 import { GraphController } from './graph';
 import { hierarchy, cluster, tree } from 'd3-hierarchy';
 import patchController from './patchController';
@@ -128,7 +128,7 @@ TreeController.defaults = /*#__PURE__*/ merge({}, [
 
 export class TreeChart extends Chart {
   constructor(item, config) {
-    super(item, patchController(config, TreeController, EdgeLine));
+    super(item, patchController(config, TreeController, [EdgeLine, Point], LinearScale));
   }
 }
 TreeChart.id = TreeController.id;

@@ -16,3 +16,4 @@ npm-debug.log*
 *.tgz
 /.vscode
 samples_treeshake/build
+__diff_output__

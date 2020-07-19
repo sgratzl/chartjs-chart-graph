@@ -1,10 +1,14 @@
 import matchChart from '../__tests__/matchChart';
 import { DendogramController } from './tree';
+import { registry, Point, LinearScale } from '@sgratzl/chartjs-esm-facade';
 import nodes from './__tests__/tree';
+import { EdgeLine } from '../elements';
 
 describe('dendogram', () => {
   beforeAll(() => {
-    DendogramController.register();
+    registry.addControllers(DendogramController);
+    registry.addElements(EdgeLine, Point);
+    registry.addScales(LinearScale);
   });
   test('default', () => {
     return matchChart({

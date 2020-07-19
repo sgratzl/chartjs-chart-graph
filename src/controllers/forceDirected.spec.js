@@ -1,10 +1,14 @@
 import matchChart from '../__tests__/matchChart';
 import { ForceDirectedGraphController } from './forceDirected';
 import data from './__tests__/miserables';
+import { registry, Point, LinearScale } from '@sgratzl/chartjs-esm-facade';
+import { EdgeLine } from '../elements';
 
 describe('dendogram', () => {
   beforeAll(() => {
-    ForceDirectedGraphController.register();
+    registry.addControllers(ForceDirectedGraphController);
+    registry.addElements(EdgeLine, Point);
+    registry.addScales(LinearScale);
   });
   test('default', () => {
     return matchChart({
