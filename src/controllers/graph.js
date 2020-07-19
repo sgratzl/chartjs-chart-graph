@@ -19,7 +19,6 @@ export class GraphController extends ScatterController {
   constructor(chart, datasetIndex) {
     super(chart, datasetIndex);
 
-    this._initialReset = true;
     this._cachedEdgeOpts = {};
     this._edgeListener = {
       _onDataPush: (...args) => {
@@ -68,21 +67,38 @@ export class GraphController extends ScatterController {
     this.edgeElementOptions = defaultConfig.edgeElementOptions;
     this.edgeElementType = registry.getElement(defaultConfig.edgeElementType);
     super.initialize();
+    this._scheduleResyncLayout();
   }
 
   parse(start, count) {
-    super.parse(start, count);
-    // since generated
+    const meta = this._cachedMeta;
+    const data = this._data;
+    const iScale = meta.iScale;
+    const vScale = meta.vScale;
+    for (let i = 0; i < count; i++) {
+      const index = i + start;
+      const d = data[index];
+      const v = meta._parsed[index] || {};
+      if (d && typeof d.x === 'number') {
+        v.x = d.x;
+      }
+      if (d && typeof d.y === 'number') {
+        v.y = d.y;
+      }
+      meta._parsed[index] = v;
+    }
+    if (meta._parsed.length > data.length) {
+      meta._parsed.splice(data.length, meta._parsed.length - data.length);
+    }
     this._cachedMeta._sorted = false;
+    iScale.invalidateCaches();
+    vScale.invalidateCaches();
+
     this._parseEdges();
   }
 
   reset() {
-    if (this._initialReset) {
-      this._initialReset = false;
-    } else {
-      this.resetLayout();
-    }
+    this.resetLayout();
     super.reset();
   }
 
@@ -258,7 +274,6 @@ export class GraphController extends ScatterController {
     } else if (numData > numMeta) {
       this._insertEdgeElements(numMeta, numData - numMeta);
     }
-    this._scheduleResyncLayout();
   }
 
   getTreeRootIndex() {
@@ -464,8 +479,8 @@ GraphController.defaults = /*#__PURE__*/ merge({}, [
     },
     tooltips: {
       callbacks: {
-        label(item, data) {
-          return data.labels[item.index];
+        label(item) {
+          return item.chart.data.labels[item.dataIndex];
         },
       },
     },

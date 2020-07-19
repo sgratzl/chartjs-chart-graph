@@ -19,11 +19,11 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation = forceSimulation()
       .on('tick', () => {
         this._copyPosition();
-        this.chart.update();
+        this.chart.render();
       })
       .on('end', () => {
         this._copyPosition();
-        this.chart.update();
+        this.chart.render();
       });
     const sim = this._config.simulation;
 
@@ -84,14 +84,23 @@ export class ForceDirectedGraphController extends GraphController {
       }
     );
 
-    const xScale = (v) => ((v - minmax.minX) / (minmax.maxX - minmax.minX)) * 2 - 1;
-    const yScale = (v) => ((v - minmax.minY) / (minmax.maxY - minmax.minY)) * 2 - 1;
+    const rescaleX = (v) => ((v - minmax.minX) / (minmax.maxX - minmax.minX)) * 2 - 1;
+    const rescaleY = (v) => ((v - minmax.minY) / (minmax.maxY - minmax.minY)) * 2 - 1;
 
     nodes.forEach((node) => {
       if (node._sim) {
-        node.x = xScale(node._sim.x);
-        node.y = yScale(node._sim.y);
+        node.x = rescaleX(node._sim.x);
+        node.y = rescaleY(node._sim.y);
       }
+    });
+
+    const xScale = this._cachedMeta.xScale;
+    const yScale = this._cachedMeta.yScale;
+    const elems = this._cachedMeta.data;
+    elems.forEach((elem, i) => {
+      const parsed = nodes[i];
+      elem.x = xScale.getPixelForValue(parsed.x, i);
+      elem.y = yScale.getPixelForValue(parsed.y, i);
     });
   }
 
@@ -104,7 +113,7 @@ export class ForceDirectedGraphController extends GraphController {
       simNode.index = i;
       node._sim = simNode;
       if (!node.reset) {
-        return;
+        return simNode;
       }
       delete simNode.x;
       delete simNode.y;
@@ -176,6 +185,7 @@ ForceDirectedGraphController.id = 'forceDirectedGraph';
 ForceDirectedGraphController.defaults = /*#__PURE__*/ merge({}, [
   GraphController.defaults,
   {
+    animation: false,
     datasets: {
       simulation: {
         initialIterations: 0,
