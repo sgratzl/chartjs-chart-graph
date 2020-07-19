@@ -1,6 +1,8 @@
-import { Chart, merge, patchControllerConfig, registerController, requestAnimFrame } from '../chart';
+import { Chart, merge, requestAnimFrame } from '@sgratzl/chartjs-esm-facade';
 import { GraphController } from './graph';
 import { hierarchy, cluster, tree } from 'd3-hierarchy';
+import patchController from './patchController';
+import { EdgeLine } from '../elements';
 
 export class DendogramController extends GraphController {
   updateEdgeElement(line, index, properties, mode) {
@@ -9,7 +11,9 @@ export class DendogramController extends GraphController {
   }
 
   updateElement(point, index, properties, mode) {
-    properties.angle = this.getParsed(index).angle;
+    if (index != null) {
+      properties.angle = this.getParsed(index).angle;
+    }
     super.updateElement(point, index, properties, mode);
   }
 
@@ -67,7 +71,7 @@ export class DendogramController extends GraphController {
 
     layout(root).each(orientation[options.orientation] || orientation.horizontal);
 
-    requestAnimFrame(() => this.chart.update());
+    requestAnimFrame.call(window, () => this.chart.update());
   }
 }
 
@@ -100,14 +104,10 @@ DendogramController.defaults = /*#__PURE__*/ merge({}, [
     },
   },
 ]);
-DendogramController.register = (transitive = true) => {
-  GraphController.register(transitive);
-  return registerController(DendogramController);
-};
 
 export class DendogramChart extends Chart {
   constructor(item, config) {
-    super(item, patchControllerConfig(config, DendogramController));
+    super(item, patchController(config, DendogramController, EdgeLine));
   }
 }
 DendogramChart.id = DendogramController.id;
@@ -125,14 +125,10 @@ TreeController.defaults = /*#__PURE__*/ merge({}, [
     },
   },
 ]);
-TreeController.register = (transitive = true) => {
-  DendogramController.register(transitive);
-  return registerController(TreeController);
-};
 
 export class TreeChart extends Chart {
   constructor(item, config) {
-    super(item, patchControllerConfig(config, TreeController));
+    super(item, patchController(config, TreeController, EdgeLine));
   }
 }
 TreeChart.id = TreeController.id;

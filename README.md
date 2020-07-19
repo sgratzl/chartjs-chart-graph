@@ -23,7 +23,7 @@ Works great with https://github.com/chartjs/chartjs-plugin-datalabels or https:/
 ## Install
 
 ```bash
-npm install --save chart.js@next chartjs-chart-graph@next
+npm install --save chart.js@next @sgratzl/chartjs-esm-facade@next chartjs-chart-graph@next
 ```
 
 ## Usage
@@ -106,7 +106,7 @@ interface IForceDirectedOptions {
       center: boolean | ICenterForce,
 
       /**
-       * collision betweeen nodes
+       * collision between nodes
        * https://github.com/d3/d3-force/#collision
        *
        * @default false
@@ -245,7 +245,7 @@ The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
 
 ### Options
 
-```typescript
+```ts
 interface ITreeOptions {
   tree: {
     /**
@@ -269,10 +269,10 @@ Variant A:
 
 ```js
 import Chart from 'chart.js';
-import { ForceDirectedGraphController } from 'chartjs-chart-graph';
+import { ForceDirectedGraphController, EdgeLine } from 'chartjs-chart-graph';
 
 // register controller in chart.js and ensure the defaults are set
-ForceDirectedGraphController.register();
+Chart.register(ForceDirectedGraphController, EdgeLine);
 ...
 
 new Chart(ctx, {
@@ -297,7 +297,7 @@ new ForceDirectedGraphChart(ctx, {
 npm i -g yarn
 yarn set version 2
 yarn
-yarn pnpify --sdk
+yarn pnpify --sdk vscode
 ```
 
 ### Building

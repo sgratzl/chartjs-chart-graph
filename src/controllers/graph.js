@@ -1,17 +1,19 @@
 import {
-  Chart,
   defaults,
+  Chart,
   ScatterController,
   clipArea,
   unclipArea,
+  registry,
   merge,
-  registerController,
-  patchControllerConfig,
   requestAnimFrame,
-} from '../chart';
-import { listenArrayEvents, unlistenArrayEvents } from '../data';
+  LineController,
+} from '@sgratzl/chartjs-esm-facade';
+// not part of facade since not part of UMD build
+import { listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers/collection';
 import { EdgeLine } from '../elements';
 import { interpolatePoints } from './utils';
+import patchController from './patchController';
 
 export class GraphController extends ScatterController {
   constructor(chart, datasetIndex) {
@@ -20,7 +22,7 @@ export class GraphController extends ScatterController {
     this._initialReset = true;
     this._cachedEdgeOpts = {};
     this._edgeListener = {
-      onDataPush: (...args) => {
+      _onDataPush: (...args) => {
         const count = args.length;
         const start = this.getDataset().edges.length - count;
         const parsed = this._cachedMeta._parsedEdges;
@@ -29,17 +31,17 @@ export class GraphController extends ScatterController {
         });
         this._insertEdgeElements(start, count);
       },
-      onDataPop: () => {
+      _onDataPop: () => {
         this._cachedMeta.edges.pop();
         this._cachedMeta._parsedEdges.pop();
         this._scheduleResyncLayout();
       },
-      onDataShift: () => {
+      _onDataShift: () => {
         this._cachedMeta.edges.shift();
         this._cachedMeta._parsedEdges.shift();
         this._scheduleResyncLayout();
       },
-      onDataSplice: (start, count, ...args) => {
+      _onDataSplice: (start, count, ...args) => {
         this._cachedMeta.edges.splice(start, count);
         this._cachedMeta._parsedEdges.splice(start, count);
         if (args.length > 0) {
@@ -50,7 +52,7 @@ export class GraphController extends ScatterController {
           this._scheduleResyncLayout();
         }
       },
-      onDataUnshift: (...args) => {
+      _onDataUnshift: (...args) => {
         const parsed = this._cachedMeta._parsedEdges;
         parsed.unshift(...args.map((edge) => this._parseDefinedEdge(edge)));
         this._insertEdgeElements(0, args.length);
@@ -58,6 +60,14 @@ export class GraphController extends ScatterController {
     };
 
     // this.resyncLayout();
+  }
+
+  initialize() {
+    const type = this._type;
+    const defaultConfig = defaults.get(type);
+    this.edgeElementOptions = defaultConfig.edgeElementOptions;
+    this.edgeElementType = registry.getElement(defaultConfig.edgeElementType);
+    super.initialize();
   }
 
   parse(start, count) {
@@ -116,7 +126,7 @@ export class GraphController extends ScatterController {
     const xScale = meta.xScale;
     const yScale = meta.yScale;
 
-    const basePoint = {
+    const base = {
       x: xScale.getBasePixel(),
       y: yScale.getBasePixel(),
     };
@@ -233,8 +243,8 @@ export class GraphController extends ScatterController {
     elements.forEach((elem) => elem.draw(ctx, area));
   }
 
-  _resyncElements(changed) {
-    super._resyncElements(changed);
+  _resyncElements() {
+    super._resyncElements();
 
     const meta = this._cachedMeta;
     const edges = meta._parsedEdges;
@@ -247,9 +257,8 @@ export class GraphController extends ScatterController {
       this._scheduleResyncLayout();
     } else if (numData > numMeta) {
       this._insertEdgeElements(numMeta, numData - numMeta);
-    } else if (changed) {
-      this._scheduleResyncLayout();
     }
+    this._scheduleResyncLayout();
   }
 
   getTreeRootIndex() {
@@ -406,7 +415,7 @@ export class GraphController extends ScatterController {
     if (this._scheduleResyncLayoutId != null) {
       return;
     }
-    this._scheduleResyncLayoutId = requestAnimFrame(() => {
+    this._scheduleResyncLayoutId = requestAnimFrame.call(window, () => {
       this._scheduleResyncLayoutId = null;
       this.resyncLayout();
     });
@@ -419,7 +428,7 @@ export class GraphController extends ScatterController {
 
 GraphController.id = 'graph';
 GraphController.defaults = /*#__PURE__*/ merge({}, [
-  defaults.scatter,
+  ScatterController.defaults,
   {
     datasets: {
       clip: 10, // some space in combination with padding
@@ -460,27 +469,29 @@ GraphController.defaults = /*#__PURE__*/ merge({}, [
         },
       },
     },
+    edgeElementType: EdgeLine.id,
+    edgeElementOptions: Object.assign(
+      {
+        tension: 'lineTension',
+        stepped: 'lineStepped',
+        directed: 'directed',
+        arrowHeadSize: 'arrowHeadSize',
+        arrowHeadOffset: 'pointRadius',
+      },
+      (() => {
+        const options = {};
+        LineController.defaults.datasetElementOptions.forEach((attr) => {
+          options[attr] = `line${attr[0].toUpperCase()}${attr.slice(1)}`;
+        });
+        return options;
+      })()
+    ),
   },
 ]);
-GraphController.register = () => {
-  GraphController.prototype.edgeElementType = EdgeLine.register();
-  const options = {
-    tension: 'lineTension',
-    stepped: 'lineStepped',
-    directed: 'directed',
-    arrowHeadSize: 'arrowHeadSize',
-    arrowHeadOffset: 'pointRadius',
-  };
-  GraphController.prototype.edgeElementOptions = options;
-  ScatterController.prototype.datasetElementOptions.forEach((attr) => {
-    options[attr] = `line${attr[0].toUpperCase()}${attr.slice(1)}`;
-  });
-  return registerController(GraphController);
-};
 
 export class GraphChart extends Chart {
   constructor(item, config) {
-    super(item, patchControllerConfig(config, GraphController));
+    super(item, patchController(config, GraphController, EdgeLine));
   }
 }
 GraphChart.id = GraphController.id;

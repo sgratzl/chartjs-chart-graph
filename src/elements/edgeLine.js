@@ -1,4 +1,4 @@
-import { defaults, Line, registerElement } from '../chart';
+import { Line } from '@sgratzl/chartjs-esm-facade';
 
 function horizontal(from, to, options) {
   return {
@@ -154,11 +154,11 @@ export class EdgeLine extends Line {
   }
 }
 
-EdgeLine.id = EdgeLine._type = 'edgeLine';
-EdgeLine.defaults = /*#__PURE__*/ Object.assign({}, defaults.elements.line, {
+EdgeLine.id = 'edgeLine';
+EdgeLine.defaults = /*#__PURE__*/ Object.assign({}, Line.defaults, {
   tension: 0,
   directed: false,
   arrowHeadSize: 15,
   arrowHeadOffset: 5,
 });
-EdgeLine.register = () => registerElement(EdgeLine);
+EdgeLine.defaultRoutes = Line.defaultRoutes;

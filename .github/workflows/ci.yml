@@ -14,24 +14,16 @@ jobs:
       - run: yarn set version berry
       - run: yarn config set checksumBehavior ignore
       - name: Cache Node.js modules
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ./.yarn
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - run: yarn install --immutable
-        env:
-          CI: true
+      - run: yarn install
       - run: yarn build
-        env:
-          CI: true
       - run: yarn lint
-        env:
-          CI: true
       - run: yarn test
-        env:
-          CI: true
       - uses: actions/upload-artifact@v2
         if: failure()
         with:

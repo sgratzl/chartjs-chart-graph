@@ -1,4 +1,4 @@
-import { Chart, merge, patchControllerConfig, registerController, requestAnimFrame } from '../chart';
+import { Chart, merge, requestAnimFrame } from '@sgratzl/chartjs-esm-facade';
 import { GraphController } from './graph';
 import {
   forceSimulation,
@@ -10,6 +10,8 @@ import {
   forceRadial,
   forceY,
 } from 'd3-force';
+import patchController from './patchController';
+import { EdgeLine } from '../elements';
 
 export class ForceDirectedGraphController extends GraphController {
   constructor(chart, datasetIndex) {
@@ -153,7 +155,7 @@ export class ForceDirectedGraphController extends GraphController {
       if (this._config.simulation.autoRestart) {
         this._simulation.restart();
       } else {
-        requestAnimFrame(() => this.chart.update());
+        requestAnimFrame.call(window, () => this.chart.update());
       }
     } else if (this._config.simulation.autoRestart) {
       this._simulation.alpha(1).restart();
@@ -201,14 +203,10 @@ ForceDirectedGraphController.defaults = /*#__PURE__*/ merge({}, [
     },
   },
 ]);
-ForceDirectedGraphController.register = (transitive = true) => {
-  GraphController.register(transitive);
-  return registerController(ForceDirectedGraphController);
-};
 
 export class ForceDirectedGraphChart extends Chart {
   constructor(item, config) {
-    super(item, patchControllerConfig(config, ForceDirectedGraphController));
+    super(item, patchController(config, ForceDirectedGraphController, EdgeLine));
   }
 }
 ForceDirectedGraphChart.id = ForceDirectedGraphController.id;
