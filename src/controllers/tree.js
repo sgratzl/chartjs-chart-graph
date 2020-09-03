@@ -32,6 +32,7 @@ Chart.defaults.dendogram = Chart.helpers.configMerge(Chart.defaults.graph, defau
 
 if (Chart.defaults.global.datasets && Chart.defaults.global.datasets.graph) {
   Chart.defaults.global.datasets.dendogram = { ...Chart.defaults.global.datasets.graph };
+  Chart.defaults.global.datasets.tree = { ...Chart.defaults.global.datasets.graph };
 }
 
 const superClass = Graph.prototype;
