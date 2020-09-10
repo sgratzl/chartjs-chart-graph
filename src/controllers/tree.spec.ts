@@ -1,6 +1,6 @@
-import matchChart from '../__tests__/matchChart';
+import createChart from '../__tests__/createChart';
 import { DendogramController } from './tree';
-import { registry, Point, LinearScale } from '@sgratzl/chartjs-esm-facade';
+import { registry, Point, LinearScale } from 'chart.js';
 import nodes from './__tests__/tree';
 import { EdgeLine } from '../elements';
 
@@ -11,7 +11,7 @@ describe('dendogram', () => {
     registry.addScales(LinearScale);
   });
   test('default', () => {
-    return matchChart({
+    return createChart({
       type: DendogramController.id,
       data: {
         labels: nodes.map((d) => d.name),
@@ -29,10 +29,10 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
   test('vertical', () => {
-    return matchChart({
+    return createChart({
       type: DendogramController.id,
       data: {
         labels: nodes.map((d) => d.name),
@@ -53,10 +53,10 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
   test('radial', () => {
-    return matchChart({
+    return createChart({
       type: DendogramController.id,
       data: {
         labels: nodes.map((d) => d.name),
@@ -77,11 +77,11 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
 
   test('default tree', () => {
-    return matchChart({
+    return createChart({
       type: DendogramController.id,
       data: {
         labels: nodes.map((d) => d.name),
@@ -102,10 +102,10 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
   test('vertical tree', () => {
-    return matchChart({
+    return createChart({
       type: DendogramController.id,
       data: {
         labels: nodes.map((d) => d.name),
@@ -127,10 +127,10 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
   test('radial tree', () => {
-    return matchChart({
+    return createChart({
       type: DendogramController.id,
       data: {
         labels: nodes.map((d) => d.name),
@@ -152,10 +152,10 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
   test('directed', () => {
-    return matchChart({
+    return createChart({
       type: DendogramController.id,
       data: {
         labels: nodes.map((d) => d.name),
@@ -174,6 +174,6 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
 });

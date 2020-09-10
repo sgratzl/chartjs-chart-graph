@@ -2,14 +2,14 @@
 <html>
   <head>
     <script src="https://unpkg.com/chart.js@3.0.0-alpha.2/dist/chart.js"></script>
-    <script src="https://unpkg.com/@sgratzl/chartjs-esm-facade@3.0.0-alpha.2"></script>
+    <script src="https://unpkg.com/chart.js@3.0.0-alpha.2"></script>
     <!-- <script src="https://unpkg.com/chartjs-plugin-datalabels"></script> -->
-    <script src="../build/Chart.Graphs.js"></script>
+    <script src="../build/index.umd.js"></script>
   </head>
 
   <body>
-    <div style="width: 50vw; height: 50vw; position: absolute;">
-      <canvas id="canvas" style="width: 50vw; height: 50vw; position: absolute;"></canvas>
+    <div style="width: 50vw; height: 50vw; position: absolute">
+      <canvas id="canvas" style="width: 50vw; height: 50vw; position: absolute"></canvas>
     </div>
     <script>
       fetch('./tree.json')

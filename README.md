@@ -23,7 +23,7 @@ Works great with https://github.com/chartjs/chartjs-plugin-datalabels or https:/
 ## Install
 
 ```bash
-npm install --save chart.js@next @sgratzl/chartjs-esm-facade@next chartjs-chart-graph@next
+npm install --save chart.js@next chartjs-chart-graph@next
 ```
 
 ## Usage
@@ -86,121 +86,6 @@ Computes the x,y position of nodes based on a force simulation. It is based on h
 
 ### Options
 
-```typescript
-interface IForceDirectedOptions {
-  simulation: {
-    /**
-     * auto restarts the simulation upon dataset change, one can manually restart by calling: `chart.getDatasetMeta(0).controller.reLayout();`
-     *
-     * @default true
-     */
-    autoRestart: boolean;
-
-    forces: {
-      /**
-       * center force
-       * https://github.com/d3/d3-force/#centering
-       *
-       * @default true
-       */
-      center: boolean | ICenterForce,
-
-      /**
-       * collision between nodes
-       * https://github.com/d3/d3-force/#collision
-       *
-       * @default false
-       */
-      collide: boolean | ICollideForce,
-
-      /**
-       * link force
-       * https://github.com/d3/d3-force/#links
-       *
-       * @default true
-       */
-      link: boolean | ILinkForce,
-
-      /**
-       * link force
-       * https://github.com/d3/d3-force/#many-body
-       *
-       * @default true
-       */
-      manyBody: boolean | IManyBodyForce,
-
-      /**
-       * x positioning force
-       * https://github.com/d3/d3-force/#forceX
-       *
-       * @default false
-       */
-      x: boolean | IForceXForce,
-
-      /**
-       * y positioning force
-       * https://github.com/d3/d3-force/#forceY
-       *
-       * @default false
-       */
-      y: boolean | IForceYForce,
-
-      /**
-       * radial positioning force
-       * https://github.com/d3/d3-force/#forceRadial
-       *
-       * @default false
-       */
-      radial: boolean | IRadialForce,
-    }
-  }
-}
-
-declare ID3NodeCallback = (d: IDataNode, i: number) => number;
-declare ID3EdgeCallback = (d: IDataEdge, i: number) => number;
-
-interface ICenterForce {
-  x?: number;
-  y?: number;
-}
-
-interface ICollideForce {
-  radius?: number | ID3NodeCallback;
-  strength?: number | ID3NodeCallback;
-}
-
-interface ILinkForce {
-  id?: (d: IDataEdge) => string | number;
-  distance?: number | ID3EdgeCallback;
-  strength?: number | ID3EdgeCallback;
-}
-
-interface IManyBodyForce {
-  strength?: number | ID3NodeCallback;
-  theta?: number;
-  distanceMin?: number;
-  distanceMax?: number;
-}
-
-interface IForceXForce {
-  x?: number;
-  strength?: number;
-}
-
-interface IForceYForce {
-  y?: number;
-  strength?: number;
-}
-
-interface IRadialForce {
-  x?: number;
-  y?: number;
-  radius?: number;
-  strength?: number;
-}
-
-```
-
 ## Dendogram, Tree
 
 chart types: `dendogram`, `tree`
@@ -244,22 +129,6 @@ The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
 [![Open in CodePen][codepen]](https://codepen.io/sgratzl/pen/jObedwg)
 
 ### Options
-
-```ts
-interface ITreeOptions {
-  tree: {
-    /**
-     * tree (cluster) or dendogram layout default depends on the chart type
-     */
-    mode: 'dendogram' | 'tree';
-    /**
-     * orientation of the tree layout
-     * @default horizontal
-     */
-    orientation: 'horizontal' | 'vertical' | 'radial';
-  };
-}
-```
 
 ### ESM and Tree Shaking
 

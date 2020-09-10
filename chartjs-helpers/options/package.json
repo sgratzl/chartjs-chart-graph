@@ -1,0 +1,6 @@
+{
+  "name": "chartjs-helpers-options",
+  "main": "index.js",
+  "module": "index.esm.js",
+  "types": "index.d.ts"
+}

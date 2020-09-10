@@ -1,4 +1,5 @@
-import { Chart, merge, requestAnimFrame, LinearScale, Point } from '@sgratzl/chartjs-esm-facade';
+import { Chart, LinearScale, Point } from 'chart.js';
+import { merge } from '../../chartjs-helpers/core';
 import { GraphController } from './graph';
 import {
   forceSimulation,
@@ -13,7 +14,121 @@ import {
 import patchController from './patchController';
 import { EdgeLine } from '../elements';
 
+export interface IForceDirectedControllerOptions {
+  simulation: {
+    /**
+     * auto restarts the simulation upon dataset change, one can manually restart by calling: `chart.getDatasetMeta(0).controller.reLayout();`
+     *
+     * @default true
+     */
+    autoRestart: boolean;
+
+    forces: {
+      /**
+       * center force
+       * https://github.com/d3/d3-force/#centering
+       *
+       * @default true
+       */
+      center: boolean | ICenterForce;
+
+      /**
+       * collision between nodes
+       * https://github.com/d3/d3-force/#collision
+       *
+       * @default false
+       */
+      collide: boolean | ICollideForce;
+
+      /**
+       * link force
+       * https://github.com/d3/d3-force/#links
+       *
+       * @default true
+       */
+      link: boolean | ILinkForce;
+
+      /**
+       * link force
+       * https://github.com/d3/d3-force/#many-body
+       *
+       * @default true
+       */
+      manyBody: boolean | IManyBodyForce;
+
+      /**
+       * x positioning force
+       * https://github.com/d3/d3-force/#forceX
+       *
+       * @default false
+       */
+      x: boolean | IForceXForce;
+
+      /**
+       * y positioning force
+       * https://github.com/d3/d3-force/#forceY
+       *
+       * @default false
+       */
+      y: boolean | IForceYForce;
+
+      /**
+       * radial positioning force
+       * https://github.com/d3/d3-force/#forceRadial
+       *
+       * @default false
+       */
+      radial: boolean | IRadialForce;
+    };
+  };
+}
+
+declare type ID3NodeCallback = (d: IDataNode, i: number) => number;
+declare type ID3EdgeCallback = (d: IDataEdge, i: number) => number;
+
+export interface ICenterForce {
+  x?: number;
+  y?: number;
+}
+
+export interface ICollideForce {
+  radius?: number | ID3NodeCallback;
+  strength?: number | ID3NodeCallback;
+}
+
+export interface ILinkForce {
+  id?: (d: IDataEdge) => string | number;
+  distance?: number | ID3EdgeCallback;
+  strength?: number | ID3EdgeCallback;
+}
+
+export interface IManyBodyForce {
+  strength?: number | ID3NodeCallback;
+  theta?: number;
+  distanceMin?: number;
+  distanceMax?: number;
+}
+
+export interface IForceXForce {
+  x?: number;
+  strength?: number;
+}
+
+export interface IForceYForce {
+  y?: number;
+  strength?: number;
+}
+
+export interface IRadialForce {
+  x?: number;
+  y?: number;
+  radius?: number;
+  strength?: number;
+}
+
 export class ForceDirectedGraphController extends GraphController {
+  private readonly _simulation: any; // TODO
+
   constructor(chart, datasetIndex) {
     super(chart, datasetIndex);
     this._simulation = forceSimulation()
@@ -118,7 +233,7 @@ export class ForceDirectedGraphController extends GraphController {
       delete simNode.x;
       delete simNode.y;
       delete simNode.vx;
-      delete simNoe.vy;
+      delete simNode.vy;
       return simNode;
     });
     this._simulation.nodes(nodes);
@@ -164,7 +279,7 @@ export class ForceDirectedGraphController extends GraphController {
       if (this._config.simulation.autoRestart) {
         this._simulation.restart();
       } else {
-        requestAnimFrame.call(window, () => this.chart.update());
+        requestAnimationFrame(() => this.chart.update());
       }
     } else if (this._config.simulation.autoRestart) {
       this._simulation.alpha(1).restart();
@@ -179,44 +294,45 @@ export class ForceDirectedGraphController extends GraphController {
     super.stopLayout();
     this._simulation.stop();
   }
-}
 
-ForceDirectedGraphController.id = 'forceDirectedGraph';
-ForceDirectedGraphController.defaults = /*#__PURE__*/ merge({}, [
-  GraphController.defaults,
-  {
-    animation: false,
-    datasets: {
-      simulation: {
-        initialIterations: 0,
-        autoRestart: true,
-        forces: {
-          center: true,
-          collide: false,
-          link: true,
-          manyBody: true,
-          x: false,
-          y: false,
-          radial: false,
+  static readonly id = 'forceDirectedGraph';
+  static readonly defaults = /*#__PURE__*/ merge({}, [
+    GraphController.defaults,
+    {
+      animation: false,
+      datasets: {
+        simulation: {
+          initialIterations: 0,
+          autoRestart: true,
+          forces: {
+            center: true,
+            collide: false,
+            link: true,
+            manyBody: true,
+            x: false,
+            y: false,
+            radial: false,
+          },
+        },
+      },
+      scales: {
+        x: {
+          min: -1,
+          max: 1,
+        },
+        y: {
+          min: -1,
+          max: 1,
         },
       },
     },
-    scales: {
-      x: {
-        min: -1,
-        max: 1,
-      },
-      y: {
-        min: -1,
-        max: 1,
-      },
-    },
-  },
-]);
+  ]);
+}
 
 export class ForceDirectedGraphChart extends Chart {
+  static readonly id = ForceDirectedGraphController.id;
+
   constructor(item, config) {
     super(item, patchController(config, ForceDirectedGraphController, [EdgeLine, Point], LinearScale));
   }
 }
-ForceDirectedGraphChart.id = ForceDirectedGraphController.id;

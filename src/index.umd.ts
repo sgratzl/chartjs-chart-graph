@@ -1,4 +1,4 @@
-import { registry } from '@sgratzl/chartjs-esm-facade';
+import { registry } from 'chart.js';
 import { DendogramController, ForceDirectedGraphController, GraphController, TreeController } from './controllers';
 import { EdgeLine } from './elements';
 

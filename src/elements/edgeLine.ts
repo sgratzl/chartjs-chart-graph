@@ -1,6 +1,6 @@
-import { Line } from '@sgratzl/chartjs-esm-facade';
+import { Line, ILineOptions, Point } from 'chart.js';
 
-function horizontal(from, to, options) {
+function horizontal(from: { x: number }, to: { x: number }, options: { tension: number }) {
   return {
     fx: (to.x - from.x) * options.tension,
     fy: 0,
@@ -9,7 +9,7 @@ function horizontal(from, to, options) {
   };
 }
 
-function vertical(from, to, options) {
+function vertical(from: { y: number }, to: { y: number }, options: { tension: number }) {
   return {
     fx: 0,
     fy: (to.y - from.y) * options.tension,
@@ -18,7 +18,11 @@ function vertical(from, to, options) {
   };
 }
 
-function radial(from, to, options) {
+function radial(
+  from: { x: number; angle: number; y: number },
+  to: { x: number; angle: number; y: number },
+  options: { tension: number }
+) {
   const angleHelper = Math.hypot(to.x - from.x, to.y - from.y) * options.tension;
   return {
     fx: Number.isNaN(from.angle) ? 0 : Math.cos(from.angle) * angleHelper,
@@ -28,8 +32,23 @@ function radial(from, to, options) {
   };
 }
 
+export interface IEdgeLineOptions extends ILineOptions {
+  directed: boolean;
+  arrowHeadSize: number;
+  arrowHeadOffset: number;
+}
+
+export interface IEdgeLineProps extends ILineOptions {
+  points: { x: number; y: number }[];
+}
+
 export class EdgeLine extends Line {
-  draw(ctx) {
+  declare _orientation: 'vertical' | 'radial' | 'horizontal';
+  declare source: Point;
+  declare target: Point;
+  declare options: IEdgeLineOptions;
+
+  draw(ctx: CanvasRenderingContext2D) {
     const options = this.options;
 
     ctx.save();
@@ -49,7 +68,10 @@ export class EdgeLine extends Line {
     };
     const layout = orientations[this._orientation] || orientations.horizontal;
 
-    const renderLine = (from, to) => {
+    const renderLine = (
+      from: { x: number; y: number; angle?: number },
+      to: { x: number; y: number; angle?: number }
+    ) => {
       const shift = layout(from, to, options);
 
       const fromX = {
@@ -152,13 +174,13 @@ export class EdgeLine extends Line {
     // ctx.stroke();
     // ctx.restore();
   }
-}
 
-EdgeLine.id = 'edgeLine';
-EdgeLine.defaults = /*#__PURE__*/ Object.assign({}, Line.defaults, {
-  tension: 0,
-  directed: false,
-  arrowHeadSize: 15,
-  arrowHeadOffset: 5,
-});
-EdgeLine.defaultRoutes = Line.defaultRoutes;
+  static readonly id = 'edgeLine';
+  static readonly defaults: any = /*#__PURE__*/ Object.assign({}, Line.defaults, {
+    tension: 0,
+    directed: false,
+    arrowHeadSize: 15,
+    arrowHeadOffset: 5,
+  });
+  static readonly defaultRoutes = Line.defaultRoutes;
+}

@@ -1,7 +1,7 @@
-import matchChart from '../__tests__/matchChart';
+import createChart from '../__tests__/createChart';
 import { ForceDirectedGraphController } from './forceDirected';
 import data from './__tests__/miserables';
-import { registry, Point, LinearScale } from '@sgratzl/chartjs-esm-facade';
+import { registry, Point, LinearScale } from 'chart.js';
 import { EdgeLine } from '../elements';
 
 describe('dendogram', () => {
@@ -11,7 +11,7 @@ describe('dendogram', () => {
     registry.addScales(LinearScale);
   });
   test('default', () => {
-    return matchChart({
+    return createChart({
       type: ForceDirectedGraphController.id,
       data: {
         labels: data.nodes.map((d) => d.id),
@@ -33,6 +33,6 @@ describe('dendogram', () => {
           display: false,
         },
       },
-    });
+    }).toMatchImageSnapshot();
   });
 });

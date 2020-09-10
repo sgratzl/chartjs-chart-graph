@@ -1,11 +1,11 @@
-function interpolateNumber(from, to, factor) {
+function interpolateNumber(from: number, to: number, factor: number) {
   if (from === to) {
     return to;
   }
   return from + (to - from) * factor;
 }
 
-function interpolatorPoint(fromArray, i, to, factor) {
+function interpolatorPoint(fromArray: any, i: number, to: { x: number; y: number; angle: number }, factor: number) {
   const from = fromArray[i] || fromArray[i - 1] || fromArray._source;
   if (!from) {
     return to;
@@ -16,7 +16,11 @@ function interpolatorPoint(fromArray, i, to, factor) {
   return { x, y, angle };
 }
 
-export function interpolatePoints(from, to, factor) {
+export function interpolatePoints(
+  from: { x: number; y: number; angle: number }[],
+  to: { x: number; y: number; angle: number }[],
+  factor: number
+) {
   if (Array.isArray(from) && Array.isArray(to) && to.length > 0) {
     return to.map((t, i) => interpolatorPoint(from, i, t, factor));
   }

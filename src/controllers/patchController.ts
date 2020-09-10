@@ -1,24 +1,20 @@
-import { IChartComponentLike, registry, IDatasetControllerChartComponent } from '@sgratzl/chartjs-esm-facade';
+import { registry, IDatasetControllerChartComponent, IChartComponent } from 'chart.js';
 
 export default function patchController<T, TYPE>(
   type: TYPE,
   config: T,
   controller: IDatasetControllerChartComponent,
-  elements: IChartComponentLike = [],
-  scales: IChartComponentLike = []
+  elements: IChartComponent | IChartComponent[] = [],
+  scales: IChartComponent | IChartComponent[] = []
 ): T & { type: TYPE } {
   registry.addControllers(controller);
   if (Array.isArray(elements)) {
-    for (const elem of elements) {
-      registry.addElements(elem);
-    }
+    registry.addElements(...elements);
   } else {
     registry.addElements(elements);
   }
   if (Array.isArray(scales)) {
-    for (const elem of scales) {
-      registry.addScales(elem);
-    }
+    registry.addScales(...scales);
   } else {
     registry.addScales(scales);
   }
