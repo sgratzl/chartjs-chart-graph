@@ -25,10 +25,10 @@ function radial(
 ) {
   const angleHelper = Math.hypot(to.x - from.x, to.y - from.y) * options.tension;
   return {
-    fx: Number.isNaN(from.angle) ? 0 : Math.cos(from.angle ?? 0) * angleHelper,
-    fy: Number.isNaN(from.angle) ? 0 : Math.sin(from.angle ?? 0) * -angleHelper,
-    tx: Number.isNaN(to.angle) ? 0 : Math.cos(to.angle ?? 0) * -angleHelper,
-    ty: Number.isNaN(to.angle) ? 0 : Math.sin(to.angle ?? 0) * angleHelper,
+    fx: Number.isNaN(from.angle) ? 0 : Math.cos(from.angle || 0) * angleHelper,
+    fy: Number.isNaN(from.angle) ? 0 : Math.sin(from.angle || 0) * -angleHelper,
+    tx: Number.isNaN(to.angle) ? 0 : Math.cos(to.angle || 0) * -angleHelper,
+    ty: Number.isNaN(to.angle) ? 0 : Math.sin(to.angle || 0) * angleHelper,
   };
 }
 
