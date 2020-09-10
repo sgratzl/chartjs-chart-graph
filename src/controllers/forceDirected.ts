@@ -1,6 +1,6 @@
-import { Chart, LinearScale, Point } from 'chart.js';
+import { Chart, ChartItem, IChartConfiguration, IChartDataset, LinearScale, Point } from 'chart.js';
 import { merge } from '../../chartjs-helpers/core';
-import { GraphController } from './graph';
+import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint, IGraphEdgeDataPoint } from './graph';
 import {
   forceSimulation,
   forceManyBody,
@@ -10,6 +10,10 @@ import {
   forceX,
   forceRadial,
   forceY,
+  Simulation,
+  SimulationNodeDatum,
+  ForceLink,
+  SimulationLinkDatum,
 } from 'd3-force';
 import patchController from './patchController';
 import { EdgeLine } from '../elements';
@@ -22,6 +26,8 @@ export interface IForceDirectedControllerOptions {
      * @default true
      */
     autoRestart: boolean;
+
+    initialIterations: number;
 
     forces: {
       /**
@@ -83,8 +89,8 @@ export interface IForceDirectedControllerOptions {
   };
 }
 
-declare type ID3NodeCallback = (d: IDataNode, i: number) => number;
-declare type ID3EdgeCallback = (d: IDataEdge, i: number) => number;
+declare type ID3NodeCallback = (d: any, i: number) => number;
+declare type ID3EdgeCallback = (d: any, i: number) => number;
 
 export interface ICenterForce {
   x?: number;
@@ -97,7 +103,7 @@ export interface ICollideForce {
 }
 
 export interface ILinkForce {
-  id?: (d: IDataEdge) => string | number;
+  id?: (d: { source: any; target: any }) => string | number;
   distance?: number | ID3EdgeCallback;
   strength?: number | ID3EdgeCallback;
 }
@@ -127,9 +133,10 @@ export interface IRadialForce {
 }
 
 export class ForceDirectedGraphController extends GraphController {
-  private readonly _simulation: any; // TODO
+  declare _config: IForceDirectedControllerOptions;
+  private readonly _simulation: Simulation<SimulationNodeDatum, undefined>;
 
-  constructor(chart, datasetIndex) {
+  constructor(chart: Chart, datasetIndex: number) {
     super(chart, datasetIndex);
     this._simulation = forceSimulation()
       .on('tick', () => {
@@ -152,12 +159,12 @@ export class ForceDirectedGraphController extends GraphController {
       radial: forceRadial,
     };
 
-    Object.keys(fs).forEach((key) => {
-      const options = sim.forces[key];
+    (Object.keys(fs) as (keyof typeof fs)[]).forEach((key) => {
+      const options = sim.forces[key] as any;
       if (!options) {
         return;
       }
-      const f = fs[key]();
+      const f = (fs[key] as any)();
       if (typeof options !== 'boolean') {
         Object.keys(options).forEach((attr) => {
           f[attr](options[attr]);
@@ -199,8 +206,8 @@ export class ForceDirectedGraphController extends GraphController {
       }
     );
 
-    const rescaleX = (v) => ((v - minmax.minX) / (minmax.maxX - minmax.minX)) * 2 - 1;
-    const rescaleY = (v) => ((v - minmax.minY) / (minmax.maxY - minmax.minY)) * 2 - 1;
+    const rescaleX = (v: number) => ((v - minmax.minX) / (minmax.maxX - minmax.minX)) * 2 - 1;
+    const rescaleY = (v: number) => ((v - minmax.minY) / (minmax.maxY - minmax.minY)) * 2 - 1;
 
     nodes.forEach((node) => {
       if (node._sim) {
@@ -209,13 +216,16 @@ export class ForceDirectedGraphController extends GraphController {
       }
     });
 
-    const xScale = this._cachedMeta.xScale;
-    const yScale = this._cachedMeta.yScale;
+    const xScale = this._cachedMeta.xScale!;
+    const yScale = this._cachedMeta.yScale!;
     const elems = this._cachedMeta.data;
     elems.forEach((elem, i) => {
       const parsed = nodes[i];
-      elem.x = xScale.getPixelForValue(parsed.x, i);
-      elem.y = yScale.getPixelForValue(parsed.y, i);
+      Object.assign(elem, {
+        x: xScale.getPixelForValue(parsed.x, i),
+        y: yScale.getPixelForValue(parsed.y, i),
+        skip: false,
+      });
     });
   }
 
@@ -261,7 +271,9 @@ export class ForceDirectedGraphController extends GraphController {
       }
       return simNode;
     });
-    const link = this._simulation.force('link');
+    const link = this._simulation.force<ForceLink<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>>(
+      'link'
+    );
     if (link) {
       link.links([]);
     }
@@ -296,7 +308,7 @@ export class ForceDirectedGraphController extends GraphController {
   }
 
   static readonly id = 'forceDirectedGraph';
-  static readonly defaults = /*#__PURE__*/ merge({}, [
+  static readonly defaults: any = /*#__PURE__*/ merge({}, [
     GraphController.defaults,
     {
       animation: false,
@@ -329,10 +341,34 @@ export class ForceDirectedGraphController extends GraphController {
   ]);
 }
 
-export class ForceDirectedGraphChart extends Chart {
+export interface IForceDirectedGraphChartControllerDatasetOptions
+  extends IGraphChartControllerDatasetOptions,
+    IForceDirectedControllerOptions {}
+
+export type IForceDirectedGraphChartControllerDataset<T = IGraphDataPoint, E = IGraphEdgeDataPoint> = IChartDataset<
+  T,
+  IForceDirectedGraphChartControllerDatasetOptions
+> & {
+  edges?: E[];
+};
+
+export type IForceDirectedGraphChartControllerConfiguration<
+  T = IGraphDataPoint,
+  E = IGraphEdgeDataPoint,
+  L = string
+> = IChartConfiguration<'forceDirectedGraph', T, L, IForceDirectedGraphChartControllerDataset<T, E>>;
+
+export class ForceDirectedGraphChart<T = IGraphDataPoint, E = IGraphEdgeDataPoint, L = string> extends Chart<
+  T,
+  L,
+  IForceDirectedGraphChartControllerConfiguration<T, E, L>
+> {
   static readonly id = ForceDirectedGraphController.id;
 
-  constructor(item, config) {
-    super(item, patchController(config, ForceDirectedGraphController, [EdgeLine, Point], LinearScale));
+  constructor(item: ChartItem, config: Omit<IForceDirectedGraphChartControllerConfiguration<T, E, L>, 'type'>) {
+    super(
+      item,
+      patchController('forceDirectedGraph', config, ForceDirectedGraphController, [EdgeLine, Point], LinearScale)
+    );
   }
 }

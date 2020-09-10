@@ -1,5 +1,5 @@
 import createChart from '../__tests__/createChart';
-import { ForceDirectedGraphController } from './forceDirected';
+import { ForceDirectedGraphController, IForceDirectedGraphChartControllerConfiguration } from './forceDirected';
 import data from './__tests__/miserables';
 import { registry, Point, LinearScale } from 'chart.js';
 import { EdgeLine } from '../elements';
@@ -11,7 +11,15 @@ describe('dendogram', () => {
     registry.addScales(LinearScale);
   });
   test('default', () => {
-    return createChart({
+    return createChart<
+      { id: string; group: number },
+      string,
+      IForceDirectedGraphChartControllerConfiguration<
+        { id: string; group: number },
+        { source: string; target: string; value: number },
+        string
+      >
+    >({
       type: ForceDirectedGraphController.id,
       data: {
         labels: data.nodes.map((d) => d.id),

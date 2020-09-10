@@ -76,7 +76,8 @@ export default (options) => {
       plugins: [
         replace({
           'chartjs-helpers/core': 'chartjs-helpers/core/index.js',
-          'chartjs-helpers/options': 'chartjs-helpers/options/index.js',
+          'chartjs-helpers/canvas': 'chartjs-helpers/canvas/index.js',
+          'chartjs-helpers/collection': 'chartjs-helpers/collection/index.js',
         }),
         ...base.plugins,
       ],
@@ -103,7 +104,8 @@ export default (options) => {
       plugins: [
         replace({
           'chartjs-helpers/core': 'chartjs-helpers/core/index.js',
-          'chartjs-helpers/options': 'chartjs-helpers/options/index.js',
+          'chartjs-helpers/canvas': 'chartjs-helpers/canvas/index.js',
+          'chartjs-helpers/collection': 'chartjs-helpers/collection/index.js',
         }),
         ...base.plugins,
       ],

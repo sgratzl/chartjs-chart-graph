@@ -1,5 +1,5 @@
 {
-  "name": "chartjs-helpers-options",
+  "name": "chartjs-helpers-collection",
   "main": "index.js",
   "module": "index.esm.js",
   "types": "index.d.ts"

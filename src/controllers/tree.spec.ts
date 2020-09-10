@@ -1,5 +1,5 @@
 import createChart from '../__tests__/createChart';
-import { DendogramController } from './tree';
+import { DendogramController, IDendogramChartControllerConfiguration } from './tree';
 import { registry, Point, LinearScale } from 'chart.js';
 import nodes from './__tests__/tree';
 import { EdgeLine } from '../elements';
@@ -11,8 +11,12 @@ describe('dendogram', () => {
     registry.addScales(LinearScale);
   });
   test('default', () => {
-    return createChart({
-      type: DendogramController.id,
+    return createChart<
+      { name: string; parent?: number },
+      string,
+      IDendogramChartControllerConfiguration<{ name: string; parent?: number }, string>
+    >({
+      type: DendogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -32,8 +36,12 @@ describe('dendogram', () => {
     }).toMatchImageSnapshot();
   });
   test('vertical', () => {
-    return createChart({
-      type: DendogramController.id,
+    return createChart<
+      { name: string; parent?: number },
+      string,
+      IDendogramChartControllerConfiguration<{ name: string; parent?: number }, string>
+    >({
+      type: DendogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -56,8 +64,12 @@ describe('dendogram', () => {
     }).toMatchImageSnapshot();
   });
   test('radial', () => {
-    return createChart({
-      type: DendogramController.id,
+    return createChart<
+      { name: string; parent?: number },
+      string,
+      IDendogramChartControllerConfiguration<{ name: string; parent?: number }, string>
+    >({
+      type: DendogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -81,8 +93,12 @@ describe('dendogram', () => {
   });
 
   test('default tree', () => {
-    return createChart({
-      type: DendogramController.id,
+    return createChart<
+      { name: string; parent?: number },
+      string,
+      IDendogramChartControllerConfiguration<{ name: string; parent?: number }, string>
+    >({
+      type: DendogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -105,8 +121,12 @@ describe('dendogram', () => {
     }).toMatchImageSnapshot();
   });
   test('vertical tree', () => {
-    return createChart({
-      type: DendogramController.id,
+    return createChart<
+      { name: string; parent?: number },
+      string,
+      IDendogramChartControllerConfiguration<{ name: string; parent?: number }, string>
+    >({
+      type: DendogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -130,8 +150,12 @@ describe('dendogram', () => {
     }).toMatchImageSnapshot();
   });
   test('radial tree', () => {
-    return createChart({
-      type: DendogramController.id,
+    return createChart<
+      { name: string; parent?: number },
+      string,
+      IDendogramChartControllerConfiguration<{ name: string; parent?: number }, string>
+    >({
+      type: DendogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -155,8 +179,12 @@ describe('dendogram', () => {
     }).toMatchImageSnapshot();
   });
   test('directed', () => {
-    return createChart({
-      type: DendogramController.id,
+    return createChart<
+      { name: string; parent?: number },
+      string,
+      IDendogramChartControllerConfiguration<{ name: string; parent?: number }, string>
+    >({
+      type: DendogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [

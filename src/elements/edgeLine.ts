@@ -1,4 +1,4 @@
-import { Line, ILineOptions, Point } from 'chart.js';
+import { Line, ILineOptions, Point, IPointProps } from 'chart.js';
 
 function horizontal(from: { x: number }, to: { x: number }, options: { tension: number }) {
   return {
@@ -19,16 +19,16 @@ function vertical(from: { y: number }, to: { y: number }, options: { tension: nu
 }
 
 function radial(
-  from: { x: number; angle: number; y: number },
-  to: { x: number; angle: number; y: number },
+  from: { x: number; angle?: number; y: number },
+  to: { x: number; angle?: number; y: number },
   options: { tension: number }
 ) {
   const angleHelper = Math.hypot(to.x - from.x, to.y - from.y) * options.tension;
   return {
-    fx: Number.isNaN(from.angle) ? 0 : Math.cos(from.angle) * angleHelper,
-    fy: Number.isNaN(from.angle) ? 0 : Math.sin(from.angle) * -angleHelper,
-    tx: Number.isNaN(to.angle) ? 0 : Math.cos(to.angle) * -angleHelper,
-    ty: Number.isNaN(to.angle) ? 0 : Math.sin(to.angle) * angleHelper,
+    fx: Number.isNaN(from.angle) ? 0 : Math.cos(from.angle ?? 0) * angleHelper,
+    fy: Number.isNaN(from.angle) ? 0 : Math.sin(from.angle ?? 0) * -angleHelper,
+    tx: Number.isNaN(to.angle) ? 0 : Math.cos(to.angle ?? 0) * -angleHelper,
+    ty: Number.isNaN(to.angle) ? 0 : Math.sin(to.angle ?? 0) * angleHelper,
   };
 }
 
@@ -44,8 +44,8 @@ export interface IEdgeLineProps extends ILineOptions {
 
 export class EdgeLine extends Line {
   declare _orientation: 'vertical' | 'radial' | 'horizontal';
-  declare source: Point;
-  declare target: Point;
+  declare source: Point<IPointProps & { angle?: number }>;
+  declare target: Point<IPointProps & { angle?: number }>;
   declare options: IEdgeLineOptions;
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -105,7 +105,11 @@ export class EdgeLine extends Line {
 
     const source = this.source.getProps(['x', 'y', 'angle']);
     const target = this.target.getProps(['x', 'y', 'angle']);
-    const points = this.getProps(['points']).points;
+    const points = (this.getProps(['points'] as any) as any).points as {
+      x: number;
+      y: number;
+      angle: number;
+    }[];
 
     // Stroke Line
     ctx.beginPath();

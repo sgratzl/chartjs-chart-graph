@@ -2,40 +2,54 @@ import {
   defaults,
   Chart,
   ScatterController,
-  clipArea,
-  unclipArea,
   registry,
-  merge,
   LineController,
   LinearScale,
   Point,
   UpdateMode,
   ITooltipItem,
   IChartMeta,
+  ChartItem,
+  IChartDataset,
+  IChartConfiguration,
+  IControllerDatasetOptions,
+  ScriptableAndArrayOptions,
+  ILineHoverOptions,
+  IPointPrefixedOptions,
+  IPointPrefixedHoverOptions,
 } from 'chart.js';
-// not part of facade since not part of UMD build
-import { listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers/collection';
-import { EdgeLine } from '../elements';
+import { merge } from '../../chartjs-helpers/core';
+import { clipArea, unclipArea } from '../../chartjs-helpers/canvas';
+import { listenArrayEvents, unlistenArrayEvents } from '../../chartjs-helpers/collection';
+import { EdgeLine, IEdgeLineOptions } from '../elements';
 import { interpolatePoints } from './utils';
 import patchController from './patchController';
 
-interface IExtendedChartMeta extends IChartMeta{
-  _parsedEdges: { source: Point, target: Point, points: { x: number, y: number }[] }[];
+interface IExtendedChartMeta extends IChartMeta<Point> {
+  edges: EdgeLine[];
+  _parsedEdges: { source: number; target: number; points: { x: number; y: number }[] }[];
 }
 
 export class GraphController extends ScatterController {
   declare _cachedMeta: IExtendedChartMeta;
   declare _ctx: CanvasRenderingContext2D;
+  declare _cachedDataOpts: any;
+  declare _type: string;
+  declare _data: any[];
+  declare _edges: any[];
+  declare _sharedOptions: any;
+  declare _edgeSharedOptions: any;
+  declare dataElementType: any;
+  declare dataElementOptions: any;
 
   private _scheduleResyncLayoutId = -1;
-  private _cachedEdgeOpts = {};
   edgeElementOptions: any;
   edgeElementType: any;
 
   private readonly _edgeListener = {
     _onDataPush: (...args: any[]) => {
       const count = args.length;
-      const start = this.getDataset().edges.length - count;
+      const start = (this.getDataset() as any).edges.length - count;
       const parsed = this._cachedMeta._parsedEdges;
       args.forEach((edge) => {
         parsed.push(this._parseDefinedEdge(edge));
@@ -76,14 +90,15 @@ export class GraphController extends ScatterController {
     this.edgeElementOptions = defaultConfig.edgeElementOptions;
     this.edgeElementType = registry.getElement(defaultConfig.edgeElementType);
     super.initialize();
+    this.enableOptionSharing = true;
     this._scheduleResyncLayout();
   }
 
   parse(start: number, count: number) {
     const meta = this._cachedMeta;
     const data = this._data;
-    const iScale = meta.iScale;
-    const vScale = meta.vScale;
+    const iScale = meta.iScale!;
+    const vScale = meta.vScale!;
     for (let i = 0; i < count; i++) {
       const index = i + start;
       const d = data[index];
@@ -121,14 +136,14 @@ export class GraphController extends ScatterController {
   }
 
   destroy() {
-    super.destroy();
+    (ScatterController.prototype as any).destroy.call(this);
     if (this._edges) {
       unlistenArrayEvents(this._edges, this._edgeListener);
     }
     this.stopLayout();
   }
 
-  updateEdgeElements(edges, start: number, mode: UpdateMode) {
+  updateEdgeElements(edges: EdgeLine[], start: number, mode: UpdateMode) {
     const bak = {
       _cachedDataOpts: this._cachedDataOpts,
       dataElementType: this.dataElementType,
@@ -138,6 +153,7 @@ export class GraphController extends ScatterController {
     this._cachedDataOpts = {};
     this.dataElementType = this.edgeElementType;
     this.dataElementOptions = this.edgeElementOptions;
+    this._sharedOptions = this._edgeSharedOptions;
     const meta = this._cachedMeta;
     const nodes = meta.data;
     const data = meta._parsedEdges;
@@ -145,7 +161,7 @@ export class GraphController extends ScatterController {
     const reset = mode === 'reset';
 
     const firstOpts = this.resolveDataElementOptions(start, mode);
-    const sharedOptions = this.getSharedOptions(mode || 'normal', edges[start], firstOpts);
+    const sharedOptions = this.getSharedOptions(firstOpts);
     const includeOptions = this.includeOptions(mode, sharedOptions);
 
     const xScale = meta.xScale!;
@@ -156,7 +172,7 @@ export class GraphController extends ScatterController {
       y: yScale.getBasePixel(),
     };
 
-    function copyPoint(point: { x: number; y: number; angle: number }) {
+    function copyPoint(point: { x: number; y: number; angle?: number }) {
       const x = reset ? base.x : xScale.getPixelForValue(point.x, 0);
       const y = reset ? base.y : yScale.getPixelForValue(point.y, 0);
       return {
@@ -171,36 +187,37 @@ export class GraphController extends ScatterController {
       const index = start + i;
       const parsed = data[index];
 
-      const properties = {
+      const properties: any = {
         source: nodes[parsed.source],
         target: nodes[parsed.target],
         points: Array.isArray(parsed.points) ? parsed.points.map(copyPoint) : [],
       };
       properties.points._source = nodes[parsed.source];
       if (includeOptions) {
-        properties.options = this.resolveDataElementOptions(index, mode);
+        properties.options = sharedOptions || this.resolveDataElementOptions(index, mode);
       }
       this.updateEdgeElement(edge, index, properties, mode);
     }
-    this.updateSharedOptions(sharedOptions, mode);
+    this.updateSharedOptions(sharedOptions, mode, firstOpts);
 
+    this._edgeSharedOptions = this._sharedOptions;
     Object.assign(this, bak);
   }
 
-  updateEdgeElement(edge, index: number, properties: any, mode: UpdateMode) {
+  updateEdgeElement(edge: EdgeLine, index: number, properties: any, mode: UpdateMode) {
     super.updateElement(edge, index, properties, mode);
   }
 
-  updateElement(point, index: number, properties: any, mode: UpdateMode) {
+  updateElement(point: Point, index: number, properties: any, mode: UpdateMode) {
     if (mode === 'reset') {
       // start in center also in x
-      const xScale = this._cachedMeta.xScale;
+      const xScale = this._cachedMeta.xScale!;
       properties.x = xScale.getBasePixel();
     }
     super.updateElement(point, index, properties, mode);
   }
 
-  resolveNodeIndex(nodes, ref: string | number | any) {
+  resolveNodeIndex(nodes: any[], ref: string | number | any): number {
     if (typeof ref === 'number') {
       // index
       return ref;
@@ -231,7 +248,7 @@ export class GraphController extends ScatterController {
   }
 
   buildOrUpdateElements() {
-    const dataset = this.getDataset();
+    const dataset = this.getDataset() as any;
     const edges = dataset.edges || [];
 
     // In order to correctly handle data addition/deletion animation (an thus simulate
@@ -261,15 +278,15 @@ export class GraphController extends ScatterController {
 
     if (edges.length > 0) {
       clipArea(ctx, area);
-      edges.forEach((edge) => edge.draw(ctx, area));
+      edges.forEach((edge) => edge.draw(ctx));
       unclipArea(ctx);
     }
 
-    elements.forEach((elem) => elem.draw(ctx, area));
+    elements.forEach((elem) => elem.draw(ctx));
   }
 
   _resyncElements() {
-    super._resyncElements();
+    (ScatterController.prototype as any)._resyncElements.call(this);
 
     const meta = this._cachedMeta;
     const edges = meta._parsedEdges;
@@ -286,8 +303,8 @@ export class GraphController extends ScatterController {
   }
 
   getTreeRootIndex() {
-    const ds = this.getDataset();
-    const nodes = ds.data;
+    const ds = this.getDataset() as any;
+    const nodes = ds.data as any[];
     if (ds.derivedEdges) {
       // find the one with no parent
       return nodes.findIndex((d) => d.parent == null);
@@ -296,7 +313,7 @@ export class GraphController extends ScatterController {
     const edges = this._cachedMeta._parsedEdges || [];
     const nodeIndices = new Set(nodes.map((_, i) => i));
     edges.forEach((edge) => {
-      nodeIndices.delete(edge.targetIndex);
+      nodeIndices.delete(edge.target);
     });
     return Array.from(nodeIndices)[0];
   }
@@ -308,7 +325,7 @@ export class GraphController extends ScatterController {
     return p;
   }
 
-  getTreeChildren(node) {
+  getTreeChildren(node: { index: number }) {
     const edges = this._cachedMeta._parsedEdges;
     return edges
       .filter((d) => d.source === node.index)
@@ -319,7 +336,7 @@ export class GraphController extends ScatterController {
       });
   }
 
-  _parseDefinedEdge(edge) {
+  _parseDefinedEdge(edge: { source: number; target: number }) {
     const ds = this.getDataset();
     const data = ds.data;
     return {
@@ -330,14 +347,15 @@ export class GraphController extends ScatterController {
   }
 
   _parseEdges() {
-    const ds = this.getDataset();
-    const data = ds.data;
+    const ds = this.getDataset() as any;
+    const data = ds.data as { parent?: number }[];
     const meta = this._cachedMeta;
     if (ds.edges) {
-      return (meta._parsedEdges = ds.edges.map((edge) => this._parseDefinedEdge(edge)));
+      return (meta._parsedEdges = ds.edges.map((edge: any) => this._parseDefinedEdge(edge)));
     }
 
-    const edges = (meta._parsedEdges = []);
+    const edges: { source: number; target: number; points: { x: number; y: number }[] }[] = [];
+    meta._parsedEdges = edges as any;
     // try to derive edges via parent links
     data.forEach((node, i) => {
       if (node.parent != null) {
@@ -379,14 +397,14 @@ export class GraphController extends ScatterController {
   }
 
   _insertElements(start: number, count: number) {
-    super._insertElements(start, count);
+    (ScatterController.prototype as any)._insertElements.call(this, start, count);
     if (count > 0) {
       this._resyncEdgeElements();
     }
   }
 
   _removeElements(start: number, count: number) {
-    super._removeElements(start, count);
+    (ScatterController.prototype as any)._removeElements.call(this, start, count);
     if (count > 0) {
       this._resyncEdgeElements();
     }
@@ -399,27 +417,6 @@ export class GraphController extends ScatterController {
     }
     this._cachedMeta.edges.splice(start, 0, ...elements);
     this.updateEdgeElements(elements, start, 'reset');
-    this._scheduleResyncLayout();
-  }
-
-  _onDataPush() {
-    (super as any)._onDataPush.apply(this, Array.from(arguments));
-    this._scheduleResyncLayout();
-  }
-  _onDataPop() {
-    super._onDataPop();
-    this._scheduleResyncLayout();
-  }
-  _onDataShift() {
-    super._onDataShift();
-    this._scheduleResyncLayout();
-  }
-  _onDataSplice() {
-    super._onDataSplice.apply(this, Array.from(arguments));
-    this._scheduleResyncLayout();
-  }
-  _onDataUnshift() {
-    super._onDataUnshift.apply(this, Array.from(arguments));
     this._scheduleResyncLayout();
   }
 
@@ -436,7 +433,7 @@ export class GraphController extends ScatterController {
   }
 
   _scheduleResyncLayout() {
-    if (this._scheduleResyncLayoutId !== -1) {
+    if (this._scheduleResyncLayoutId != null && this._scheduleResyncLayoutId >= 0) {
       return;
     }
     this._scheduleResyncLayoutId = requestAnimationFrame(() => {
@@ -449,7 +446,7 @@ export class GraphController extends ScatterController {
     // hook
   }
 
-  static readonly id = 'graph';
+  static readonly id: string = 'graph';
   static readonly defaults: any = /*#__PURE__*/ merge({}, [
     ScatterController.defaults,
     {
@@ -513,10 +510,43 @@ export class GraphController extends ScatterController {
   ]);
 }
 
-export class GraphChart extends Chart {
+export interface IGraphDataPoint {
+  parent?: number;
+}
+
+export interface IGraphEdgeDataPoint {
+  source: number;
+  target: number;
+}
+
+export interface IGraphChartControllerDatasetOptions
+  extends IControllerDatasetOptions,
+    ScriptableAndArrayOptions<IPointPrefixedOptions>,
+    ScriptableAndArrayOptions<IPointPrefixedHoverOptions>,
+    ScriptableAndArrayOptions<IEdgeLineOptions>,
+    ScriptableAndArrayOptions<ILineHoverOptions> {}
+
+export type IGraphChartControllerDataset<T = IGraphDataPoint, E = IGraphEdgeDataPoint> = IChartDataset<
+  T,
+  IGraphChartControllerDatasetOptions
+> & {
+  edges?: E[];
+};
+
+export type IGraphChartControllerConfiguration<
+  T = IGraphDataPoint,
+  E = IGraphEdgeDataPoint,
+  L = string
+> = IChartConfiguration<'graph', T, L, IGraphChartControllerDataset<T, E>>;
+
+export class GraphChart<T = IGraphDataPoint, E = IGraphEdgeDataPoint, L = string> extends Chart<
+  T,
+  L,
+  IGraphChartControllerConfiguration<T, E, L>
+> {
   static readonly id = GraphController.id;
 
-  constructor(item, config) {
-    super(item, patchController(config, GraphController, [EdgeLine, Point], LinearScale));
+  constructor(item: ChartItem, config: Omit<IGraphChartControllerConfiguration<T, E, L>, 'type'>) {
+    super(item, patchController('graph', config, GraphController, [EdgeLine, Point], LinearScale));
   }
 }
