@@ -1,22 +1,30 @@
-import { Chart, ChartItem, IChartConfiguration, IChartDataset, LinearScale, Point } from 'chart.js';
-import { merge } from '../../chartjs-helpers/core';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint, IGraphEdgeDataPoint } from './graph';
 import {
-  forceSimulation,
-  forceManyBody,
-  forceLink,
+  Chart,
+  ChartItem,
+  ICartesianScaleTypeRegistry,
+  IChartConfiguration,
+  ICoreChartOptions,
+  LinearScale,
+  Point,
+} from 'chart.js';
+import { merge } from 'chart.js/helpers';
+import {
   forceCenter,
   forceCollide,
-  forceX,
+  forceLink,
+  ForceLink,
+  forceManyBody,
   forceRadial,
+  forceSimulation,
+  forceX,
   forceY,
   Simulation,
-  SimulationNodeDatum,
-  ForceLink,
   SimulationLinkDatum,
+  SimulationNodeDatum,
 } from 'd3-force';
-import patchController from './patchController';
 import { EdgeLine } from '../elements';
+import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './graph';
+import patchController from './patchController';
 
 export interface IForceDirectedControllerOptions {
   simulation: {
@@ -345,27 +353,29 @@ export interface IForceDirectedGraphChartControllerDatasetOptions
   extends IGraphChartControllerDatasetOptions,
     IForceDirectedControllerOptions {}
 
-export type IForceDirectedGraphChartControllerDataset<T = IGraphDataPoint, E = IGraphEdgeDataPoint> = IChartDataset<
-  T,
-  IForceDirectedGraphChartControllerDatasetOptions
-> & {
-  edges?: E[];
-};
+declare module 'chart.js' {
+  export enum ChartTypeEnum {
+    forceDirectedGraph = 'forceDirectedGraph',
+  }
 
-export type IForceDirectedGraphChartControllerConfiguration<
-  T = IGraphDataPoint,
-  E = IGraphEdgeDataPoint,
-  L = string
-> = IChartConfiguration<'forceDirectedGraph', T, L, IForceDirectedGraphChartControllerDataset<T, E>>;
+  export interface IChartTypeRegistry {
+    forceDirectedGraph: {
+      chartOptions: ICoreChartOptions;
+      datasetOptions: IForceDirectedGraphChartControllerDatasetOptions;
+      defaultDataPoint: IGraphDataPoint[];
+      scales: keyof ICartesianScaleTypeRegistry;
+    };
+  }
+}
 
-export class ForceDirectedGraphChart<T = IGraphDataPoint, E = IGraphEdgeDataPoint, L = string> extends Chart<
-  T,
-  L,
-  IForceDirectedGraphChartControllerConfiguration<T, E, L>
+export class ForceDirectedGraphChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<
+  'forceDirectedGraph',
+  DATA,
+  LABEL
 > {
-  static readonly id = ForceDirectedGraphController.id;
+  static id = ForceDirectedGraphController.id;
 
-  constructor(item: ChartItem, config: Omit<IForceDirectedGraphChartControllerConfiguration<T, E, L>, 'type'>) {
+  constructor(item: ChartItem, config: Omit<IChartConfiguration<'forceDirectedGraph', DATA, LABEL>, 'type'>) {
     super(
       item,
       patchController('forceDirectedGraph', config, ForceDirectedGraphController, [EdgeLine, Point], LinearScale)

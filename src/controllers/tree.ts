@@ -1,9 +1,18 @@
-import { Chart, ChartItem, IChartConfiguration, IChartDataset, LinearScale, Point, UpdateMode } from 'chart.js';
-import { merge } from '../../chartjs-helpers/core';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint, IGraphEdgeDataPoint } from './graph';
-import { hierarchy, cluster, tree, HierarchyNode } from 'd3-hierarchy';
-import patchController from './patchController';
+import {
+  Chart,
+  ChartItem,
+  ICartesianScaleTypeRegistry,
+  IChartConfiguration,
+  ICoreChartOptions,
+  LinearScale,
+  Point,
+  UpdateMode,
+} from 'chart.js';
+import { merge } from 'chart.js/helpers';
+import { cluster, hierarchy, HierarchyNode, tree } from 'd3-hierarchy';
 import { EdgeLine } from '../elements';
+import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './graph';
+import patchController from './patchController';
 
 export interface ITreeOptions {
   /**
@@ -124,27 +133,29 @@ export interface IDendogramChartControllerDatasetOptions extends IGraphChartCont
   tree: ITreeOptions;
 }
 
-export type IDendogramChartControllerDataset<T = IGraphDataPoint, E = IGraphEdgeDataPoint> = IChartDataset<
-  T,
-  IDendogramChartControllerDatasetOptions
-> & {
-  edges?: E[];
-};
+declare module 'chart.js' {
+  export enum ChartTypeEnum {
+    dendogram = 'dendogram',
+  }
 
-export type IDendogramChartControllerConfiguration<
-  T = IGraphDataPoint,
-  E = IGraphEdgeDataPoint,
-  L = string
-> = IChartConfiguration<'dendogram', T, L, IDendogramChartControllerDataset<T, E>>;
+  export interface IChartTypeRegistry {
+    dendogram: {
+      chartOptions: ICoreChartOptions;
+      datasetOptions: IDendogramChartControllerDatasetOptions;
+      defaultDataPoint: IGraphDataPoint[];
+      scales: keyof ICartesianScaleTypeRegistry;
+    };
+  }
+}
 
-export class DendogramChart<T = IGraphDataPoint, E = IGraphEdgeDataPoint, L = string> extends Chart<
-  T,
-  L,
-  IDendogramChartControllerConfiguration<T, E, L>
+export class DendogramChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<
+  'dendogram',
+  DATA,
+  LABEL
 > {
-  static readonly id = DendogramController.id;
+  static id = DendogramController.id;
 
-  constructor(item: ChartItem, config: Omit<IDendogramChartControllerConfiguration<T, E, L>, 'type'>) {
+  constructor(item: ChartItem, config: Omit<IChartConfiguration<'dendogram', DATA, LABEL>, 'type'>) {
     super(item, patchController('dendogram', config, DendogramController, [EdgeLine, Point], LinearScale));
   }
 }
@@ -163,20 +174,25 @@ export class TreeController extends DendogramController {
   ]);
 }
 
-export type ITreeChartControllerConfiguration<
-  T = IGraphDataPoint,
-  E = IGraphEdgeDataPoint,
-  L = string
-> = IChartConfiguration<'tree', T, L, IDendogramChartControllerDataset<T, E>>;
+declare module 'chart.js' {
+  export enum ChartTypeEnum {
+    tree = 'tree',
+  }
 
-export class TreeChart<T = IGraphDataPoint, E = IGraphEdgeDataPoint, L = string> extends Chart<
-  T,
-  L,
-  ITreeChartControllerConfiguration<T, E, L>
-> {
-  static readonly id = TreeController.id;
+  export interface IChartTypeRegistry {
+    tree: {
+      chartOptions: ICoreChartOptions;
+      datasetOptions: IDendogramChartControllerDatasetOptions;
+      defaultDataPoint: IGraphDataPoint[];
+      scales: keyof ICartesianScaleTypeRegistry;
+    };
+  }
+}
 
-  constructor(item: ChartItem, config: Omit<ITreeChartControllerConfiguration<T, E, L>, 'type'>) {
+export class TreeChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<'tree', DATA, LABEL> {
+  static id = TreeController.id;
+
+  constructor(item: ChartItem, config: Omit<IChartConfiguration<'tree', DATA, LABEL>, 'type'>) {
     super(item, patchController('tree', config, TreeController, [EdgeLine, Point], LinearScale));
   }
 }

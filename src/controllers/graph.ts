@@ -10,17 +10,18 @@ import {
   ITooltipItem,
   IChartMeta,
   ChartItem,
-  IChartDataset,
   IChartConfiguration,
   IControllerDatasetOptions,
   ScriptableAndArrayOptions,
   ILineHoverOptions,
   IPointPrefixedOptions,
   IPointPrefixedHoverOptions,
+  ICartesianScaleTypeRegistry,
+  ICoreChartOptions,
 } from 'chart.js';
-import { merge } from '../../chartjs-helpers/core';
-import { clipArea, unclipArea } from '../../chartjs-helpers/canvas';
-import { listenArrayEvents, unlistenArrayEvents } from '../../chartjs-helpers/collection';
+import { merge } from 'chart.js/helpers';
+import { clipArea, unclipArea } from 'chart.js/helpers';
+import { listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers';
 import { EdgeLine, IEdgeLineOptions } from '../elements';
 import { interpolatePoints } from './utils';
 import patchController from './patchController';
@@ -524,29 +525,33 @@ export interface IGraphChartControllerDatasetOptions
     ScriptableAndArrayOptions<IPointPrefixedOptions>,
     ScriptableAndArrayOptions<IPointPrefixedHoverOptions>,
     ScriptableAndArrayOptions<IEdgeLineOptions>,
-    ScriptableAndArrayOptions<ILineHoverOptions> {}
+    ScriptableAndArrayOptions<ILineHoverOptions> {
+  edges: IGraphEdgeDataPoint[];
+}
 
-export type IGraphChartControllerDataset<T = IGraphDataPoint, E = IGraphEdgeDataPoint> = IChartDataset<
-  T,
-  IGraphChartControllerDatasetOptions
-> & {
-  edges?: E[];
-};
+declare module 'chart.js' {
+  export enum ChartTypeEnum {
+    graph = 'graph',
+  }
 
-export type IGraphChartControllerConfiguration<
-  T = IGraphDataPoint,
-  E = IGraphEdgeDataPoint,
-  L = string
-> = IChartConfiguration<'graph', T, L, IGraphChartControllerDataset<T, E>>;
+  export interface IChartTypeRegistry {
+    graph: {
+      chartOptions: ICoreChartOptions;
+      datasetOptions: IGraphChartControllerDatasetOptions;
+      defaultDataPoint: IGraphDataPoint[];
+      scales: keyof ICartesianScaleTypeRegistry;
+    };
+  }
+}
 
-export class GraphChart<T = IGraphDataPoint, E = IGraphEdgeDataPoint, L = string> extends Chart<
-  T,
-  L,
-  IGraphChartControllerConfiguration<T, E, L>
+export class GraphChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<
+  'graph',
+  DATA,
+  LABEL
 > {
-  static readonly id = GraphController.id;
+  static id = GraphController.id;
 
-  constructor(item: ChartItem, config: Omit<IGraphChartControllerConfiguration<T, E, L>, 'type'>) {
+  constructor(item: ChartItem, config: Omit<IChartConfiguration<'graph', DATA, LABEL>, 'type'>) {
     super(item, patchController('graph', config, GraphController, [EdgeLine, Point], LinearScale));
   }
 }
