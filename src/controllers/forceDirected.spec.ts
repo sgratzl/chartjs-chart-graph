@@ -1,13 +1,13 @@
 import createChart from '../__tests__/createChart';
 import { ForceDirectedGraphController } from './forceDirected';
 import data from './__tests__/miserables';
-import { registry, Point, LinearScale } from 'chart.js';
+import { registry, PointElement, LinearScale } from 'chart.js';
 import { EdgeLine } from '../elements';
 
 describe('dendogram', () => {
   beforeAll(() => {
     registry.addControllers(ForceDirectedGraphController);
-    registry.addElements(EdgeLine, Point);
+    registry.addElements(EdgeLine, PointElement);
     registry.addScales(LinearScale);
   });
   test('default', () => {

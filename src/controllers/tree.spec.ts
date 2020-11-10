@@ -1,13 +1,13 @@
 import createChart from '../__tests__/createChart';
 import { DendogramController } from './tree';
-import { registry, Point, LinearScale } from 'chart.js';
+import { registry, PointElement, LinearScale } from 'chart.js';
 import nodes from './__tests__/tree';
 import { EdgeLine } from '../elements';
 
 describe('dendogram', () => {
   beforeAll(() => {
     registry.addControllers(DendogramController);
-    registry.addElements(EdgeLine, Point);
+    registry.addElements(EdgeLine, PointElement);
     registry.addScales(LinearScale);
   });
   test('default', () => {

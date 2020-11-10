@@ -1,11 +1,11 @@
 import {
   Chart,
   ChartItem,
-  ICartesianScaleTypeRegistry,
-  IChartConfiguration,
-  ICoreChartOptions,
+  CartesianScaleTypeRegistry,
+  ChartConfiguration,
+  CoreChartOptions,
   LinearScale,
-  Point,
+  PointElement,
 } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import {
@@ -354,16 +354,12 @@ export interface IForceDirectedGraphChartControllerDatasetOptions
     IForceDirectedControllerOptions {}
 
 declare module 'chart.js' {
-  export enum ChartTypeEnum {
-    forceDirectedGraph = 'forceDirectedGraph',
-  }
-
-  export interface IChartTypeRegistry {
+  export interface ChartTypeRegistry {
     forceDirectedGraph: {
-      chartOptions: ICoreChartOptions;
+      chartOptions: CoreChartOptions;
       datasetOptions: IForceDirectedGraphChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint[];
-      scales: keyof ICartesianScaleTypeRegistry;
+      scales: keyof CartesianScaleTypeRegistry;
     };
   }
 }
@@ -375,10 +371,10 @@ export class ForceDirectedGraphChart<DATA extends unknown[] = IGraphDataPoint[],
 > {
   static id = ForceDirectedGraphController.id;
 
-  constructor(item: ChartItem, config: Omit<IChartConfiguration<'forceDirectedGraph', DATA, LABEL>, 'type'>) {
+  constructor(item: ChartItem, config: Omit<ChartConfiguration<'forceDirectedGraph', DATA, LABEL>, 'type'>) {
     super(
       item,
-      patchController('forceDirectedGraph', config, ForceDirectedGraphController, [EdgeLine, Point], LinearScale)
+      patchController('forceDirectedGraph', config, ForceDirectedGraphController, [EdgeLine, PointElement], LinearScale)
     );
   }
 }

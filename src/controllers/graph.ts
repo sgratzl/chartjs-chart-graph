@@ -5,19 +5,19 @@ import {
   registry,
   LineController,
   LinearScale,
-  Point,
+  PointElement,
   UpdateMode,
-  ITooltipItem,
-  IChartMeta,
+  TooltipItem,
+  ChartMeta,
   ChartItem,
-  IChartConfiguration,
-  IControllerDatasetOptions,
+  ChartConfiguration,
+  ControllerDatasetOptions,
   ScriptableAndArrayOptions,
-  ILineHoverOptions,
-  IPointPrefixedOptions,
-  IPointPrefixedHoverOptions,
-  ICartesianScaleTypeRegistry,
-  ICoreChartOptions,
+  LineHoverOptions,
+  PointPrefixedOptions,
+  PointPrefixedHoverOptions,
+  CartesianScaleTypeRegistry,
+  CoreChartOptions,
 } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { clipArea, unclipArea } from 'chart.js/helpers';
@@ -26,7 +26,7 @@ import { EdgeLine, IEdgeLineOptions } from '../elements';
 import { interpolatePoints } from './utils';
 import patchController from './patchController';
 
-interface IExtendedChartMeta extends IChartMeta<Point> {
+interface IExtendedChartMeta extends ChartMeta<PointElement> {
   edges: EdgeLine[];
   _parsedEdges: { source: number; target: number; points: { x: number; y: number }[] }[];
 }
@@ -209,7 +209,7 @@ export class GraphController extends ScatterController {
     super.updateElement(edge, index, properties, mode);
   }
 
-  updateElement(point: Point, index: number, properties: any, mode: UpdateMode) {
+  updateElement(point: PointElement, index: number, properties: any, mode: UpdateMode) {
     if (mode === 'reset') {
       // start in center also in x
       const xScale = this._cachedMeta.xScale!;
@@ -485,7 +485,7 @@ export class GraphController extends ScatterController {
       },
       tooltips: {
         callbacks: {
-          label(item: ITooltipItem) {
+          label(item: TooltipItem) {
             return item.chart.data.labels[item.dataIndex];
           },
         },
@@ -521,25 +521,21 @@ export interface IGraphEdgeDataPoint {
 }
 
 export interface IGraphChartControllerDatasetOptions
-  extends IControllerDatasetOptions,
-    ScriptableAndArrayOptions<IPointPrefixedOptions>,
-    ScriptableAndArrayOptions<IPointPrefixedHoverOptions>,
+  extends ControllerDatasetOptions,
+    ScriptableAndArrayOptions<PointPrefixedOptions>,
+    ScriptableAndArrayOptions<PointPrefixedHoverOptions>,
     ScriptableAndArrayOptions<IEdgeLineOptions>,
-    ScriptableAndArrayOptions<ILineHoverOptions> {
+    ScriptableAndArrayOptions<LineHoverOptions> {
   edges: IGraphEdgeDataPoint[];
 }
 
 declare module 'chart.js' {
-  export enum ChartTypeEnum {
-    graph = 'graph',
-  }
-
-  export interface IChartTypeRegistry {
+  export interface ChartTypeRegistry {
     graph: {
-      chartOptions: ICoreChartOptions;
+      chartOptions: CoreChartOptions;
       datasetOptions: IGraphChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint[];
-      scales: keyof ICartesianScaleTypeRegistry;
+      scales: keyof CartesianScaleTypeRegistry;
     };
   }
 }
@@ -551,7 +547,7 @@ export class GraphChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = stri
 > {
   static id = GraphController.id;
 
-  constructor(item: ChartItem, config: Omit<IChartConfiguration<'graph', DATA, LABEL>, 'type'>) {
-    super(item, patchController('graph', config, GraphController, [EdgeLine, Point], LinearScale));
+  constructor(item: ChartItem, config: Omit<ChartConfiguration<'graph', DATA, LABEL>, 'type'>) {
+    super(item, patchController('graph', config, GraphController, [EdgeLine, PointElement], LinearScale));
   }
 }

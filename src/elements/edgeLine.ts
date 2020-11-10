@@ -1,4 +1,4 @@
-import { Line, ILineOptions, Point, IPointProps } from 'chart.js';
+import { LineElement, LineOptions, PointElement, PointProps } from 'chart.js';
 
 function horizontal(from: { x: number }, to: { x: number }, options: { tension: number }) {
   return {
@@ -32,20 +32,20 @@ function radial(
   };
 }
 
-export interface IEdgeLineOptions extends ILineOptions {
+export interface IEdgeLineOptions extends LineOptions {
   directed: boolean;
   arrowHeadSize: number;
   arrowHeadOffset: number;
 }
 
-export interface IEdgeLineProps extends ILineOptions {
+export interface IEdgeLineProps extends LineOptions {
   points: { x: number; y: number }[];
 }
 
-export class EdgeLine extends Line {
+export class EdgeLine extends LineElement {
   declare _orientation: 'vertical' | 'radial' | 'horizontal';
-  declare source: Point<IPointProps & { angle?: number }>;
-  declare target: Point<IPointProps & { angle?: number }>;
+  declare source: PointElement<PointProps & { angle?: number }>;
+  declare target: PointElement<PointProps & { angle?: number }>;
   declare options: IEdgeLineOptions;
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -180,11 +180,11 @@ export class EdgeLine extends Line {
   }
 
   static readonly id = 'edgeLine';
-  static readonly defaults: any = /*#__PURE__*/ Object.assign({}, Line.defaults, {
+  static readonly defaults: any = /*#__PURE__*/ Object.assign({}, LineElement.defaults, {
     tension: 0,
     directed: false,
     arrowHeadSize: 15,
     arrowHeadOffset: 5,
   });
-  static readonly defaultRoutes = Line.defaultRoutes;
+  static readonly defaultRoutes = LineElement.defaultRoutes;
 }
