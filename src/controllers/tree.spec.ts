@@ -24,11 +24,6 @@ describe('dendogram', () => {
           },
         ],
       },
-      options: {
-        legend: {
-          display: false,
-        },
-      },
     }).toMatchImageSnapshot();
   });
   test('vertical', () => {
@@ -48,11 +43,6 @@ describe('dendogram', () => {
           },
         ],
       },
-      options: {
-        legend: {
-          display: false,
-        },
-      },
     }).toMatchImageSnapshot();
   });
   test('radial', () => {
@@ -71,11 +61,6 @@ describe('dendogram', () => {
             data: nodes,
           },
         ],
-      },
-      options: {
-        legend: {
-          display: false,
-        },
       },
     }).toMatchImageSnapshot();
   });
@@ -97,11 +82,6 @@ describe('dendogram', () => {
           },
         ],
       },
-      options: {
-        legend: {
-          display: false,
-        },
-      },
     }).toMatchImageSnapshot();
   });
   test('vertical tree', () => {
@@ -121,11 +101,6 @@ describe('dendogram', () => {
             data: nodes,
           },
         ],
-      },
-      options: {
-        legend: {
-          display: false,
-        },
       },
     }).toMatchImageSnapshot();
   });
@@ -147,11 +122,6 @@ describe('dendogram', () => {
           },
         ],
       },
-      options: {
-        legend: {
-          display: false,
-        },
-      },
     }).toMatchImageSnapshot();
   });
   test('directed', () => {
@@ -168,11 +138,6 @@ describe('dendogram', () => {
             data: nodes,
           },
         ],
-      },
-      options: {
-        legend: {
-          display: false,
-        },
       },
     }).toMatchImageSnapshot();
   });

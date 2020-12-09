@@ -88,9 +88,8 @@ export class GraphController extends ScatterController {
   initialize() {
     const type = this._type;
     const defaultConfig = defaults.get(`controllers.${type}`);
-    console.log('type', type, defaultConfig, (this as any)._config);
     this.edgeElementOptions = defaultConfig.edgeElementOptions;
-    this.edgeElementType = registry.getElement(defaultConfig.edgeElementType);
+    this.edgeElementType = registry.getElement(defaultConfig.edgeElementType as string);
     super.initialize();
     this.enableOptionSharing = true;
     this._scheduleResyncLayout();

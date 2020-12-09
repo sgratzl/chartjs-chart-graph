@@ -28,11 +28,6 @@ describe('dendogram', () => {
           },
         ],
       },
-      options: {
-        legend: {
-          display: false,
-        },
-      },
     }).toMatchImageSnapshot();
   });
 });
