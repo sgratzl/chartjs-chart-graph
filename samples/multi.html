@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
-    <script src="../build/Chart.Graphs.js"></script>
-
+    <script src="https://unpkg.com/chart.js@3.0.0-beta.7/dist/chart.js"></script>
+    <script src="../build/index.umd.js"></script>
     <style>
       body {
         width: 100vw;
@@ -22,7 +21,7 @@
     <div><canvas id="tv"></canvas></div>
     <div><canvas id="tr"></canvas></div>
     <script>
-      const data = `https://raw.githubusercontent.com/sgratzl/chartjs-chart-graph/master/samples/tree.json`;
+      const data = `https://raw.githubusercontent.com/sgratzl/chartjs-chart-graph/main/samples/tree.json`;
 
       function createChart(nodes, id, type, orientation) {
         new Chart(document.getElementById(id).getContext('2d'), {
@@ -42,8 +41,10 @@
             tree: {
               orientation,
             },
-            legend: {
-              display: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
             },
           },
         });
