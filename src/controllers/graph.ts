@@ -18,6 +18,7 @@ import {
   PointPrefixedHoverOptions,
   CartesianScaleTypeRegistry,
   CoreChartOptions,
+  ScriptableContext,
 } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { clipArea, unclipArea } from 'chart.js/helpers';
@@ -116,8 +117,8 @@ export class GraphController extends ScatterController {
       meta._parsed.splice(data.length, meta._parsed.length - data.length);
     }
     this._cachedMeta._sorted = false;
-    iScale.invalidateCaches();
-    vScale.invalidateCaches();
+    (iScale as any)._dataLimitsCached = false;
+    (vScale as any)._dataLimitsCached = false;
 
     this._parseEdges();
   }
@@ -522,10 +523,10 @@ export interface IGraphEdgeDataPoint {
 
 export interface IGraphChartControllerDatasetOptions
   extends ControllerDatasetOptions,
-    ScriptableAndArrayOptions<PointPrefixedOptions>,
-    ScriptableAndArrayOptions<PointPrefixedHoverOptions>,
-    ScriptableAndArrayOptions<IEdgeLineOptions>,
-    ScriptableAndArrayOptions<LineHoverOptions> {
+    ScriptableAndArrayOptions<PointPrefixedOptions, ScriptableContext>,
+    ScriptableAndArrayOptions<PointPrefixedHoverOptions, ScriptableContext>,
+    ScriptableAndArrayOptions<IEdgeLineOptions, ScriptableContext>,
+    ScriptableAndArrayOptions<LineHoverOptions, ScriptableContext> {
   edges: IGraphEdgeDataPoint[];
 }
 
