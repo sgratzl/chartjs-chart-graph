@@ -44,12 +44,15 @@ export interface IEdgeLineProps extends LineOptions {
 
 export class EdgeLine extends LineElement {
   declare _orientation: 'vertical' | 'radial' | 'horizontal';
+
   declare source: PointElement<PointProps & { angle?: number }>;
+
   declare target: PointElement<PointProps & { angle?: number }>;
+
   declare options: IEdgeLineOptions;
 
-  draw(ctx: CanvasRenderingContext2D) {
-    const options = this.options;
+  draw(ctx: CanvasRenderingContext2D): void {
+    const { options } = this;
 
     ctx.save();
 
@@ -180,11 +183,14 @@ export class EdgeLine extends LineElement {
   }
 
   static readonly id = 'edgeLine';
-  static readonly defaults: any = /*#__PURE__*/ Object.assign({}, LineElement.defaults, {
+
+  static readonly defaults: any = /* #__PURE__ */ {
+    ...LineElement.defaults,
     tension: 0,
     directed: false,
     arrowHeadSize: 15,
     arrowHeadOffset: 5,
-  });
+  };
+
   static readonly defaultRoutes = LineElement.defaultRoutes;
 }

@@ -1,1 +1,1 @@
-export * from './edgeLine';
+export * from './EdgeLine';

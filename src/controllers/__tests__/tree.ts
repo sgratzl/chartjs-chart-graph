@@ -1,4 +1,4 @@
-export default [
+const data = [
   { name: '1' },
   { name: '11', parent: 0 },
   { name: '111', parent: 1 },
@@ -23,3 +23,5 @@ export default [
   { name: '13', parent: 0 },
   { name: '131', parent: 21 },
 ];
+
+export default data;

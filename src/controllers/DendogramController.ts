@@ -11,7 +11,7 @@ import {
 import { merge } from 'chart.js/helpers';
 import { cluster, hierarchy, HierarchyNode, tree } from 'd3-hierarchy';
 import { EdgeLine } from '../elements';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './graph';
+import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './GraphController';
 import patchController from './patchController';
 
 export interface ITreeOptions {
@@ -29,19 +29,19 @@ export interface ITreeOptions {
 export class DendogramController extends GraphController {
   declare _config: { tree: ITreeOptions };
 
-  updateEdgeElement(line: EdgeLine, index: number, properties: any, mode: UpdateMode) {
+  updateEdgeElement(line: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
     properties._orientation = this._config.tree.orientation;
     super.updateEdgeElement(line, index, properties, mode);
   }
 
-  updateElement(point: PointElement, index: number, properties: any, mode: UpdateMode) {
+  updateElement(point: PointElement, index: number, properties: any, mode: UpdateMode): void {
     if (index != null) {
       properties.angle = this.getParsed(index).angle;
     }
     super.updateElement(point, index, properties, mode);
   }
 
-  resyncLayout() {
+  resyncLayout(): void {
     const meta = this._cachedMeta as any;
 
     meta.root = hierarchy(this.getTreeRoot(), (d) => this.getTreeChildren(d))
@@ -53,7 +53,7 @@ export class DendogramController extends GraphController {
     super.resyncLayout();
   }
 
-  reLayout(newOptions: Partial<ITreeOptions> = {}) {
+  reLayout(newOptions: Partial<ITreeOptions> = {}): void {
     if (newOptions) {
       Object.assign(this._config.tree, newOptions);
       const ds = this.getDataset() as any;
@@ -66,7 +66,7 @@ export class DendogramController extends GraphController {
     this.doLayout((this._cachedMeta as any).root);
   }
 
-  doLayout(root: HierarchyNode<{ x: number; y: number; angle?: number }>) {
+  doLayout(root: HierarchyNode<{ x: number; y: number; angle?: number }>): void {
     const options = this._config.tree;
 
     const layout = options.mode === 'tree' ? tree() : cluster();
@@ -99,7 +99,8 @@ export class DendogramController extends GraphController {
   }
 
   static readonly id: string = 'dendogram';
-  static readonly defaults: any = /*#__PURE__*/ merge({}, [
+
+  static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
     {
       datasets: {
@@ -158,7 +159,8 @@ export class DendogramChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = 
 
 export class TreeController extends DendogramController {
   static readonly id = 'tree';
-  static readonly defaults: any = /*#__PURE__*/ merge({}, [
+
+  static readonly defaults: any = /* #__PURE__ */ merge({}, [
     DendogramController.defaults,
     {
       datasets: {

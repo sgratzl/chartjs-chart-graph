@@ -16,11 +16,11 @@ function interpolatorPoint(fromArray: any, i: number, to: { x: number; y: number
   return { x, y, angle };
 }
 
-export function interpolatePoints(
+export default function interpolatePoints(
   from: { x: number; y: number; angle: number }[],
   to: { x: number; y: number; angle: number }[],
   factor: number
-) {
+): { x: number; y: number; angle?: number }[] {
   if (Array.isArray(from) && Array.isArray(to) && to.length > 0) {
     return to.map((t, i) => interpolatorPoint(from, i, t, factor));
   }

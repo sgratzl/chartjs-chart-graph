@@ -23,7 +23,7 @@ import {
   SimulationNodeDatum,
 } from 'd3-force';
 import { EdgeLine } from '../elements';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './graph';
+import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './GraphController';
 import patchController from './patchController';
 
 export interface IForceDirectedControllerOptions {
@@ -142,6 +142,7 @@ export interface IRadialForce {
 
 export class ForceDirectedGraphController extends GraphController {
   declare _config: IForceDirectedControllerOptions;
+
   private readonly _simulation: Simulation<SimulationNodeDatum, undefined>;
 
   constructor(chart: Chart, datasetIndex: number) {
@@ -242,7 +243,7 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation.stop();
 
     const nodes = this._cachedMeta._parsed.map((node, i) => {
-      const simNode = Object.assign({}, node);
+      const simNode = { ...node };
       simNode.index = i;
       node._sim = simNode;
       if (!node.reset) {
@@ -265,7 +266,7 @@ export class ForceDirectedGraphController extends GraphController {
     const meta = this._cachedMeta;
 
     const nodes = meta._parsed.map((node, i) => {
-      const simNode = Object.assign({}, node);
+      const simNode = { ...node };
       simNode.index = i;
       node._sim = simNode;
       if (simNode.x === null) {
@@ -289,7 +290,7 @@ export class ForceDirectedGraphController extends GraphController {
     if (link) {
       // console.assert(ds.edges.length === meta.edges.length);
       // work on copy to avoid change
-      link.links((meta._parsedEdges || []).map((link) => Object.assign({}, link)));
+      link.links((meta._parsedEdges || []).map((link) => ({ ...link })));
     }
 
     if (this._config.simulation.initialIterations > 0) {
@@ -316,7 +317,8 @@ export class ForceDirectedGraphController extends GraphController {
   }
 
   static readonly id = 'forceDirectedGraph';
-  static readonly defaults: any = /*#__PURE__*/ merge({}, [
+
+  static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
     {
       animation: false,

@@ -1,4 +1,4 @@
-export default {
+const data = {
   nodes: [
     { id: 'Myriel', group: 1 },
     { id: 'Napoleon', group: 1 },
@@ -335,3 +335,5 @@ export default {
     { source: 'Mme.Hucheloup', target: 'Enjolras', value: 1 },
   ],
 };
+
+export default data;

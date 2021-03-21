@@ -1,3 +1,3 @@
-export * from './graph';
-export * from './forceDirected';
-export * from './tree';
+export * from './GraphController';
+export * from './ForceDirectedGraphController';
+export * from './TreeController';
