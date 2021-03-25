@@ -9,7 +9,7 @@ import {
 } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { EdgeLine } from '../elements';
-import { DendogramController } from './DendogramController';
+import { DendogramController, IDendogramChartControllerDatasetOptions } from './DendogramController';
 import { IGraphDataPoint } from './GraphController';
 import patchController from './patchController';
 
@@ -31,9 +31,10 @@ export class TreeController extends DendogramController {
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     tree: {
-      chartOptions: CoreChartOptions;
+      chartOptions: CoreChartOptions<'tree'>;
       datasetOptions: IDendogramChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint[];
+      defaultDataPoint: IGraphDataPoint;
+      parsedDataType: { x: number; y: number };
       scales: keyof CartesianScaleTypeRegistry;
     };
   }

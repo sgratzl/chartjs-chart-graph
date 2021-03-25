@@ -23,7 +23,7 @@ import {
 import { merge, clipArea, unclipArea, listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers';
 
 import { EdgeLine, IEdgeLineOptions } from '../elements';
-import { interpolatePoints } from './interpolatePoints';
+import interpolatePoints from './interpolatePoints';
 import patchController from './patchController';
 
 interface IExtendedChartMeta extends ChartMeta<PointElement> {
@@ -96,7 +96,7 @@ export class GraphController extends ScatterController {
     },
   };
 
-  initialize() {
+  initialize(): void {
     const type = this._type;
     const defaultConfig = defaults.get(`controllers.${type}`);
     this.edgeElementOptions = defaultConfig.edgeElementOptions;
@@ -109,12 +109,11 @@ export class GraphController extends ScatterController {
   parse(start: number, count: number): void {
     const meta = this._cachedMeta;
     const data = this._data;
-    const iScale = meta.iScale!;
-    const vScale = meta.vScale!;
-    for (let i = 0; i < count; i++) {
+    const { iScale, vScale } = meta;
+    for (let i = 0; i < count; i += 1) {
       const index = i + start;
       const d = data[index];
-      const v = meta._parsed[index] || {};
+      const v = (meta._parsed[index] || {}) as { x: number; y: number };
       if (d && typeof d.x === 'number') {
         v.x = d.x;
       }
@@ -173,20 +172,19 @@ export class GraphController extends ScatterController {
     const reset = mode === 'reset';
 
     const firstOpts = this.resolveDataElementOptions(start, mode);
-    const sharedOptions = this.getSharedOptions(firstOpts);
+    const sharedOptions = this.getSharedOptions(firstOpts) ?? {};
     const includeOptions = this.includeOptions(mode, sharedOptions);
 
-    const xScale = meta.xScale!;
-    const yScale = meta.yScale!;
+    const { xScale, yScale } = meta;
 
     const base = {
-      x: xScale.getBasePixel(),
-      y: yScale.getBasePixel(),
+      x: xScale?.getBasePixel() ?? 0,
+      y: yScale?.getBasePixel() ?? 0,
     };
 
     function copyPoint(point: { x: number; y: number; angle?: number }) {
-      const x = reset ? base.x : xScale.getPixelForValue(point.x, 0);
-      const y = reset ? base.y : yScale.getPixelForValue(point.y, 0);
+      const x = reset ? base.x : xScale?.getPixelForValue(point.x, 0) ?? 0;
+      const y = reset ? base.y : yScale?.getPixelForValue(point.y, 0) ?? 0;
       return {
         x,
         y,
@@ -194,7 +192,7 @@ export class GraphController extends ScatterController {
       };
     }
 
-    for (let i = 0; i < edges.length; i++) {
+    for (let i = 0; i < edges.length; i += 1) {
       const edge = edges[i];
       const index = start + i;
       const parsed = data[index];
@@ -216,6 +214,7 @@ export class GraphController extends ScatterController {
     Object.assign(this, bak);
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateEdgeElement(edge: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
     super.updateElement(edge, index, properties, mode);
   }
@@ -348,7 +347,10 @@ export class GraphController extends ScatterController {
       });
   }
 
-  _parseDefinedEdge(edge: { source: number; target: number }) {
+  _parseDefinedEdge(edge: {
+    source: number;
+    target: number;
+  }): { source: number; target: number; points: { x: number; y: number }[] } {
     const ds = this.getDataset();
     const { data } = ds;
     return {
@@ -358,12 +360,14 @@ export class GraphController extends ScatterController {
     };
   }
 
-  _parseEdges() {
+  _parseEdges(): { source: number; target: number; points: { x: number; y: number }[] }[] {
     const ds = this.getDataset() as any;
     const data = ds.data as { parent?: number }[];
     const meta = this._cachedMeta;
     if (ds.edges) {
-      return (meta._parsedEdges = ds.edges.map((edge: any) => this._parseDefinedEdge(edge)));
+      const edges = ds.edges.map((edge: any) => this._parseDefinedEdge(edge));
+      meta._parsedEdges = edges;
+      return edges;
     }
 
     const edges: { source: number; target: number; points: { x: number; y: number }[] }[] = [];
@@ -383,24 +387,25 @@ export class GraphController extends ScatterController {
     return edges;
   }
 
-  addElements() {
+  addElements(): void {
     super.addElements();
 
     const meta = this._cachedMeta;
     const edges = this._parseEdges();
-    const metaData = (meta.edges = new Array(edges.length));
+    const metaData = new Array(edges.length);
+    meta.edges = metaData;
 
-    for (let i = 0; i < edges.length; ++i) {
+    for (let i = 0; i < edges.length; i += 1) {
       metaData[i] = new this.edgeElementType();
     }
   }
 
-  _resyncEdgeElements() {
+  _resyncEdgeElements(): void {
     const meta = this._cachedMeta;
     const edges = this._parseEdges();
     const metaData = meta.edges || (meta.edges = []);
 
-    for (let i = 0; i < edges.length; ++i) {
+    for (let i = 0; i < edges.length; i += 1) {
       metaData[i] = metaData[i] || new this.edgeElementType();
     }
     if (edges.length < metaData.length) {
@@ -408,23 +413,23 @@ export class GraphController extends ScatterController {
     }
   }
 
-  _insertElements(start: number, count: number) {
+  _insertElements(start: number, count: number): void {
     (ScatterController.prototype as any)._insertElements.call(this, start, count);
     if (count > 0) {
       this._resyncEdgeElements();
     }
   }
 
-  _removeElements(start: number, count: number) {
+  _removeElements(start: number, count: number): void {
     (ScatterController.prototype as any)._removeElements.call(this, start, count);
     if (count > 0) {
       this._resyncEdgeElements();
     }
   }
 
-  _insertEdgeElements(start: number, count: number) {
+  _insertEdgeElements(start: number, count: number): void {
     const elements = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < count; i += 1) {
       elements.push(new this.edgeElementType());
     }
     this._cachedMeta.edges.splice(start, 0, ...elements);
@@ -477,6 +482,13 @@ export class GraphController extends ScatterController {
       layout: {
         padding: 10,
       },
+      edgeElementType: EdgeLine.id,
+    },
+  ]);
+
+  static readonly overrides: any = /* #__PURE__ */ merge({}, [
+    (ScatterController as any).overrides,
+    {
       scales: {
         x: {
           display: false,
@@ -500,26 +512,11 @@ export class GraphController extends ScatterController {
       plugins: {
         tooltips: {
           callbacks: {
-            label(item: TooltipItem) {
-              return item.chart.data.labels[item.dataIndex];
+            label(item: TooltipItem<'graph'>) {
+              return item.chart.data?.labels?.[item.dataIndex];
             },
           },
         },
-      },
-      edgeElementType: EdgeLine.id,
-      edgeElementOptions: {
-        tension: 'lineTension',
-        stepped: 'lineStepped',
-        directed: 'directed',
-        arrowHeadSize: 'arrowHeadSize',
-        arrowHeadOffset: 'pointRadius',
-        ...(() => {
-          const options: any = {};
-          LineController.defaults.datasetElementOptions.forEach((attr: any) => {
-            options[attr] = `line${attr[0].toUpperCase()}${attr.slice(1)}`;
-          });
-          return options;
-        })(),
       },
     },
   ]);
@@ -536,19 +533,20 @@ export interface IGraphEdgeDataPoint {
 
 export interface IGraphChartControllerDatasetOptions
   extends ControllerDatasetOptions,
-    ScriptableAndArrayOptions<PointPrefixedOptions, ScriptableContext>,
-    ScriptableAndArrayOptions<PointPrefixedHoverOptions, ScriptableContext>,
-    ScriptableAndArrayOptions<IEdgeLineOptions, ScriptableContext>,
-    ScriptableAndArrayOptions<LineHoverOptions, ScriptableContext> {
+    ScriptableAndArrayOptions<PointPrefixedOptions, ScriptableContext<'graph'>>,
+    ScriptableAndArrayOptions<PointPrefixedHoverOptions, ScriptableContext<'graph'>>,
+    ScriptableAndArrayOptions<IEdgeLineOptions, ScriptableContext<'graph'>>,
+    ScriptableAndArrayOptions<LineHoverOptions, ScriptableContext<'graph'>> {
   edges: IGraphEdgeDataPoint[];
 }
 
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     graph: {
-      chartOptions: CoreChartOptions;
+      chartOptions: CoreChartOptions<'graph'>;
       datasetOptions: IGraphChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint[];
+      defaultDataPoint: IGraphDataPoint;
+      parsedDataType: { x: number; y: number };
       scales: keyof CartesianScaleTypeRegistry;
     };
   }
