@@ -23,8 +23,19 @@ import {
   SimulationNodeDatum,
 } from 'd3-force';
 import { EdgeLine } from '../elements';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './GraphController';
+import {
+  GraphController,
+  IGraphChartControllerDatasetOptions,
+  IGraphDataPoint,
+  ITreeEdge,
+  ITreeNode,
+} from './GraphController';
 import patchController from './patchController';
+
+export interface ITreeSimNode extends ITreeNode {
+  _sim: { x?: number; y?: number; vx?: number; vy?: number; index: number };
+  reset?: boolean;
+}
 
 export interface IForceDirectedControllerOptions {
   simulation: {
@@ -184,13 +195,13 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation.stop();
   }
 
-  _copyPosition() {
-    const nodes = this._cachedMeta._parsed;
+  _copyPosition(): void {
+    const nodes = this._cachedMeta._parsed as ITreeSimNode[];
 
     const minmax = nodes.reduce(
       (acc, v) => {
         const s = v._sim;
-        if (!s) {
+        if (!s || s.x == null || s.y == null) {
           return acc;
         }
         if (s.x < acc.minX) {
@@ -220,31 +231,33 @@ export class ForceDirectedGraphController extends GraphController {
 
     nodes.forEach((node) => {
       if (node._sim) {
-        node.x = rescaleX(node._sim.x);
-        node.y = rescaleY(node._sim.y);
+        // eslint-disable-next-line no-param-reassign
+        node.x = rescaleX(node._sim.x ?? 0);
+        // eslint-disable-next-line no-param-reassign
+        node.y = rescaleY(node._sim.y ?? 0);
       }
     });
 
-    const xScale = this._cachedMeta.xScale!;
-    const yScale = this._cachedMeta.yScale!;
+    const { xScale, yScale } = this._cachedMeta;
     const elems = this._cachedMeta.data;
     elems.forEach((elem, i) => {
       const parsed = nodes[i];
       Object.assign(elem, {
-        x: xScale.getPixelForValue(parsed.x, i),
-        y: yScale.getPixelForValue(parsed.y, i),
+        x: xScale?.getPixelForValue(parsed.x, i) ?? 0,
+        y: yScale?.getPixelForValue(parsed.y, i) ?? 0,
         skip: false,
       });
     });
   }
 
-  resetLayout() {
+  resetLayout(): void {
     super.resetLayout();
     this._simulation.stop();
 
-    const nodes = this._cachedMeta._parsed.map((node, i) => {
-      const simNode = { ...node };
+    const nodes = (this._cachedMeta._parsed as ITreeSimNode[]).map((node, i) => {
+      const simNode: ITreeSimNode['_sim'] = { ...node };
       simNode.index = i;
+      // eslint-disable-next-line no-param-reassign
       node._sim = simNode;
       if (!node.reset) {
         return simNode;
@@ -259,15 +272,16 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation.alpha(1).restart();
   }
 
-  resyncLayout() {
+  resyncLayout(): void {
     super.resyncLayout();
     this._simulation.stop();
 
     const meta = this._cachedMeta;
 
-    const nodes = meta._parsed.map((node, i) => {
-      const simNode = { ...node };
+    const nodes = (meta._parsed as ITreeSimNode[]).map((node, i) => {
+      const simNode: ITreeSimNode['_sim'] = { ...node };
       simNode.index = i;
+      // eslint-disable-next-line no-param-reassign
       node._sim = simNode;
       if (simNode.x === null) {
         delete simNode.x;
@@ -276,6 +290,7 @@ export class ForceDirectedGraphController extends GraphController {
         delete simNode.y;
       }
       if (simNode.x == null && simNode.y == null) {
+        // eslint-disable-next-line no-param-reassign
         node.reset = true;
       }
       return simNode;
@@ -290,7 +305,7 @@ export class ForceDirectedGraphController extends GraphController {
     if (link) {
       // console.assert(ds.edges.length === meta.edges.length);
       // work on copy to avoid change
-      link.links((meta._parsedEdges || []).map((link) => ({ ...link })));
+      link.links(((meta._parsedEdges || []) as ITreeEdge[]).map((l) => ({ ...l })));
     }
 
     if (this._config.simulation.initialIterations > 0) {
@@ -307,11 +322,11 @@ export class ForceDirectedGraphController extends GraphController {
     }
   }
 
-  reLayout() {
+  reLayout(): void {
     this._simulation.alpha(1).restart();
   }
 
-  stopLayout() {
+  stopLayout(): void {
     super.stopLayout();
     this._simulation.stop();
   }
@@ -337,6 +352,12 @@ export class ForceDirectedGraphController extends GraphController {
           },
         },
       },
+    },
+  ]);
+
+  static readonly overrides: any = /* #__PURE__ */ merge({}, [
+    GraphController.overrides,
+    {
       scales: {
         x: {
           min: -1,
@@ -358,9 +379,10 @@ export interface IForceDirectedGraphChartControllerDatasetOptions
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     forceDirectedGraph: {
-      chartOptions: CoreChartOptions;
+      chartOptions: CoreChartOptions<'forceDirectedGraph'>;
       datasetOptions: IForceDirectedGraphChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint[];
+      defaultDataPoint: IGraphDataPoint;
+      parsedDataType: ITreeSimNode;
       scales: keyof CartesianScaleTypeRegistry;
     };
   }

@@ -11,7 +11,7 @@ import {
 import { merge } from 'chart.js/helpers';
 import { cluster, hierarchy, HierarchyNode, tree } from 'd3-hierarchy';
 import { EdgeLine } from '../elements';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint } from './GraphController';
+import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
 export interface ITreeOptions {
@@ -29,14 +29,18 @@ export interface ITreeOptions {
 export class DendogramController extends GraphController {
   declare _config: { tree: ITreeOptions };
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateEdgeElement(line: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
+    // eslint-disable-next-line no-param-reassign
     properties._orientation = this._config.tree.orientation;
     super.updateEdgeElement(line, index, properties, mode);
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateElement(point: PointElement, index: number, properties: any, mode: UpdateMode): void {
     if (index != null) {
-      properties.angle = this.getParsed(index).angle;
+      // eslint-disable-next-line no-param-reassign
+      properties.angle = (this.getParsed(index) as { angle: number }).angle;
     }
     super.updateElement(point, index, properties, mode);
   }
@@ -79,16 +83,23 @@ export class DendogramController extends GraphController {
 
     const orientation = {
       horizontal: (d: { x: number; y: number; data: { x: number; y: number } }) => {
+        // eslint-disable-next-line no-param-reassign
         d.data.x = d.y - 1;
+        // eslint-disable-next-line no-param-reassign
         d.data.y = -d.x + 1;
       },
       vertical: (d: { x: number; y: number; data: { x: number; y: number } }) => {
+        // eslint-disable-next-line no-param-reassign
         d.data.x = d.x - 1;
+        // eslint-disable-next-line no-param-reassign
         d.data.y = -d.y + 1;
       },
       radial: (d: { x: number; y: number; data: { x: number; y: number; angle?: number } }) => {
+        // eslint-disable-next-line no-param-reassign
         d.data.x = Math.cos(d.x) * d.y;
+        // eslint-disable-next-line no-param-reassign
         d.data.y = Math.sin(d.x) * d.y;
+        // eslint-disable-next-line no-param-reassign
         d.data.angle = d.y === 0 ? Number.NaN : d.x;
       },
     };
@@ -116,6 +127,12 @@ export class DendogramController extends GraphController {
         },
         tension: 0.4,
       },
+    },
+  ]);
+
+  static readonly overrides: any = /* #__PURE__ */ merge({}, [
+    GraphController.overrides,
+    {
       scales: {
         x: {
           min: -1,
@@ -140,7 +157,7 @@ declare module 'chart.js' {
       chartOptions: CoreChartOptions<'dendogram'>;
       datasetOptions: IDendogramChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint[];
-      parsedDataType: { x: number; y: number };
+      parsedDataType: ITreeNode & { angle?: number };
       scales: keyof CartesianScaleTypeRegistry;
     };
   }

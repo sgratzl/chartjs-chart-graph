@@ -3,7 +3,6 @@ import {
   Chart,
   ScatterController,
   registry,
-  LineController,
   LinearScale,
   PointElement,
   UpdateMode,
@@ -28,7 +27,19 @@ import patchController from './patchController';
 
 interface IExtendedChartMeta extends ChartMeta<PointElement> {
   edges: EdgeLine[];
-  _parsedEdges: { source: number; target: number; points: { x: number; y: number }[] }[];
+  _parsedEdges: ITreeEdge[];
+}
+
+export interface ITreeNode extends IGraphDataPoint {
+  x: number;
+  y: number;
+  index: number;
+}
+
+export interface ITreeEdge {
+  source: number;
+  target: number;
+  points?: { x: number; y: number }[];
 }
 
 export class GraphController extends ScatterController {
@@ -200,7 +211,7 @@ export class GraphController extends ScatterController {
       const properties: any = {
         source: nodes[parsed.source],
         target: nodes[parsed.target],
-        points: Array.isArray(parsed.points) ? parsed.points.map(copyPoint) : [],
+        points: Array.isArray(parsed.points) ? parsed.points.map((p) => copyPoint(p)) : [],
       };
       properties.points._source = nodes[parsed.source];
       if (includeOptions) {
@@ -219,11 +230,13 @@ export class GraphController extends ScatterController {
     super.updateElement(edge, index, properties, mode);
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateElement(point: PointElement, index: number, properties: any, mode: UpdateMode): void {
     if (mode === 'reset') {
       // start in center also in x
-      const xScale = this._cachedMeta.xScale!;
-      properties.x = xScale.getBasePixel();
+      const { xScale } = this._cachedMeta;
+      // eslint-disable-next-line no-param-reassign
+      properties.x = xScale?.getBasePixel() ?? 0;
     }
     super.updateElement(point, index, properties, mode);
   }
@@ -235,7 +248,7 @@ export class GraphController extends ScatterController {
     }
     if (typeof ref === 'string') {
       // label
-      const { labels } = this.chart.data;
+      const labels = this.chart.data.labels as string[];
       return labels.indexOf(ref);
     }
     const nIndex = nodes.indexOf(ref);
@@ -244,16 +257,13 @@ export class GraphController extends ScatterController {
       return nIndex;
     }
 
-    if (ref && typeof ref.index === 'number') {
-      return ref.index;
-    }
-
-    const { data } = this.getDataset();
+    const data = this.getDataset().data as any[];
     const index = data.indexOf(ref);
     if (index >= 0) {
       return index;
     }
 
+    // eslint-disable-next-line no-console
     console.warn('cannot resolve edge ref', ref);
     return -1;
   }
@@ -329,28 +339,25 @@ export class GraphController extends ScatterController {
     return Array.from(nodeIndices)[0];
   }
 
-  getTreeRoot() {
+  getTreeRoot(): ITreeNode {
     const index = this.getTreeRootIndex();
-    const p = this.getParsed(index);
+    const p = this.getParsed(index) as ITreeNode;
     p.index = index;
     return p;
   }
 
-  getTreeChildren(node: { index: number }) {
+  getTreeChildren(node: { index: number }): ITreeNode[] {
     const edges = this._cachedMeta._parsedEdges;
     return edges
       .filter((d) => d.source === node.index)
       .map((d) => {
-        const p = this.getParsed(d.target);
+        const p = this.getParsed(d.target) as ITreeNode;
         p.index = d.target;
         return p;
       });
   }
 
-  _parseDefinedEdge(edge: {
-    source: number;
-    target: number;
-  }): { source: number; target: number; points: { x: number; y: number }[] } {
+  _parseDefinedEdge(edge: { source: number; target: number }): ITreeEdge {
     const ds = this.getDataset();
     const { data } = ds;
     return {
@@ -360,7 +367,7 @@ export class GraphController extends ScatterController {
     };
   }
 
-  _parseEdges(): { source: number; target: number; points: { x: number; y: number }[] }[] {
+  _parseEdges(): ITreeEdge[] {
     const ds = this.getDataset() as any;
     const data = ds.data as { parent?: number }[];
     const meta = this._cachedMeta;
@@ -370,7 +377,7 @@ export class GraphController extends ScatterController {
       return edges;
     }
 
-    const edges: { source: number; target: number; points: { x: number; y: number }[] }[] = [];
+    const edges: ITreeEdge[] = [];
     meta._parsedEdges = edges as any;
     // try to derive edges via parent links
     data.forEach((node, i) => {
@@ -396,6 +403,7 @@ export class GraphController extends ScatterController {
     meta.edges = metaData;
 
     for (let i = 0; i < edges.length; i += 1) {
+      // eslint-disable-next-line new-cap
       metaData[i] = new this.edgeElementType();
     }
   }
@@ -406,6 +414,7 @@ export class GraphController extends ScatterController {
     const metaData = meta.edges || (meta.edges = []);
 
     for (let i = 0; i < edges.length; i += 1) {
+      // eslint-disable-next-line new-cap
       metaData[i] = metaData[i] || new this.edgeElementType();
     }
     if (edges.length < metaData.length) {
@@ -430,6 +439,7 @@ export class GraphController extends ScatterController {
   _insertEdgeElements(start: number, count: number): void {
     const elements = [];
     for (let i = 0; i < count; i += 1) {
+      // eslint-disable-next-line new-cap
       elements.push(new this.edgeElementType());
     }
     this._cachedMeta.edges.splice(start, 0, ...elements);
@@ -546,7 +556,7 @@ declare module 'chart.js' {
       chartOptions: CoreChartOptions<'graph'>;
       datasetOptions: IGraphChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint;
-      parsedDataType: { x: number; y: number };
+      parsedDataType: ITreeNode;
       scales: keyof CartesianScaleTypeRegistry;
     };
   }

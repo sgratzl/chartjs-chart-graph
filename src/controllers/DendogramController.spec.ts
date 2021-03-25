@@ -1,6 +1,6 @@
 import { registry, PointElement, LinearScale } from 'chart.js';
 import createChart from '../__tests__/createChart';
-import { DendogramController } from './TreeController';
+import { DendogramController } from './DendogramController';
 import nodes from './__tests__/tree';
 import { EdgeLine } from '../elements';
 
