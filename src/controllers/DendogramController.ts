@@ -27,12 +27,12 @@ export interface ITreeOptions {
 }
 
 export class DendogramController extends GraphController {
-  declare _config: { tree: ITreeOptions };
+  declare options: { tree: ITreeOptions };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateEdgeElement(line: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
     // eslint-disable-next-line no-param-reassign
-    properties._orientation = this._config.tree.orientation;
+    properties._orientation = this.options.tree.orientation;
     super.updateEdgeElement(line, index, properties, mode);
   }
 
@@ -50,7 +50,7 @@ export class DendogramController extends GraphController {
 
     meta.root = hierarchy(this.getTreeRoot(), (d) => this.getTreeChildren(d))
       .count()
-      .sort((a, b) => b.height - a.height || b.data.index - a.data.index);
+      .sort((a, b) => b.height - a.height || (b.data.index ?? 0) - (a.data.index ?? 0));
 
     this.doLayout(meta.root);
 
@@ -59,7 +59,7 @@ export class DendogramController extends GraphController {
 
   reLayout(newOptions: Partial<ITreeOptions> = {}): void {
     if (newOptions) {
-      Object.assign(this._config.tree, newOptions);
+      Object.assign(this.options.tree, newOptions);
       const ds = this.getDataset() as any;
       if (ds.tree) {
         Object.assign(ds.tree, newOptions);
@@ -71,7 +71,7 @@ export class DendogramController extends GraphController {
   }
 
   doLayout(root: HierarchyNode<{ x: number; y: number; angle?: number }>): void {
-    const options = this._config.tree;
+    const options = this.options.tree;
 
     const layout = options.mode === 'tree' ? tree() : cluster();
 
@@ -114,19 +114,17 @@ export class DendogramController extends GraphController {
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
     {
-      datasets: {
-        tree: {
-          mode: 'dendogram', // dendogram, tree
-          orientation: 'horizontal', // vertical, horizontal, radial
-        },
-        animation: {
-          numbers: {
-            type: 'number',
-            properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],
-          },
-        },
-        tension: 0.4,
+      tree: {
+        mode: 'dendogram', // dendogram, tree
+        orientation: 'horizontal', // vertical, horizontal, radial
       },
+      animations: {
+        numbers: {
+          type: 'number',
+          properties: ['x', 'y', 'angle', 'radius', 'rotation', 'borderWidth'],
+        },
+      },
+      tension: 0.4,
     },
   ]);
 

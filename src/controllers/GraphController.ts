@@ -33,7 +33,7 @@ interface IExtendedChartMeta extends ChartMeta<PointElement> {
 export interface ITreeNode extends IGraphDataPoint {
   x: number;
   y: number;
-  index: number;
+  index?: number;
 }
 
 export interface ITreeEdge {
@@ -61,11 +61,7 @@ export class GraphController extends ScatterController {
 
   declare dataElementType: any;
 
-  declare dataElementOptions: any;
-
   private _scheduleResyncLayoutId = -1;
-
-  edgeElementOptions: any;
 
   edgeElementType: any;
 
@@ -109,8 +105,7 @@ export class GraphController extends ScatterController {
 
   initialize(): void {
     const type = this._type;
-    const defaultConfig = defaults.get(`controllers.${type}`);
-    this.edgeElementOptions = defaultConfig.edgeElementOptions;
+    const defaultConfig = defaults.datasets[type as 'graph'] as any;
     this.edgeElementType = registry.getElement(defaultConfig.edgeElementType as string);
     super.initialize();
     this.enableOptionSharing = true;
@@ -169,12 +164,10 @@ export class GraphController extends ScatterController {
     const bak = {
       _cachedDataOpts: this._cachedDataOpts,
       dataElementType: this.dataElementType,
-      dataElementOptions: this.dataElementOptions,
       _sharedOptions: this._sharedOptions,
     };
     this._cachedDataOpts = {};
     this.dataElementType = this.edgeElementType;
-    this.dataElementOptions = this.edgeElementOptions;
     this._sharedOptions = this._edgeSharedOptions;
     const meta = this._cachedMeta;
     const nodes = meta.data;
@@ -346,10 +339,11 @@ export class GraphController extends ScatterController {
     return p;
   }
 
-  getTreeChildren(node: { index: number }): ITreeNode[] {
+  getTreeChildren(node: { index?: number }): ITreeNode[] {
     const edges = this._cachedMeta._parsedEdges;
+    const index = node.index ?? 0;
     return edges
-      .filter((d) => d.source === node.index)
+      .filter((d) => d.source === index)
       .map((d) => {
         const p = this.getParsed(d.target) as ITreeNode;
         p.index = d.target;
@@ -489,9 +483,6 @@ export class GraphController extends ScatterController {
           properties: ['points'],
         },
       },
-      layout: {
-        padding: 10,
-      },
       edgeElementType: EdgeLine.id,
     },
   ]);
@@ -499,6 +490,9 @@ export class GraphController extends ScatterController {
   static readonly overrides: any = /* #__PURE__ */ merge({}, [
     (ScatterController as any).overrides,
     {
+      layout: {
+        padding: 10,
+      },
       scales: {
         x: {
           display: false,

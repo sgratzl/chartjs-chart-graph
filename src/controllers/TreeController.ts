@@ -26,6 +26,8 @@ export class TreeController extends DendogramController {
       },
     },
   ]);
+
+  static readonly overrides: any = /* #__PURE__ */ DendogramController.overrides;
 }
 
 declare module 'chart.js' {

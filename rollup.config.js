@@ -23,10 +23,11 @@ const banner = `/**
  */
 const watchOnly = ['umd'];
 
-const isDependency = (v) => Object.keys(pkg.dependencies || {}).some((e) => e === v || v.startsWith(e + '/'));
-const isPeerDependency = (v) => Object.keys(pkg.peerDependencies || {}).some((e) => e === v || v.startsWith(e + '/'));
+const isDependency = (v) => Object.keys(pkg.dependencies || {}).some((e) => e === v || v.startsWith(`${e}/`));
+const isPeerDependency = (v) => Object.keys(pkg.peerDependencies || {}).some((e) => e === v || v.startsWith(`${e}/`));
 
-export default (options) => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default function Config(options) {
   const buildFormat = (format) => {
     return !options.watch || watchOnly.includes(format);
   };
@@ -35,7 +36,7 @@ export default (options) => {
     banner,
     globals: {
       'chart.js': 'Chart',
-      'chart.js/helpers': 'Chart.helpers'
+      'chart.js/helpers': 'Chart.helpers',
     },
   };
 
@@ -52,7 +53,7 @@ export default (options) => {
           // eslint-disable-next-line no-undef
           'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) || 'production',
           __VERSION__: JSON.stringify(pkg.version),
-        }
+        },
       }),
       cleanup({
         comments: ['some', 'ts', 'ts3s'],
@@ -112,4 +113,4 @@ export default (options) => {
       ],
     },
   ].filter(Boolean);
-};
+}

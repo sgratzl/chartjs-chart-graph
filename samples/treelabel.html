@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://unpkg.com/chart.js@3.0.0-rc.3/dist/chart.js"></script>
-    <!-- <script src="https://unpkg.com/chartjs-plugin-datalabels"></script>
-    <script src="https://unpkg.com/chartjs-plugin-dragdata"></script> -->
+    <script src="https://unpkg.com/chart.js@3.0.0-rc.5/dist/chart.js"></script>
+    <script src="https://unpkg.com/chartjs-plugin-datalabels@next"></script>
+    <!-- <script src="https://unpkg.com/chartjs-plugin-dragdata@next"></script> -->
     <script src="../build/index.umd.js"></script>
   </head>
 
@@ -21,6 +21,7 @@
       </select>
     </div>
     <script>
+      Chart.registry.add(ChartDataLabels);
       fetch('./tree.json')
         .then((r) => r.json())
         .then((nodes) => {
@@ -37,8 +38,8 @@
               ],
             },
             options: {
-              dragData: true,
-              dragX: true,
+              // dragData: true,
+              // dragX: true,
               layout: {
                 padding: {
                   top: 5,
@@ -48,14 +49,14 @@
                 },
               },
               plugins: {
-                // datalabels: {
-                //   align: 'right',
-                //   offset: 6,
-                //   backgroundColor: 'white',
-                //   formatter: (v) => {
-                //     return v.name;
-                //   },
-                // },
+                datalabels: {
+                  align: 'right',
+                  offset: 6,
+                  backgroundColor: 'white',
+                  formatter: (v) => {
+                    return v.name;
+                  },
+                },
               },
               legend: {
                 display: false,

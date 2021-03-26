@@ -33,7 +33,7 @@ import {
 import patchController from './patchController';
 
 export interface ITreeSimNode extends ITreeNode {
-  _sim: { x?: number; y?: number; vx?: number; vy?: number; index: number };
+  _sim: { x?: number; y?: number; vx?: number; vy?: number; index?: number };
   reset?: boolean;
 }
 
@@ -152,7 +152,7 @@ export interface IRadialForce {
 }
 
 export class ForceDirectedGraphController extends GraphController {
-  declare _config: IForceDirectedControllerOptions;
+  declare options: IForceDirectedControllerOptions;
 
   private readonly _simulation: Simulation<SimulationNodeDatum, undefined>;
 
@@ -167,7 +167,7 @@ export class ForceDirectedGraphController extends GraphController {
         this._copyPosition();
         this.chart.render();
       });
-    const sim = this._config.simulation;
+    const sim = this.options.simulation;
 
     const fs = {
       center: forceCenter,
@@ -308,16 +308,16 @@ export class ForceDirectedGraphController extends GraphController {
       link.links(((meta._parsedEdges || []) as ITreeEdge[]).map((l) => ({ ...l })));
     }
 
-    if (this._config.simulation.initialIterations > 0) {
+    if (this.options.simulation.initialIterations > 0) {
       this._simulation.alpha(1);
-      this._simulation.tick(this._config.simulation.initialIterations);
+      this._simulation.tick(this.options.simulation.initialIterations);
       this._copyPosition();
-      if (this._config.simulation.autoRestart) {
+      if (this.options.simulation.autoRestart) {
         this._simulation.restart();
       } else {
         requestAnimationFrame(() => this.chart.update());
       }
-    } else if (this._config.simulation.autoRestart) {
+    } else if (this.options.simulation.autoRestart) {
       this._simulation.alpha(1).restart();
     }
   }
@@ -337,19 +337,17 @@ export class ForceDirectedGraphController extends GraphController {
     GraphController.defaults,
     {
       animation: false,
-      datasets: {
-        simulation: {
-          initialIterations: 0,
-          autoRestart: true,
-          forces: {
-            center: true,
-            collide: false,
-            link: true,
-            manyBody: true,
-            x: false,
-            y: false,
-            radial: false,
-          },
+      simulation: {
+        initialIterations: 0,
+        autoRestart: true,
+        forces: {
+          center: true,
+          collide: false,
+          link: true,
+          manyBody: true,
+          x: false,
+          y: false,
+          radial: false,
         },
       },
     },

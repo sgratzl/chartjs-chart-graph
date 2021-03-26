@@ -193,4 +193,9 @@ export class EdgeLine extends LineElement {
   };
 
   static readonly defaultRoutes = LineElement.defaultRoutes;
+
+  static readonly descriptors = /* #__PURE__ */ {
+    _scriptable: true,
+    _indexable: (name: keyof IEdgeLineOptions): boolean => name !== 'borderDash',
+  };
 }
