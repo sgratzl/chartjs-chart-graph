@@ -23,7 +23,7 @@ Works great with https://github.com/chartjs/chartjs-plugin-datalabels or https:/
 ## Install
 
 ```bash
-npm install --save chart.js@next chartjs-chart-graph@next
+npm install --save chart.js chartjs-chart-graph
 ```
 
 ## Usage
