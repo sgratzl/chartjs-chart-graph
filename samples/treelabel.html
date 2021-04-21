@@ -21,7 +21,7 @@
       </select>
     </div>
     <script>
-      Chart.registry.add(ChartDataLabels);
+      Chart.register(ChartDataLabels);
       fetch('./tree.json')
         .then((r) => r.json())
         .then((nodes) => {

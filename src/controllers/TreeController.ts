@@ -10,7 +10,7 @@ import {
 import { merge } from 'chart.js/helpers';
 import { EdgeLine } from '../elements';
 import { DendogramController, IDendogramChartControllerDatasetOptions } from './DendogramController';
-import { IGraphDataPoint, ITreeNode } from './GraphController';
+import type { IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
 export class TreeController extends DendogramController {
