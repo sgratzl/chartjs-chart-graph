@@ -295,9 +295,8 @@ export class ForceDirectedGraphController extends GraphController {
       }
       return simNode;
     });
-    const link = this._simulation.force<ForceLink<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>>(
-      'link'
-    );
+    const link =
+      this._simulation.force<ForceLink<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>>('link');
     if (link) {
       link.links([]);
     }
