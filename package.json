@@ -46,7 +46,7 @@
     "@types/d3-force": "^2.1.1",
     "@types/d3-hierarchy": "^2.0.0",
     "d3-force": "^2.1.1",
-    "d3-hierarchy": "^3.0.0"
+    "d3-hierarchy": "^2.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.0",

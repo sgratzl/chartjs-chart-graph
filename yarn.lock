@@ -2298,7 +2298,7 @@ __metadata:
     canvas-5-polyfill: ^0.1.5
     chart.js: 3.0.0-rc.3
     d3-force: ^2.1.1
-    d3-hierarchy: ^3.0.0
+    d3-hierarchy: ^2.0.0
     eslint: ^7.28.0
     eslint-config-airbnb-typescript: ^12.3.1
     eslint-config-prettier: ^8.3.0
@@ -2659,10 +2659,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-hierarchy@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "d3-hierarchy@npm:3.0.0"
-  checksum: f546c85eef99e55c5065355e52da7419a3549469c734ee91108e8c99c95a83d49871d4e67d2f8f1745fea6ebd02bbb5f2bbbf26bd77149360b37e0333d9e7ce8
+"d3-hierarchy@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "d3-hierarchy@npm:2.0.0"
+  checksum: 6fa4f8393444072c1466478e1baf1551857a6d6a797bbfb7b28bbe6322f288749ecdd6e1801b9c1978614c8a4664115aeda836dab8c8bd0829df75e6ac965f40
   languageName: node
   linkType: hard
 
