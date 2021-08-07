@@ -36,6 +36,7 @@ declare module 'chart.js' {
       chartOptions: CoreChartOptions<'tree'>;
       datasetOptions: IDendogramChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint;
+      metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode;
       scales: keyof CartesianScaleTypeRegistry;
     };

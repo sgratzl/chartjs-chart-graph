@@ -379,6 +379,7 @@ declare module 'chart.js' {
       chartOptions: CoreChartOptions<'forceDirectedGraph'>;
       datasetOptions: IForceDirectedGraphChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint;
+      metaExtensions: Record<string, never>;
       parsedDataType: ITreeSimNode;
       scales: keyof CartesianScaleTypeRegistry;
     };

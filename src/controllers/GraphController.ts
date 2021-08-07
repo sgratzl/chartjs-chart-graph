@@ -292,11 +292,11 @@ export class GraphController extends ScatterController {
 
     if (edges.length > 0) {
       clipArea(ctx, area);
-      edges.forEach((edge) => edge.draw(ctx));
+      edges.forEach((edge) => (edge.draw.call as any)(edge, ctx, area));
       unclipArea(ctx);
     }
 
-    elements.forEach((elem) => elem.draw(ctx));
+    elements.forEach((elem) => (elem.draw.call as any)(elem, ctx, area));
   }
 
   protected _resyncElements(): void {
@@ -550,6 +550,7 @@ declare module 'chart.js' {
       chartOptions: CoreChartOptions<'graph'>;
       datasetOptions: IGraphChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint;
+      metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode;
       scales: keyof CartesianScaleTypeRegistry;
     };

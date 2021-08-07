@@ -155,6 +155,7 @@ declare module 'chart.js' {
       chartOptions: CoreChartOptions<'dendogram'>;
       datasetOptions: IDendogramChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint[];
+      metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode & { angle?: number };
       scales: keyof CartesianScaleTypeRegistry;
     };
