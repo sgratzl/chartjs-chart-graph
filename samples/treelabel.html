@@ -3,7 +3,8 @@
   <head>
     <script src="https://unpkg.com/chart.js@3.3.2/dist/chart.js"></script>
     <script src="https://unpkg.com/chartjs-plugin-datalabels@next"></script>
-    <!-- <script src="https://unpkg.com/chartjs-plugin-dragdata@next"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://unpkg.com/chartjs-plugin-zoom/dist/chartjs-plugin-zoom"></script>
     <script src="../build/index.umd.js"></script>
   </head>
 
@@ -55,6 +56,23 @@
                   backgroundColor: 'white',
                   formatter: (v) => {
                     return v.name;
+                  },
+                },
+                zoom: {
+                  pan: {
+                    enabled: true,
+                  },
+                  zoom: {
+                    wheel: {
+                      enabled: true,
+                    },
+                    pinch: {
+                      enabled: true,
+                    },
+                    // drag: {
+                    //   enabled: true
+                    // },
+                    mode: 'xy',
                   },
                 },
               },
