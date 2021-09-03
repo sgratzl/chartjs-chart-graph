@@ -514,7 +514,7 @@ export class GraphController extends ScatterController {
         },
       },
       plugins: {
-        tooltips: {
+        tooltip: {
           callbacks: {
             label(item: TooltipItem<'graph'>) {
               return item.chart.data?.labels?.[item.dataIndex];
