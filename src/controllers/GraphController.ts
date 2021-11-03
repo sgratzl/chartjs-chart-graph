@@ -7,7 +7,6 @@ import {
   PointElement,
   UpdateMode,
   TooltipItem,
-  ChartMeta,
   ChartItem,
   ChartConfiguration,
   ControllerDatasetOptions,
@@ -15,17 +14,17 @@ import {
   LineHoverOptions,
   PointPrefixedOptions,
   PointPrefixedHoverOptions,
-  CartesianScaleTypeRegistry,
-  CoreChartOptions,
   ScriptableContext,
+  Element,
 } from 'chart.js';
 import { merge, clipArea, unclipArea, listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers';
-
 import { EdgeLine, IEdgeLineOptions } from '../elements';
 import interpolatePoints from './interpolatePoints';
 import patchController from './patchController';
 
-interface IExtendedChartMeta extends ChartMeta<PointElement> {
+export type AnyObject = Record<string, unknown>;
+
+export interface IExtendedChartMeta {
   edges: EdgeLine[];
   _parsedEdges: ITreeEdge[];
 }
@@ -43,8 +42,6 @@ export interface ITreeEdge {
 }
 
 export class GraphController extends ScatterController {
-  declare _cachedMeta: IExtendedChartMeta;
-
   declare _ctx: CanvasRenderingContext2D;
 
   declare _cachedDataOpts: any;
@@ -69,27 +66,27 @@ export class GraphController extends ScatterController {
     _onDataPush: (...args: any[]) => {
       const count = args.length;
       const start = (this.getDataset() as any).edges.length - count;
-      const parsed = this._cachedMeta._parsedEdges;
+      const parsed = (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges;
       args.forEach((edge) => {
         parsed.push(this._parseDefinedEdge(edge));
       });
       this._insertEdgeElements(start, count);
     },
     _onDataPop: () => {
-      this._cachedMeta.edges.pop();
-      this._cachedMeta._parsedEdges.pop();
+      (this._cachedMeta as unknown as IExtendedChartMeta).edges.pop();
+      (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges.pop();
       this._scheduleResyncLayout();
     },
     _onDataShift: () => {
-      this._cachedMeta.edges.shift();
-      this._cachedMeta._parsedEdges.shift();
+      (this._cachedMeta as unknown as IExtendedChartMeta).edges.shift();
+      (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges.shift();
       this._scheduleResyncLayout();
     },
     _onDataSplice: (start: number, count: number, ...args: any[]) => {
-      this._cachedMeta.edges.splice(start, count);
-      this._cachedMeta._parsedEdges.splice(start, count);
+      (this._cachedMeta as unknown as IExtendedChartMeta).edges.splice(start, count);
+      (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges.splice(start, count);
       if (args.length > 0) {
-        const parsed = this._cachedMeta._parsedEdges;
+        const parsed = (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges;
         parsed.splice(start, 0, ...args.map((edge) => this._parseDefinedEdge(edge)));
         this._insertEdgeElements(start, args.length);
       } else {
@@ -97,7 +94,7 @@ export class GraphController extends ScatterController {
       }
     },
     _onDataUnshift: (...args: any[]) => {
-      const parsed = this._cachedMeta._parsedEdges;
+      const parsed = (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges;
       parsed.unshift(...args.map((edge) => this._parseDefinedEdge(edge)));
       this._insertEdgeElements(0, args.length);
     },
@@ -146,7 +143,7 @@ export class GraphController extends ScatterController {
   update(mode: UpdateMode): void {
     super.update(mode);
 
-    const meta = this._cachedMeta;
+    const meta = this._cachedMeta as unknown as IExtendedChartMeta;
     const edges = meta.edges || [];
 
     this.updateEdgeElements(edges, 0, mode);
@@ -171,7 +168,7 @@ export class GraphController extends ScatterController {
     this._sharedOptions = this._edgeSharedOptions;
     const meta = this._cachedMeta;
     const nodes = meta.data;
-    const data = meta._parsedEdges;
+    const data = (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges;
 
     const reset = mode === 'reset';
 
@@ -220,11 +217,11 @@ export class GraphController extends ScatterController {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateEdgeElement(edge: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
-    super.updateElement(edge, index, properties, mode);
+    super.updateElement(edge as unknown as Element<AnyObject, AnyObject>, index, properties, mode);
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  updateElement(point: PointElement, index: number, properties: any, mode: UpdateMode): void {
+  updateElement(point: Element<AnyObject, AnyObject>, index: number, properties: any, mode: UpdateMode): void {
     if (mode === 'reset') {
       // start in center also in x
       const { xScale } = this._cachedMeta;
@@ -284,8 +281,8 @@ export class GraphController extends ScatterController {
 
   draw(): void {
     const meta = this._cachedMeta;
-    const edges = meta.edges || [];
-    const elements = meta.data || [];
+    const edges = (this._cachedMeta as unknown as IExtendedChartMeta).edges || [];
+    const elements = (meta.data || []) as unknown[] as PointElement[];
 
     const area = this.chart.chartArea;
     const ctx = this._ctx;
@@ -302,7 +299,7 @@ export class GraphController extends ScatterController {
   protected _resyncElements(): void {
     (ScatterController.prototype as any)._resyncElements.call(this);
 
-    const meta = this._cachedMeta;
+    const meta = this._cachedMeta as unknown as IExtendedChartMeta;
     const edges = meta._parsedEdges;
     const metaEdges = meta.edges || (meta.edges = []);
     const numMeta = metaEdges.length;
@@ -324,7 +321,7 @@ export class GraphController extends ScatterController {
       return nodes.findIndex((d) => d.parent == null);
     }
     // find the one with no edge
-    const edges = this._cachedMeta._parsedEdges || [];
+    const edges = (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges || [];
     const nodeIndices = new Set(nodes.map((_, i) => i));
     edges.forEach((edge) => {
       nodeIndices.delete(edge.target);
@@ -340,7 +337,7 @@ export class GraphController extends ScatterController {
   }
 
   getTreeChildren(node: { index?: number }): ITreeNode[] {
-    const edges = this._cachedMeta._parsedEdges;
+    const edges = (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges;
     const index = node.index ?? 0;
     return edges
       .filter((d) => d.source === index)
@@ -364,7 +361,7 @@ export class GraphController extends ScatterController {
   _parseEdges(): ITreeEdge[] {
     const ds = this.getDataset() as any;
     const data = ds.data as { parent?: number }[];
-    const meta = this._cachedMeta;
+    const meta = this._cachedMeta as unknown as IExtendedChartMeta;
     if (ds.edges) {
       const edges = ds.edges.map((edge: any) => this._parseDefinedEdge(edge));
       meta._parsedEdges = edges;
@@ -391,7 +388,7 @@ export class GraphController extends ScatterController {
   addElements(): void {
     super.addElements();
 
-    const meta = this._cachedMeta;
+    const meta = this._cachedMeta as unknown as IExtendedChartMeta;
     const edges = this._parseEdges();
     const metaData = new Array(edges.length);
     meta.edges = metaData;
@@ -403,7 +400,7 @@ export class GraphController extends ScatterController {
   }
 
   _resyncEdgeElements(): void {
-    const meta = this._cachedMeta;
+    const meta = this._cachedMeta as unknown as IExtendedChartMeta;
     const edges = this._parseEdges();
     const metaData = meta.edges || (meta.edges = []);
 
@@ -436,7 +433,7 @@ export class GraphController extends ScatterController {
       // eslint-disable-next-line new-cap
       elements.push(new this.edgeElementType());
     }
-    this._cachedMeta.edges.splice(start, 0, ...elements);
+    (this._cachedMeta as unknown as IExtendedChartMeta).edges.splice(start, 0, ...elements);
     this.updateEdgeElements(elements, start, 'reset');
     this._scheduleResyncLayout();
   }

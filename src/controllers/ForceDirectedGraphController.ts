@@ -1,12 +1,5 @@
-import {
-  Chart,
-  ChartItem,
-  CartesianScaleTypeRegistry,
-  ChartConfiguration,
-  CoreChartOptions,
-  LinearScale,
-  PointElement,
-} from 'chart.js';
+import type { IExtendedChartMeta } from '@';
+import { Chart, ChartItem, ChartConfiguration, LinearScale, PointElement } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import {
   forceCenter,
@@ -23,13 +16,7 @@ import {
   SimulationNodeDatum,
 } from 'd3-force';
 import { EdgeLine } from '../elements';
-import {
-  GraphController,
-  IGraphChartControllerDatasetOptions,
-  IGraphDataPoint,
-  ITreeEdge,
-  ITreeNode,
-} from './GraphController';
+import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
 export interface ITreeSimNode extends ITreeNode {
@@ -304,7 +291,7 @@ export class ForceDirectedGraphController extends GraphController {
     if (link) {
       // console.assert(ds.edges.length === meta.edges.length);
       // work on copy to avoid change
-      link.links(((meta._parsedEdges || []) as ITreeEdge[]).map((l) => ({ ...l })));
+      link.links(((meta as unknown as IExtendedChartMeta)._parsedEdges || []).map((l) => ({ ...l })));
     }
 
     if (this.options.simulation.initialIterations > 0) {

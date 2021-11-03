@@ -1,17 +1,14 @@
-import {
-  Chart,
-  ChartItem,
-  CartesianScaleTypeRegistry,
-  ChartConfiguration,
-  CoreChartOptions,
-  LinearScale,
-  PointElement,
-  UpdateMode,
-} from 'chart.js';
+import { Chart, ChartItem, ChartConfiguration, LinearScale, PointElement, UpdateMode, Element } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { cluster, hierarchy, HierarchyNode, tree } from 'd3-hierarchy';
 import { EdgeLine } from '../elements';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint, ITreeNode } from './GraphController';
+import {
+  GraphController,
+  IGraphChartControllerDatasetOptions,
+  IGraphDataPoint,
+  ITreeNode,
+  AnyObject,
+} from './GraphController';
 import patchController from './patchController';
 
 export interface ITreeOptions {
@@ -37,7 +34,7 @@ export class DendogramController extends GraphController {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  updateElement(point: PointElement, index: number, properties: any, mode: UpdateMode): void {
+  updateElement(point: Element<AnyObject, AnyObject>, index: number, properties: any, mode: UpdateMode): void {
     if (index != null) {
       // eslint-disable-next-line no-param-reassign
       properties.angle = (this.getParsed(index) as { angle: number }).angle;
