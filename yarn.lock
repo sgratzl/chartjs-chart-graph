@@ -2059,6 +2059,7 @@ __metadata:
     eslint-config-airbnb-typescript: ^14.0.1
     eslint-config-prettier: ^8.3.0
     eslint-config-react-app: ^6.0.0
+    eslint-plugin-flowtype: ^8.0.3
     eslint-plugin-import: ^2.25.2
     eslint-plugin-jsx-a11y: ^6.4.1
     eslint-plugin-prettier: ^4.0.0
@@ -2808,6 +2809,20 @@ __metadata:
     find-up: ^2.1.0
     pkg-dir: ^2.0.0
   checksum: c30dfa125aafe65e5f6a30a31c26932106fcf09934a2f47d7f8a393ed9106da7b07416f2337b55c85f9db0175c873ee0827be5429a24ec381b49940f342b9ac3
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-flowtype@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "eslint-plugin-flowtype@npm:8.0.3"
+  dependencies:
+    lodash: ^4.17.21
+    string-natural-compare: ^3.0.1
+  peerDependencies:
+    "@babel/plugin-syntax-flow": ^7.14.5
+    "@babel/plugin-transform-react-jsx": ^7.14.9
+    eslint: ^8.1.0
+  checksum: 30e63c5357b0b5571f39afed51e59c140084f4aa53c106b1fd04f26da42b268908466daa6020b92943e71409bdaee1c67202515ed9012404d027cc92cb03cefa
   languageName: node
   linkType: hard
 
@@ -4809,7 +4824,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.15, lodash@npm:^4.17.4, lodash@npm:^4.7.0":
+"lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -6394,6 +6409,13 @@ __metadata:
     char-regex: ^1.0.2
     strip-ansi: ^6.0.0
   checksum: ce85533ef5113fcb7e522bcf9e62cb33871aa99b3729cec5595f4447f660b0cefd542ca6df4150c97a677d58b0cb727a3fe09ac1de94071d05526c73579bf505
+  languageName: node
+  linkType: hard
+
+"string-natural-compare@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "string-natural-compare@npm:3.0.1"
+  checksum: 65910d9995074086e769a68728395effbba9b7186be5b4c16a7fad4f4ef50cae95ca16e3e9086e019cbb636ae8daac9c7b8fe91b5f21865c5c0f26e3c0725406
   languageName: node
   linkType: hard
 
