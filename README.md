@@ -179,9 +179,8 @@ new ForceDirectedGraphChart(ctx, {
 
 ```sh
 npm i -g yarn
-yarn set version 2
-yarn
-yarn pnpify --sdk vscode
+yarn install
+yarn sdks vscode
 ```
 
 ### Building
