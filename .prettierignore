@@ -12,3 +12,4 @@
 /.vscode
 *.png
 *.tsbuildinfo
+/samples/type_test.js
