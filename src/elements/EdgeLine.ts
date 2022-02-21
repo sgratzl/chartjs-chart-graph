@@ -199,3 +199,9 @@ export class EdgeLine extends LineElement {
     _indexable: (name: keyof IEdgeLineOptions): boolean => name !== 'borderDash',
   };
 }
+
+declare module 'chart.js' {
+  export interface ElementOptionsByType<TType extends ChartType> {
+    edgeLine: ScriptableAndArrayOptions<IEdgeLineOptions, ScriptableContext<TType>>;
+  }
+}
