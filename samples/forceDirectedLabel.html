@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/chart.js@3/dist/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js"></script>
+    <script src="../build/index.umd.js"></script>
+  </head>
+
+  <body>
+    <div style="width: 75%">
+      <canvas id="graph"></canvas>
+    </div>
+    <script>
+      requestAnimationFrame(() => {
+        nodes = [
+          { name: '1' },
+          { name: '11', parent: 0 },
+          { name: '111', parent: 1 },
+          { name: '1111', parent: 2 },
+          { name: '1112', parent: 2 },
+          { name: '112', parent: 1 },
+          { name: '1121', parent: 5 },
+          { name: '1122', parent: 5 },
+          { name: '113', parent: 1 },
+          { name: '1131', parent: 8 },
+          { name: '1132', parent: 8 },
+          { name: '12', parent: 0 },
+          { name: '121', parent: 11 },
+          { name: '1211', parent: 12 },
+          { name: '1212', parent: 12 },
+          { name: '122', parent: 11 },
+          { name: '1221', parent: 15 },
+          { name: '1222', parent: 15 },
+          { name: '123', parent: 11 },
+          { name: '1231', parent: 18 },
+          { name: '1232', parent: 18 },
+          { name: '13', parent: 0 },
+          { name: '131', parent: 21 },
+        ];
+
+        Chart.register(ChartDataLabels);
+        chart = new Chart(document.getElementById('graph').getContext('2d'), {
+          plugins: [ChartDataLabels],
+          type: 'forceDirectedGraph',
+          data: {
+            labels: nodes.map((d) => d.name),
+            datasets: [
+              {
+                pointBackgroundColor: ['#002838', '#ed7d00', '#395c6b', '#d94d15', '#889da6'],
+                pointRadius: 10,
+                data: nodes.map((d) => Object.assign({}, d)),
+              },
+            ],
+          },
+          options: {
+            // dragData: true,
+            // dragX: true,
+            tree: {
+              orientation: 'radial',
+            },
+            layout: {
+              padding: {
+                left: 20,
+                top: 20,
+                bottom: 20,
+                right: 20,
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              datalabels: {
+                // display: true,
+                align: 'right',
+                offset: 6,
+                formatter: function (value, context) {
+                  return '' + value.name + '';
+                },
+                color: 'black',
+                backgroundColor: 'steelblue',
+              },
+            },
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
