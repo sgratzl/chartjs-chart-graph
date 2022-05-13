@@ -101,25 +101,25 @@ Computes the x,y position of nodes based on a force simulation. It is based on h
 
 ### Options
 
-## Dendogram, Tree
+## Dendrogram, Tree
 
 chart types: `dendogram`, `tree`
 
 The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
 
-**Dendogram Horizontal**
+**Dendrogram Horizontal**
 
 ![dend_h](https://user-images.githubusercontent.com/4129778/65398352-9bc03f80-dd84-11e9-9197-ecb66a872736.png)
 
 [![Open in CodePen][codepen]](https://codepen.io/sgratzl/pen/jObedwg)
 
-**Dendogram Vertical**
+**Dendrogram Vertical**
 
 ![dend_v](https://user-images.githubusercontent.com/4129778/65398355-9bc03f80-dd84-11e9-9ea3-9501a79491fb.png)
 
 [![Open in CodePen][codepen]](https://codepen.io/sgratzl/pen/jObedwg)
 
-**Dendogram Radial**
+**Dendrogram Radial**
 
 ![radial](https://user-images.githubusercontent.com/4129778/65398460-581a0580-dd85-11e9-93b6-b70946f1155f.png)
 

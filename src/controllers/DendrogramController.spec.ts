@@ -1,18 +1,18 @@
 import { registry, PointElement, LinearScale } from 'chart.js';
 import createChart from '../__tests__/createChart';
-import { DendogramController } from './DendogramController';
+import { DendrogramController } from './DendrogramController';
 import nodes from './__tests__/tree';
 import { EdgeLine } from '../elements';
 
 describe('dendogram', () => {
   beforeAll(() => {
-    registry.addControllers(DendogramController);
+    registry.addControllers(DendrogramController);
     registry.addElements(EdgeLine, PointElement);
     registry.addScales(LinearScale);
   });
   test('default', () => {
     return createChart({
-      type: DendogramController.id as 'dendogram',
+      type: DendrogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -28,7 +28,7 @@ describe('dendogram', () => {
   });
   test('vertical', () => {
     return createChart({
-      type: DendogramController.id as 'dendogram',
+      type: DendrogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -47,7 +47,7 @@ describe('dendogram', () => {
   });
   test('radial', () => {
     return createChart({
-      type: DendogramController.id as 'dendogram',
+      type: DendrogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -67,7 +67,7 @@ describe('dendogram', () => {
 
   test('default tree', () => {
     return createChart({
-      type: DendogramController.id as 'dendogram',
+      type: DendrogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -86,7 +86,7 @@ describe('dendogram', () => {
   });
   test('vertical tree', () => {
     return createChart({
-      type: DendogramController.id as 'dendogram',
+      type: DendrogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -106,7 +106,7 @@ describe('dendogram', () => {
   });
   test('radial tree', () => {
     return createChart({
-      type: DendogramController.id as 'dendogram',
+      type: DendrogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [
@@ -126,7 +126,7 @@ describe('dendogram', () => {
   });
   test('directed', () => {
     return createChart({
-      type: DendogramController.id as 'dendogram',
+      type: DendrogramController.id as 'dendogram',
       data: {
         labels: nodes.map((d) => d.name),
         datasets: [

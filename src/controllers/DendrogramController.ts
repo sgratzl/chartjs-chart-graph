@@ -23,7 +23,7 @@ export interface ITreeOptions {
   orientation: 'horizontal' | 'vertical' | 'radial';
 }
 
-export class DendogramController extends GraphController {
+export class DendrogramController extends GraphController {
   declare options: { tree: ITreeOptions };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -142,7 +142,7 @@ export class DendogramController extends GraphController {
   ]);
 }
 
-export interface IDendogramChartControllerDatasetOptions extends IGraphChartControllerDatasetOptions {
+export interface IDendrogramChartControllerDatasetOptions extends IGraphChartControllerDatasetOptions {
   tree: ITreeOptions;
 }
 
@@ -150,7 +150,7 @@ declare module 'chart.js' {
   export interface ChartTypeRegistry {
     dendogram: {
       chartOptions: CoreChartOptions<'dendogram'>;
-      datasetOptions: IDendogramChartControllerDatasetOptions;
+      datasetOptions: IDendrogramChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint[];
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode & { angle?: number };
@@ -159,14 +159,14 @@ declare module 'chart.js' {
   }
 }
 
-export class DendogramChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<
+export class DendrogramChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<
   'dendogram',
   DATA,
   LABEL
 > {
-  static id = DendogramController.id;
+  static id = DendrogramController.id;
 
   constructor(item: ChartItem, config: Omit<ChartConfiguration<'dendogram', DATA, LABEL>, 'type'>) {
-    super(item, patchController('dendogram', config, DendogramController, [EdgeLine, PointElement], LinearScale));
+    super(item, patchController('dendogram', config, DendrogramController, [EdgeLine, PointElement], LinearScale));
   }
 }
