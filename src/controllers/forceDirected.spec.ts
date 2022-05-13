@@ -4,7 +4,7 @@ import { ForceDirectedGraphController } from './ForceDirectedGraphController';
 import data from './__tests__/miserables';
 import { EdgeLine } from '../elements';
 
-describe('dendogram', () => {
+describe('dendrogram', () => {
   beforeAll(() => {
     registry.addControllers(ForceDirectedGraphController);
     registry.addElements(EdgeLine, PointElement);

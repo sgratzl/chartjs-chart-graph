@@ -14,7 +14,7 @@
         .then((r) => r.json())
         .then((nodes) => {
           const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
-            type: 'dendogram',
+            type: 'dendrogram',
             data: {
               labels: nodes.map((d) => d.name),
               datasets: [

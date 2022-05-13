@@ -8,8 +8,8 @@
   <body>
     <div style="width: 75%">
       <canvas id="canvas"></canvas>
-      <select id="mode" value="dendogram">
-        <option>dendogram</option>
+      <select id="mode" value="dendrogram">
+        <option>dendrogram</option>
         <option>tree</option>
       </select>
       <select id="orientation" value="horizontal">
@@ -23,7 +23,7 @@
         .then((r) => r.json())
         .then((nodes) => {
           const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
-            type: 'dendogram',
+            type: 'dendrogram',
             data: {
               labels: nodes.map((d) => d.name),
               datasets: [

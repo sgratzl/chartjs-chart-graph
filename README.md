@@ -2,7 +2,7 @@
 
 [![NPM Package][npm-image]][npm-url] [![Github Actions][github-actions-image]][github-actions-url]
 
-Chart.js module for charting graphs. Adding new chart types: `graph`, `forceDirectedGraph`, `dendogram`, and `tree`.
+Chart.js module for charting graphs. Adding new chart types: `graph`, `forceDirectedGraph`, `dendrogram`, and `tree`.
 
 ![force](https://user-images.githubusercontent.com/4129778/65398353-9bc03f80-dd84-11e9-8f14-339635c1ba4e.png)
 
@@ -103,9 +103,9 @@ Computes the x,y position of nodes based on a force simulation. It is based on h
 
 ## Dendrogram, Tree
 
-chart types: `dendogram`, `tree`
+chart types: `dendrogram`, `tree`
 
-The tree and dendograms layouts are based on https://github.com/d3/d3-hierarchy.
+The tree and dendrograms layouts are based on https://github.com/d3/d3-hierarchy.
 
 **Dendrogram Horizontal**
 
