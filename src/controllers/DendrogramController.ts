@@ -13,9 +13,9 @@ import patchController from './patchController';
 
 export interface ITreeOptions {
   /**
-   * tree (cluster) or dendogram layout default depends on the chart type
+   * tree (cluster) or dendrogram layout default depends on the chart type
    */
-  mode: 'dendogram' | 'tree';
+  mode: 'dendrogram' | 'tree' | 'dendrogram';
   /**
    * orientation of the tree layout
    * @default horizontal
@@ -23,7 +23,7 @@ export interface ITreeOptions {
   orientation: 'horizontal' | 'vertical' | 'radial';
 }
 
-export class DendogramController extends GraphController {
+export class DendrogramController extends GraphController {
   declare options: { tree: ITreeOptions };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -106,13 +106,13 @@ export class DendogramController extends GraphController {
     requestAnimationFrame(() => this.chart.update());
   }
 
-  static readonly id: string = 'dendogram';
+  static readonly id: string = 'dendrogram';
 
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
     {
       tree: {
-        mode: 'dendogram', // dendogram, tree
+        mode: 'dendrogram', // dendrogram, tree
         orientation: 'horizontal', // vertical, horizontal, radial
       },
       animations: {
@@ -142,15 +142,23 @@ export class DendogramController extends GraphController {
   ]);
 }
 
-export interface IDendogramChartControllerDatasetOptions extends IGraphChartControllerDatasetOptions {
+export interface IDendrogramChartControllerDatasetOptions extends IGraphChartControllerDatasetOptions {
   tree: ITreeOptions;
 }
 
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     dendogram: {
-      chartOptions: CoreChartOptions<'dendogram'>;
-      datasetOptions: IDendogramChartControllerDatasetOptions;
+      chartOptions: CoreChartOptions<'dendrogram'>;
+      datasetOptions: IDendrogramChartControllerDatasetOptions;
+      defaultDataPoint: IGraphDataPoint[];
+      metaExtensions: Record<string, never>;
+      parsedDataType: ITreeNode & { angle?: number };
+      scales: keyof CartesianScaleTypeRegistry;
+    };
+    dendrogram: {
+      chartOptions: CoreChartOptions<'dendrogram'>;
+      datasetOptions: IDendrogramChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint[];
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode & { angle?: number };
@@ -159,14 +167,29 @@ declare module 'chart.js' {
   }
 }
 
-export class DendogramChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<
-  'dendogram',
+export class DendrogramChart<DATA extends unknown[] = IGraphDataPoint[], LABEL = string> extends Chart<
+  'dendrogram',
   DATA,
   LABEL
 > {
-  static id = DendogramController.id;
+  static id = DendrogramController.id;
 
-  constructor(item: ChartItem, config: Omit<ChartConfiguration<'dendogram', DATA, LABEL>, 'type'>) {
-    super(item, patchController('dendogram', config, DendogramController, [EdgeLine, PointElement], LinearScale));
+  constructor(item: ChartItem, config: Omit<ChartConfiguration<'dendrogram', DATA, LABEL>, 'type'>) {
+    super(item, patchController('dendrogram', config, DendrogramController, [EdgeLine, PointElement], LinearScale));
   }
 }
+
+export class DendogramController extends DendrogramController {
+  static readonly id: string = 'dendogram';
+
+  static readonly defaults: any = /* #__PURE__ */ merge({}, [
+    DendrogramController.defaults,
+    {
+      tree: {
+        mode: 'dendrogram', // dendrogram, tree
+      },
+    },
+  ]);
+}
+
+export const DendogramChart = DendrogramChart;

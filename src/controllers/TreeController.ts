@@ -1,15 +1,15 @@
 import { Chart, ChartConfiguration, ChartItem, LinearScale, PointElement } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { EdgeLine } from '../elements';
-import { DendogramController, IDendogramChartControllerDatasetOptions } from './DendogramController';
+import { DendrogramController, IDendrogramChartControllerDatasetOptions } from './DendrogramController';
 import type { IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
-export class TreeController extends DendogramController {
+export class TreeController extends DendrogramController {
   static readonly id = 'tree';
 
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
-    DendogramController.defaults,
+    DendrogramController.defaults,
     {
       datasets: {
         tree: {
@@ -19,14 +19,14 @@ export class TreeController extends DendogramController {
     },
   ]);
 
-  static readonly overrides: any = /* #__PURE__ */ DendogramController.overrides;
+  static readonly overrides: any = /* #__PURE__ */ DendrogramController.overrides;
 }
 
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     tree: {
       chartOptions: CoreChartOptions<'tree'>;
-      datasetOptions: IDendogramChartControllerDatasetOptions;
+      datasetOptions: IDendrogramChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint;
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode;

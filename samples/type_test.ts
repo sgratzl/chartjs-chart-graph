@@ -66,7 +66,7 @@ const chart2 = new Chart(ctx, {
 });
 
 const chart3 = new Chart(ctx, {
-  type: 'dendogram',
+  type: 'dendrogram',
   data: {
     labels: ['A', 'B', 'C'], // node labels
     datasets: [
