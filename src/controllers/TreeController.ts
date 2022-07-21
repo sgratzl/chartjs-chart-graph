@@ -11,10 +11,8 @@ export class TreeController extends DendrogramController {
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     DendrogramController.defaults,
     {
-      datasets: {
-        tree: {
-          mode: 'tree',
-        },
+      tree: {
+        mode: 'tree',
       },
     },
   ]);
