@@ -34,11 +34,10 @@ const banner = `/**
  */
 const watchOnly = ['umd'];
 
-const isDependency = (v) => Object.keys(pkg.dependencies || {}).some((e) => e === v || v.startsWith(`${e}/`));
-const isPeerDependency = (v) => Object.keys(pkg.peerDependencies || {}).some((e) => e === v || v.startsWith(`${e}/`));
+const isDependency = (v) => Object.keys(pkg.dependencies || {}).some((e) => e === v || v.startsWith(e + '/'));
+const isPeerDependency = (v) => Object.keys(pkg.peerDependencies || {}).some((e) => e === v || v.startsWith(e + '/'));
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function Config(options) {
+export default (options) => {
   const buildFormat = (format) => {
     return !options.watch || watchOnly.includes(format);
   };
@@ -56,7 +55,11 @@ export default function Config(options) {
     external: (v) => isDependency(v) || isPeerDependency(v),
     plugins: [
       typescript(),
-      resolve(),
+      resolve({
+        mainFields: ['module', 'main'],
+        extensions: ['.mjs', '.cjs', '.js', '.jsx', '.json', '.node'],
+        modulesOnly: true,
+      }),
       commonjs(),
       replace({
         preventAssignment: true,
@@ -124,4 +127,4 @@ export default function Config(options) {
       ],
     },
   ].filter(Boolean);
-}
+};
