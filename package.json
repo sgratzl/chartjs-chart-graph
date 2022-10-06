@@ -45,8 +45,11 @@
   "dependencies": {
     "@types/d3-force": "^3.0.3",
     "@types/d3-hierarchy": "^3.1.0",
+    "d3-dispatch": "^3.0.1",
     "d3-force": "^3.0.0",
-    "d3-hierarchy": "^3.1.2"
+    "d3-hierarchy": "^3.1.2",
+    "d3-quadtree": "^3.0.1",
+    "d3-timer": "^3.0.1"
   },
   "devDependencies": {
     "@chiogen/rollup-plugin-terser": "^7.0.2",
@@ -56,10 +59,10 @@
     "@rollup/plugin-typescript": "^8.5.0",
     "@types/jest": "^29.1.1",
     "@types/jest-image-snapshot": "^5.1.0",
-    "@types/node": "^18.8.0",
+    "@types/node": "^18.8.2",
     "@types/seedrandom": "^3.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
-    "@typescript-eslint/parser": "^5.38.1",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
     "@yarnpkg/sdks": "^2.6.3",
     "canvas": "^2.10.1",
     "canvas-5-polyfill": "^0.1.5",
@@ -86,7 +89,7 @@
     "ts-jest": "^29.0.3",
     "tslib": "^2.4.0",
     "typedoc": "^0.23.15",
-    "typescript": "4.8.3"
+    "typescript": "^4.8.4"
   },
   "scripts": {
     "clean": "rimraf build docs node_modules \"*.tgz\" \"*.tsbuildinfo\"",
@@ -108,5 +111,5 @@
     "docs": "typedoc src/index.ts",
     "prepare": "yarn run build"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@3.2.4"
 }
