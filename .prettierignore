@@ -11,5 +11,7 @@
 /yarn.lock
 /.vscode
 *.png
+*.tgz
 *.tsbuildinfo
+.eslintcache
 /samples/type_test.js
