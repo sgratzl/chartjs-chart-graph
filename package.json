@@ -40,7 +40,6 @@
     },
     "./.pnp.cjs": "./.pnp.cjs"
   },
-
   "sideEffects": false,
   "files": [
     "build",
