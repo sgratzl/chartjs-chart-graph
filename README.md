@@ -38,7 +38,7 @@ npm install --save chart.js chartjs-chart-graph
 
 ## Usage
 
-see [Samples](https://github.com/sgratzl/chartjs-chart-graph/tree/master/samples) on Github
+see [Samples](https://github.com/sgratzl/chartjs-chart-graph/tree/main/samples) on Github
 
 CodePens
 
