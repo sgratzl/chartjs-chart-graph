@@ -1,4 +1,14 @@
-import { Chart, ChartItem, ChartConfiguration, LinearScale, PointElement, UpdateMode, Element } from 'chart.js';
+import {
+  Chart,
+  ChartItem,
+  ChartConfiguration,
+  LinearScale,
+  PointElement,
+  UpdateMode,
+  Element,
+  CartesianScaleTypeRegistry,
+  CoreChartOptions,
+} from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { cluster, hierarchy, HierarchyNode, tree } from 'd3-hierarchy';
 import { EdgeLine } from '../elements';

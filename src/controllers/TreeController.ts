@@ -1,4 +1,12 @@
-import { Chart, ChartConfiguration, ChartItem, LinearScale, PointElement } from 'chart.js';
+import {
+  CartesianScaleTypeRegistry,
+  Chart,
+  ChartConfiguration,
+  ChartItem,
+  CoreChartOptions,
+  LinearScale,
+  PointElement,
+} from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { EdgeLine } from '../elements';
 import { DendrogramController, IDendrogramChartControllerDatasetOptions } from './DendrogramController';

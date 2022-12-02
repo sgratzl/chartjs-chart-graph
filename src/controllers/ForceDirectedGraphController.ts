@@ -1,5 +1,12 @@
-import type { IExtendedChartMeta } from '@';
-import { Chart, ChartItem, ChartConfiguration, LinearScale, PointElement } from 'chart.js';
+import {
+  Chart,
+  ChartItem,
+  ChartConfiguration,
+  LinearScale,
+  PointElement,
+  CoreChartOptions,
+  CartesianScaleTypeRegistry,
+} from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import {
   forceCenter,
@@ -16,7 +23,13 @@ import {
   SimulationNodeDatum,
 } from 'd3-force';
 import { EdgeLine } from '../elements';
-import { GraphController, IGraphChartControllerDatasetOptions, IGraphDataPoint, ITreeNode } from './GraphController';
+import {
+  GraphController,
+  IGraphChartControllerDatasetOptions,
+  IGraphDataPoint,
+  ITreeNode,
+  IExtendedChartMeta,
+} from './GraphController';
 import patchController from './patchController';
 
 export interface ITreeSimNode extends ITreeNode {
