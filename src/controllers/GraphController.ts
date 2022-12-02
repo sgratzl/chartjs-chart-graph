@@ -16,6 +16,8 @@ import {
   PointPrefixedHoverOptions,
   ScriptableContext,
   Element,
+  CartesianScaleTypeRegistry,
+  CoreChartOptions,
 } from 'chart.js';
 import { merge, clipArea, unclipArea, listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers';
 import { EdgeLine, IEdgeLineOptions } from '../elements';

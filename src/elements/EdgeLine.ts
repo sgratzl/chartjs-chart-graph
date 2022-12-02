@@ -1,4 +1,11 @@
-import { LineElement, LineOptions, PointElement, PointProps } from 'chart.js';
+import {
+  ChartType,
+  LineElement,
+  LineOptions,
+  PointElement,
+  ScriptableAndArrayOptions,
+  ScriptableContext,
+} from 'chart.js';
 
 function horizontal(from: { x: number }, to: { x: number }, options: { tension: number }) {
   return {
@@ -45,9 +52,9 @@ export interface IEdgeLineProps extends LineOptions {
 export class EdgeLine extends LineElement {
   declare _orientation: 'vertical' | 'radial' | 'horizontal';
 
-  declare source: PointElement<PointProps & { angle?: number }>;
+  declare source: PointElement;
 
-  declare target: PointElement<PointProps & { angle?: number }>;
+  declare target: PointElement;
 
   declare options: IEdgeLineOptions;
 
@@ -106,8 +113,8 @@ export class EdgeLine extends LineElement {
       return to;
     };
 
-    const source = this.source.getProps(['x', 'y', 'angle']);
-    const target = this.target.getProps(['x', 'y', 'angle']);
+    const source = this.source.getProps(['x', 'y', 'angle']) as { x: number; y: number; angle?: number };
+    const target = this.target.getProps(['x', 'y', 'angle']) as { x: number; y: number; angle?: number };
     const points = (this.getProps(['points'] as any) as any).points as {
       x: number;
       y: number;
