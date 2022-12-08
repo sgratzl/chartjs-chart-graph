@@ -33,7 +33,7 @@ jobs:
         id: create_release
         uses: release-drafter/release-drafter@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.PRIVATE_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
         with:
           name: v${{ steps.extract_version.outputs.version }}
           tag: v${{ steps.extract_version.outputs.version }}
