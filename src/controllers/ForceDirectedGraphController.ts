@@ -167,7 +167,7 @@ export class ForceDirectedGraphController extends GraphController {
         this._copyPosition();
         this.chart.render();
         // trigger a full update
-        this.chart.update('normal');
+        this.chart.update('default');
       });
     const sim = this.options.simulation;
 
