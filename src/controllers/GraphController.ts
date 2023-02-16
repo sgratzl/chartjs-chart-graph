@@ -175,7 +175,8 @@ export class GraphController extends ScatterController {
     const reset = mode === 'reset';
 
     const firstOpts = this.resolveDataElementOptions(start, mode);
-    const sharedOptions = this.getSharedOptions(firstOpts) ?? {};
+    const dummyShared = {};
+    const sharedOptions = this.getSharedOptions(firstOpts) ?? dummyShared;
     const includeOptions = this.includeOptions(mode, sharedOptions);
 
     const { xScale, yScale } = meta;
@@ -207,7 +208,11 @@ export class GraphController extends ScatterController {
       };
       properties.points._source = nodes[parsed.source];
       if (includeOptions) {
-        properties.options = sharedOptions || this.resolveDataElementOptions(index, mode);
+        if (sharedOptions !== dummyShared) {
+          properties.options = sharedOptions;
+        } else {
+          properties.options = this.resolveDataElementOptions(index, mode);
+        }
       }
       this.updateEdgeElement(edge, index, properties, mode);
     }
