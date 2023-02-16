@@ -80,7 +80,10 @@ export class DendrogramController extends GraphController {
   doLayout(root: HierarchyNode<{ x: number; y: number; angle?: number }>): void {
     const options = this.options.tree;
 
-    const layout = options.mode === 'tree' ? tree() : cluster();
+    const layout =
+      options.mode === 'tree'
+        ? tree<{ x: number; y: number; angle?: number }>()
+        : cluster<{ x: number; y: number; angle?: number }>();
 
     if (options.orientation === 'radial') {
       layout.size([Math.PI * 2, 1]);
