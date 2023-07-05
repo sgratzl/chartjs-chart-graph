@@ -2,24 +2,41 @@ import type { ChartConfiguration } from 'chart.js';
 import type {} from '../../src';
 
 // #region data
-export const data: ChartConfiguration<'boxplot'>['data'] = {
-  labels: ['A'],
+import miserables from './miserables.json';
+export const data: ChartConfiguration<'forceDirectedGraph'>['data'] = {
+  labels: miserables.nodes.map((d) => d.id),
   datasets: [
     {
-      itemRadius: 2,
-      data: [[57297214, 57297216, 117540924, 117540928]],
+      pointBackgroundColor: 'steelblue',
+      pointRadius: 5,
+      data: miserables.nodes,
+      edges: miserables.links,
     },
   ],
 };
 // #endregion data
 // #region config
-export const config: ChartConfiguration<'boxplot'> = {
-  type: 'boxplot',
+export const config: ChartConfiguration<'forceDirectedGraph'> = {
+  type: 'forceDirectedGraph',
   data,
   options: {
     plugins: {
-      legend: {
-        display: false,
+      zoom: {
+        pan: {
+          enabled: true,
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          // drag: {
+          //   enabled: true
+          // },
+          mode: 'xy',
+        },
       },
     },
   },

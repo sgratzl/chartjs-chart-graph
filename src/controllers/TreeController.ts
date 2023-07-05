@@ -14,8 +14,14 @@ import type { IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
 export class TreeController extends DendrogramController {
+  /**
+   * @internal
+   */
   static readonly id = 'tree';
 
+  /**
+   * @internal
+   */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     DendrogramController.defaults,
     {
@@ -25,6 +31,9 @@ export class TreeController extends DendrogramController {
     },
   ]);
 
+  /**
+   * @internal
+   */
   static readonly overrides: any = /* #__PURE__ */ DendrogramController.overrides;
 }
 
@@ -33,7 +42,7 @@ declare module 'chart.js' {
     tree: {
       chartOptions: CoreChartOptions<'tree'>;
       datasetOptions: IDendrogramChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint;
+      defaultDataPoint: IGraphDataPoint & Record<string, unknown>;
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode;
       scales: keyof CartesianScaleTypeRegistry;
