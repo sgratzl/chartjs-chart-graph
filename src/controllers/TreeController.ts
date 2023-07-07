@@ -9,13 +9,19 @@ import {
 } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { EdgeLine } from '../elements';
-import { DendrogramController, IDendrogramChartControllerDatasetOptions } from './DendrogramController';
+import { DendrogramController, IDendrogramChartControllerDatasetOptions, ITreeOptions } from './DendrogramController';
 import type { IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
 export class TreeController extends DendrogramController {
+  /**
+   * @internal
+   */
   static readonly id = 'tree';
 
+  /**
+   * @internal
+   */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     DendrogramController.defaults,
     {
@@ -25,15 +31,18 @@ export class TreeController extends DendrogramController {
     },
   ]);
 
+  /**
+   * @internal
+   */
   static readonly overrides: any = /* #__PURE__ */ DendrogramController.overrides;
 }
 
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     tree: {
-      chartOptions: CoreChartOptions<'tree'>;
+      chartOptions: CoreChartOptions<'tree'> & { tree: ITreeOptions };
       datasetOptions: IDendrogramChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint;
+      defaultDataPoint: IGraphDataPoint & Record<string, unknown>;
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode;
       scales: keyof CartesianScaleTypeRegistry;

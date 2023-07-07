@@ -34,8 +34,14 @@ export interface ITreeOptions {
 }
 
 export class DendrogramController extends GraphController {
+  /**
+   * @internal
+   */
   declare options: { tree: ITreeOptions };
 
+  /**
+   * @internal
+   */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateEdgeElement(line: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
     // eslint-disable-next-line no-param-reassign
@@ -43,6 +49,9 @@ export class DendrogramController extends GraphController {
     super.updateEdgeElement(line, index, properties, mode);
   }
 
+  /**
+   * @internal
+   */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateElement(point: Element<AnyObject, AnyObject>, index: number, properties: any, mode: UpdateMode): void {
     if (index != null) {
@@ -119,8 +128,14 @@ export class DendrogramController extends GraphController {
     requestAnimationFrame(() => this.chart.update());
   }
 
+  /**
+   * @internal
+   */
   static readonly id: string = 'dendrogram';
 
+  /**
+   * @internal
+   */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
     {
@@ -138,6 +153,9 @@ export class DendrogramController extends GraphController {
     },
   ]);
 
+  /**
+   * @internal
+   */
   static readonly overrides: any = /* #__PURE__ */ merge({}, [
     GraphController.overrides,
     {
@@ -162,17 +180,17 @@ export interface IDendrogramChartControllerDatasetOptions extends IGraphChartCon
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     dendogram: {
-      chartOptions: CoreChartOptions<'dendrogram'>;
+      chartOptions: CoreChartOptions<'dendrogram'> & { tree: ITreeOptions };
       datasetOptions: IDendrogramChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint[];
+      defaultDataPoint: IGraphDataPoint & Record<string, unknown>;
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode & { angle?: number };
       scales: keyof CartesianScaleTypeRegistry;
     };
     dendrogram: {
-      chartOptions: CoreChartOptions<'dendrogram'>;
+      chartOptions: CoreChartOptions<'dendrogram'> & { tree: ITreeOptions };
       datasetOptions: IDendrogramChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint[];
+      defaultDataPoint: IGraphDataPoint & Record<string, unknown>;
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeNode & { angle?: number };
       scales: keyof CartesianScaleTypeRegistry;
@@ -195,6 +213,9 @@ export class DendrogramChart<DATA extends unknown[] = IGraphDataPoint[], LABEL =
 export class DendogramController extends DendrogramController {
   static readonly id: string = 'dendogram';
 
+  /**
+   * @internal
+   */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     DendrogramController.defaults,
     {

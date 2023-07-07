@@ -44,26 +44,59 @@ export interface ITreeEdge {
 }
 
 export class GraphController extends ScatterController {
+  /**
+   * @internal
+   */
   declare _ctx: CanvasRenderingContext2D;
 
+  /**
+   * @internal
+   */
   declare _cachedDataOpts: any;
 
+  /**
+   * @internal
+   */
   declare _type: string;
 
+  /**
+   * @internal
+   */
   declare _data: any[];
 
+  /**
+   * @internal
+   */
   declare _edges: any[];
 
+  /**
+   * @internal
+   */
   declare _sharedOptions: any;
 
+  /**
+   * @internal
+   */
   declare _edgeSharedOptions: any;
 
+  /**
+   * @internal
+   */
   declare dataElementType: any;
 
+  /**
+   * @internal
+   */
   private _scheduleResyncLayoutId = -1;
 
+  /**
+   * @internal
+   */
   edgeElementType: any;
 
+  /**
+   * @internal
+   */
   private readonly _edgeListener = {
     _onDataPush: (...args: any[]) => {
       const count = args.length;
@@ -102,6 +135,9 @@ export class GraphController extends ScatterController {
     },
   };
 
+  /**
+   * @internal
+   */
   initialize(): void {
     const type = this._type;
     const defaultConfig = defaults.datasets[type as 'graph'] as any;
@@ -111,6 +147,9 @@ export class GraphController extends ScatterController {
     this._scheduleResyncLayout();
   }
 
+  /**
+   * @internal
+   */
   parse(start: number, count: number): void {
     const meta = this._cachedMeta;
     const data = this._data;
@@ -137,11 +176,17 @@ export class GraphController extends ScatterController {
     this._parseEdges();
   }
 
+  /**
+   * @internal
+   */
   reset(): void {
     this.resetLayout();
     super.reset();
   }
 
+  /**
+   * @internal
+   */
   update(mode: UpdateMode): void {
     super.update(mode);
 
@@ -151,6 +196,9 @@ export class GraphController extends ScatterController {
     this.updateEdgeElements(edges, 0, mode);
   }
 
+  /**
+   * @internal
+   */
   destroy(): void {
     (ScatterController.prototype as any).destroy.call(this);
     if (this._edges) {
@@ -159,6 +207,9 @@ export class GraphController extends ScatterController {
     this.stopLayout();
   }
 
+  /**
+   * @internal
+   */
   updateEdgeElements(edges: EdgeLine[], start: number, mode: UpdateMode): void {
     const bak = {
       _cachedDataOpts: this._cachedDataOpts,
@@ -222,11 +273,17 @@ export class GraphController extends ScatterController {
     Object.assign(this, bak);
   }
 
+  /**
+   * @internal
+   */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateEdgeElement(edge: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
     super.updateElement(edge as unknown as Element<AnyObject, AnyObject>, index, properties, mode);
   }
 
+  /**
+   * @internal
+   */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateElement(point: Element<AnyObject, AnyObject>, index: number, properties: any, mode: UpdateMode): void {
     if (mode === 'reset') {
@@ -238,6 +295,9 @@ export class GraphController extends ScatterController {
     super.updateElement(point, index, properties, mode);
   }
 
+  /**
+   * @internal
+   */
   resolveNodeIndex(nodes: any[], ref: string | number | any): number {
     if (typeof ref === 'number') {
       // index
@@ -265,6 +325,9 @@ export class GraphController extends ScatterController {
     return -1;
   }
 
+  /**
+   * @internal
+   */
   buildOrUpdateElements(): void {
     const dataset = this.getDataset() as any;
     const edges = dataset.edges || [];
@@ -286,6 +349,9 @@ export class GraphController extends ScatterController {
     super.buildOrUpdateElements();
   }
 
+  /**
+   * @internal
+   */
   draw(): void {
     const meta = this._cachedMeta;
     const edges = (this._cachedMeta as unknown as IExtendedChartMeta).edges || [];
@@ -355,6 +421,9 @@ export class GraphController extends ScatterController {
       });
   }
 
+  /**
+   * @internal
+   */
   _parseDefinedEdge(edge: { source: number; target: number }): ITreeEdge {
     const ds = this.getDataset();
     const { data } = ds;
@@ -365,6 +434,9 @@ export class GraphController extends ScatterController {
     };
   }
 
+  /**
+   * @internal
+   */
   _parseEdges(): ITreeEdge[] {
     const ds = this.getDataset() as any;
     const data = ds.data as { parent?: number }[];
@@ -392,6 +464,9 @@ export class GraphController extends ScatterController {
     return edges;
   }
 
+  /**
+   * @internal
+   */
   addElements(): void {
     super.addElements();
 
@@ -406,6 +481,9 @@ export class GraphController extends ScatterController {
     }
   }
 
+  /**
+   * @internal
+   */
   _resyncEdgeElements(): void {
     const meta = this._cachedMeta as unknown as IExtendedChartMeta;
     const edges = this._parseEdges();
@@ -420,6 +498,9 @@ export class GraphController extends ScatterController {
     }
   }
 
+  /**
+   * @internal
+   */
   _insertElements(start: number, count: number): void {
     (ScatterController.prototype as any)._insertElements.call(this, start, count);
     if (count > 0) {
@@ -427,6 +508,9 @@ export class GraphController extends ScatterController {
     }
   }
 
+  /**
+   * @internal
+   */
   _removeElements(start: number, count: number): void {
     (ScatterController.prototype as any)._removeElements.call(this, start, count);
     if (count > 0) {
@@ -434,6 +518,9 @@ export class GraphController extends ScatterController {
     }
   }
 
+  /**
+   * @internal
+   */
   _insertEdgeElements(start: number, count: number): void {
     const elements = [];
     for (let i = 0; i < count; i += 1) {
@@ -460,6 +547,9 @@ export class GraphController extends ScatterController {
     // hook
   }
 
+  /**
+   * @internal
+   */
   _scheduleResyncLayout(): void {
     if (this._scheduleResyncLayoutId != null && this._scheduleResyncLayoutId >= 0) {
       return;
@@ -477,6 +567,9 @@ export class GraphController extends ScatterController {
 
   static readonly id: string = 'graph';
 
+  /**
+   * @internal
+   */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     ScatterController.defaults,
     {
@@ -491,6 +584,9 @@ export class GraphController extends ScatterController {
     },
   ]);
 
+  /**
+   * @internal
+   */
   static readonly overrides: any = /* #__PURE__ */ merge({}, [
     (ScatterController as any).overrides,
     {
@@ -535,8 +631,8 @@ export interface IGraphDataPoint {
 }
 
 export interface IGraphEdgeDataPoint {
-  source: number;
-  target: number;
+  source: number | string;
+  target: number | string;
 }
 
 export interface IGraphChartControllerDatasetOptions

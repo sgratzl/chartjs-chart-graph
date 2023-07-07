@@ -108,8 +108,8 @@ export interface IForceDirectedControllerOptions {
   };
 }
 
-declare type ID3NodeCallback = (d: any, i: number) => number;
-declare type ID3EdgeCallback = (d: any, i: number) => number;
+export declare type ID3NodeCallback = (d: any, i: number) => number;
+export declare type ID3EdgeCallback = (d: any, i: number) => number;
 
 export interface ICenterForce {
   x?: number;
@@ -152,8 +152,14 @@ export interface IRadialForce {
 }
 
 export class ForceDirectedGraphController extends GraphController {
+  /**
+   * @internal
+   */
   declare options: IForceDirectedControllerOptions;
 
+  /**
+   * @internal
+   */
   private readonly _simulation: Simulation<SimulationNodeDatum, undefined>;
 
   constructor(chart: Chart, datasetIndex: number) {
@@ -197,6 +203,9 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation.stop();
   }
 
+  /**
+   * @internal
+   */
   _copyPosition(): void {
     const nodes = this._cachedMeta._parsed as ITreeSimNode[];
 
@@ -332,8 +341,14 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation.stop();
   }
 
+  /**
+   * @internal
+   */
   static readonly id = 'forceDirectedGraph';
 
+  /**
+   * @internal
+   */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
     {
@@ -354,6 +369,9 @@ export class ForceDirectedGraphController extends GraphController {
     },
   ]);
 
+  /**
+   * @internal
+   */
   static readonly overrides: any = /* #__PURE__ */ merge({}, [
     GraphController.overrides,
     {
@@ -378,9 +396,9 @@ export interface IForceDirectedGraphChartControllerDatasetOptions
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     forceDirectedGraph: {
-      chartOptions: CoreChartOptions<'forceDirectedGraph'>;
+      chartOptions: CoreChartOptions<'forceDirectedGraph'> & IForceDirectedControllerOptions;
       datasetOptions: IForceDirectedGraphChartControllerDatasetOptions;
-      defaultDataPoint: IGraphDataPoint;
+      defaultDataPoint: IGraphDataPoint & Record<string, unknown>;
       metaExtensions: Record<string, never>;
       parsedDataType: ITreeSimNode;
       scales: keyof CartesianScaleTypeRegistry;
