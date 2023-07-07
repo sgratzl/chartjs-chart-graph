@@ -50,14 +50,29 @@ export interface IEdgeLineProps extends LineOptions {
 }
 
 export class EdgeLine extends LineElement {
+  /**
+   * @internal
+   */
   declare _orientation: 'vertical' | 'radial' | 'horizontal';
 
+  /**
+   * @internal
+   */
   declare source: PointElement;
 
+  /**
+   * @internal
+   */
   declare target: PointElement;
 
+  /**
+   * @internal
+   */
   declare options: IEdgeLineOptions;
 
+  /**
+   * @internal
+   */
   draw(ctx: CanvasRenderingContext2D): void {
     const { options } = this;
 
@@ -189,8 +204,14 @@ export class EdgeLine extends LineElement {
     // ctx.restore();
   }
 
+  /**
+   * @internal
+   */
   static readonly id = 'edgeLine';
 
+  /**
+   * @internal
+   */
   static readonly defaults: any = /* #__PURE__ */ {
     ...LineElement.defaults,
     tension: 0,
@@ -199,8 +220,14 @@ export class EdgeLine extends LineElement {
     arrowHeadOffset: 5,
   };
 
+  /**
+   * @internal
+   */
   static readonly defaultRoutes = LineElement.defaultRoutes;
 
+  /**
+   * @internal
+   */
   static readonly descriptors = /* #__PURE__ */ {
     _scriptable: true,
     _indexable: (name: keyof IEdgeLineOptions): boolean => name !== 'borderDash',
