@@ -78,6 +78,8 @@
     "canvas": "^2.11.2",
     "canvas-5-polyfill": "^0.1.5",
     "chart.js": "^4.3.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "chartjs-plugin-zoom": "^2.0.1",
     "eslint": "^8.43.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.8.0",
@@ -128,5 +130,5 @@
     "docs:build": "yarn run docs:api && vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
-  "packageManager": "yarn@3.6.0"
+  "packageManager": "yarn@3.6.1"
 }
