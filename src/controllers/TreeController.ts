@@ -9,7 +9,7 @@ import {
 } from 'chart.js';
 import { merge } from 'chart.js/helpers';
 import { EdgeLine } from '../elements';
-import { DendrogramController, IDendrogramChartControllerDatasetOptions } from './DendrogramController';
+import { DendrogramController, IDendrogramChartControllerDatasetOptions, ITreeOptions } from './DendrogramController';
 import type { IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
@@ -40,7 +40,7 @@ export class TreeController extends DendrogramController {
 declare module 'chart.js' {
   export interface ChartTypeRegistry {
     tree: {
-      chartOptions: CoreChartOptions<'tree'>;
+      chartOptions: CoreChartOptions<'tree'> & { tree: ITreeOptions };
       datasetOptions: IDendrogramChartControllerDatasetOptions;
       defaultDataPoint: IGraphDataPoint & Record<string, unknown>;
       metaExtensions: Record<string, never>;

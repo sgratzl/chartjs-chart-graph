@@ -1,10 +1,10 @@
 import type { ChartConfiguration } from 'chart.js';
 import type {} from '../../src';
-
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 // #region data
 import nodes from './tree.json';
 
-export const data: ChartConfiguration<'forceDirectedGraph'>['data'] = {
+export const data: ChartConfiguration<'tree'>['data'] = {
   labels: nodes.map((d) => d.name),
   datasets: [
     {
@@ -16,8 +16,8 @@ export const data: ChartConfiguration<'forceDirectedGraph'>['data'] = {
 };
 // #endregion data
 // #region config
-export const config: ChartConfiguration<'forceDirectedGraph'> = {
-  type: 'forceDirectedGraph',
+export const config: ChartConfiguration<'tree'> = {
+  type: 'tree',
   data,
   options: {
     tree: {
@@ -50,3 +50,42 @@ export const config: ChartConfiguration<'forceDirectedGraph'> = {
   plugins: [ChartDataLabels],
 };
 // #endregion config
+
+// #region radial
+export const radial: ChartConfiguration<'tree'> = {
+  type: 'tree',
+  data,
+  options: {
+    tree: {
+      orientation: 'radial',
+    },
+    layout: {
+      padding: 40,
+    },
+    plugins: {
+      datalabels: {
+        display: (context) => {
+          // const index = context.dataIndex;
+          // const value = context.dataset.data[index];
+          return true; //value.children.length === 0;
+        },
+        align: (context) => {
+          const index = context.dataIndex;
+          const value = context.dataset.data[index] as { angle: number };
+          return (-value.angle / Math.PI) * 180;
+        },
+        rotation: (context) => {
+          const index = context.dataIndex;
+          const value = context.dataset.data[index] as { angle: number };
+          return (-value.angle / Math.PI) * 180;
+        },
+        backgroundColor: 'white',
+        formatter: (v) => {
+          return v.name;
+        },
+      },
+    },
+  },
+  plugins: [ChartDataLabels],
+};
+// #endregion radial

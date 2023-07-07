@@ -10,7 +10,7 @@ import {horizontal, vertical, radial} from './tree';
 
 ## Horizontal
 
-<TreeGraph
+<TreeChart
   :options="horizontal.options"
   :data="horizontal.data"
 />
@@ -21,13 +21,13 @@ import {horizontal, vertical, radial} from './tree';
 
 <<< ./tree.ts#horizontal [config]
 
-<<< ./tee.ts#data [data]
+<<< ./tree.ts#data [data]
 
 :::
 
 ## Vertical
 
-<TreeGraph
+<TreeChart
   :options="vertical.options"
   :data="vertical.data"
 />
@@ -38,13 +38,13 @@ import {horizontal, vertical, radial} from './tree';
 
 <<< ./tree.ts#vertical [config]
 
-<<< ./tee.ts#data [data]
+<<< ./tree.ts#data [data]
 
 :::
 
 ## Radial
 
-<TreeGraph
+<TreeChart
   :options="radial.options"
   :data="radial.data"
 />
@@ -55,6 +55,6 @@ import {horizontal, vertical, radial} from './tree';
 
 <<< ./tree.ts#radial [config]
 
-<<< ./tee.ts#data [data]
+<<< ./tree.ts#data [data]
 
 :::

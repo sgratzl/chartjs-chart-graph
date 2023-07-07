@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: 'chartjs-chart-graphb'
+  name: 'chartjs-chart-graph'
   text: 'chart.js plugin'
   tagline: Chart.js module for charting graphs
   actions:

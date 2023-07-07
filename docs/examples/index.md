@@ -7,7 +7,7 @@ title: Examples
 <script setup>
 import {config as force} from './force';
 import {config as dendrogram} from './dendrogram';
-import {tree} from './tree';
+import {config as tree} from './tree';
 </script>
 
 ## Force Directed Graph
@@ -27,21 +27,20 @@ import {tree} from './tree';
 
 :::
 
-
 ## Dendrogram
 
-<TreeChart
-  :options="dendogram.options"
-  :data="dendogram.data"
+<DendrogramChart
+  :options="dendrogram.options"
+  :data="dendrogram.data"
 />
 
 ### Code
 
 :::code-group
 
-<<< ./dendogram.ts#config [config]
+<<< ./dendrogram.ts#config [config]
 
-<<< ./dendogram.ts#data [data]
+<<< ./dendrogram.ts#data [data]
 
 :::
 

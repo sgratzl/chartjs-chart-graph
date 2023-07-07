@@ -1,5 +1,6 @@
 import type { ChartConfiguration } from 'chart.js';
 import type {} from '../../src';
+import 'chartjs-plugin-datalabels';
 
 // #region data
 import nodes from './tree.json';
@@ -16,10 +17,15 @@ export const data: ChartConfiguration<'tree'>['data'] = {
 };
 // #endregion data
 // #region tree
-export const tree: ChartConfiguration<'tree'> = {
+export const config: ChartConfiguration<'tree'> = {
   type: 'tree',
   data,
   options: {
+    plugins: {
+      datalabels: {
+        display: false,
+      },
+    },
     tree: {
       mode: 'tree',
     },
@@ -31,6 +37,11 @@ export const horizontal: ChartConfiguration<'tree'> = {
   type: 'tree',
   data,
   options: {
+    plugins: {
+      datalabels: {
+        display: false,
+      },
+    },
     tree: {
       orientation: 'horizontal',
     },
@@ -42,6 +53,11 @@ export const vertical: ChartConfiguration<'tree'> = {
   type: 'tree',
   data,
   options: {
+    plugins: {
+      datalabels: {
+        display: false,
+      },
+    },
     tree: {
       orientation: 'vertical',
     },
@@ -53,6 +69,11 @@ export const radial: ChartConfiguration<'tree'> = {
   type: 'tree',
   data,
   options: {
+    plugins: {
+      datalabels: {
+        display: false,
+      },
+    },
     tree: {
       orientation: 'radial',
     },

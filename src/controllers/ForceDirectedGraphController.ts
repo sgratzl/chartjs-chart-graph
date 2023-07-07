@@ -108,8 +108,8 @@ export interface IForceDirectedControllerOptions {
   };
 }
 
-declare type ID3NodeCallback = (d: any, i: number) => number;
-declare type ID3EdgeCallback = (d: any, i: number) => number;
+export declare type ID3NodeCallback = (d: any, i: number) => number;
+export declare type ID3EdgeCallback = (d: any, i: number) => number;
 
 export interface ICenterForce {
   x?: number;

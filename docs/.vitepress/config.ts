@@ -23,7 +23,15 @@ export default defineConfig({
     sidebar: [
       {
         text: 'Examples',
-        items: [{ text: 'Basic', link: '/examples/' }],
+        items: [
+          { text: 'Basic', link: '/examples/' },
+          { text: 'Dendrogram', link: '/examples/dendrogram' },
+          { text: 'Tree', link: '/examples/tree' },
+          { text: 'Force Directed Graph', link: '/examples/force' },
+          { text: 'Tree with Labels', link: '/examples/label' },
+          { text: 'Directed Tree', link: '/examples/directed' },
+          { text: 'Tree Orientations', link: '/examples/orientation' },
+        ],
       },
       {
         text: 'API',
