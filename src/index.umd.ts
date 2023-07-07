@@ -1,7 +1,7 @@
 import { registry } from 'chart.js';
 import {
   DendrogramController,
-  dendrogramController,
+  DendogramController,
   ForceDirectedGraphController,
   GraphController,
   TreeController,
@@ -12,7 +12,7 @@ export * from '.';
 
 registry.addControllers(
   DendrogramController,
-  dendrogramController,
+  DendogramController,
   ForceDirectedGraphController,
   GraphController,
   TreeController
