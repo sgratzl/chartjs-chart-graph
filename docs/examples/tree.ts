@@ -12,6 +12,9 @@ export const data: ChartConfiguration<'tree'>['data'] = {
       pointBackgroundColor: 'steelblue',
       pointRadius: 5,
       data: nodes.map((d) => Object.assign({}, d)),
+      edgeLineBorderWidth: (ctx) => {
+        return ctx.dataIndex;
+      },
     },
   ],
 };

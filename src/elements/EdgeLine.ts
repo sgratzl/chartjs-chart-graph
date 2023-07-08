@@ -204,9 +204,6 @@ export class EdgeLine extends LineElement {
     // ctx.restore();
   }
 
-  /**
-   * @internal
-   */
   static readonly id = 'edgeLine';
 
   /**
