@@ -341,7 +341,7 @@ export class ForceDirectedGraphController extends GraphController {
     this._simulation.stop();
   }
 
-    static readonly id = 'forceDirectedGraph';
+  static readonly id = 'forceDirectedGraph';
 
   /**
    * @internal
