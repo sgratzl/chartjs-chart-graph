@@ -14,9 +14,6 @@ import type { IGraphDataPoint, ITreeNode } from './GraphController';
 import patchController from './patchController';
 
 export class TreeController extends DendrogramController {
-  /**
-   * @internal
-   */
   static readonly id = 'tree';
 
   /**

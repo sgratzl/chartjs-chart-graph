@@ -128,9 +128,6 @@ export class DendrogramController extends GraphController {
     requestAnimationFrame(() => this.chart.update());
   }
 
-  /**
-   * @internal
-   */
   static readonly id: string = 'dendrogram';
 
   /**
