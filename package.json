@@ -1,7 +1,7 @@
 {
   "name": "chartjs-chart-graph",
   "description": "Chart.js module for charting graphs",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "author": {
     "name": "Samuel Gratzl",
     "email": "sam@sgratzl.com",
