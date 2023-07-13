@@ -35,12 +35,12 @@ export interface ITreeOptions {
 
 export class DendrogramController extends GraphController {
   /**
-   * @internal
+   * @hidden
    */
   declare options: { tree: ITreeOptions };
 
   /**
-   * @internal
+   * @hidden
    */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateEdgeElement(line: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
@@ -50,7 +50,7 @@ export class DendrogramController extends GraphController {
   }
 
   /**
-   * @internal
+   * @hidden
    */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   updateElement(point: Element<AnyObject, AnyObject>, index: number, properties: any, mode: UpdateMode): void {
@@ -131,7 +131,7 @@ export class DendrogramController extends GraphController {
   static readonly id: string = 'dendrogram';
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
@@ -151,7 +151,7 @@ export class DendrogramController extends GraphController {
   ]);
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly overrides: any = /* #__PURE__ */ merge({}, [
     GraphController.overrides,
@@ -211,7 +211,7 @@ export class DendogramController extends DendrogramController {
   static readonly id: string = 'dendogram';
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     DendrogramController.defaults,
