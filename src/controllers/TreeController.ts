@@ -17,7 +17,7 @@ export class TreeController extends DendrogramController {
   static readonly id = 'tree';
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     DendrogramController.defaults,
@@ -29,7 +29,7 @@ export class TreeController extends DendrogramController {
   ]);
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly overrides: any = /* #__PURE__ */ DendrogramController.overrides;
 }
