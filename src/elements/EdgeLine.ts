@@ -51,27 +51,27 @@ export interface IEdgeLineProps extends LineOptions {
 
 export class EdgeLine extends LineElement {
   /**
-   * @internal
+   * @hidden
    */
   declare _orientation: 'vertical' | 'radial' | 'horizontal';
 
   /**
-   * @internal
+   * @hidden
    */
   declare source: PointElement;
 
   /**
-   * @internal
+   * @hidden
    */
   declare target: PointElement;
 
   /**
-   * @internal
+   * @hidden
    */
   declare options: IEdgeLineOptions;
 
   /**
-   * @internal
+   * @hidden
    */
   draw(ctx: CanvasRenderingContext2D): void {
     const { options } = this;
@@ -207,7 +207,7 @@ export class EdgeLine extends LineElement {
   static readonly id = 'edgeLine';
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly defaults: any = /* #__PURE__ */ {
     ...LineElement.defaults,
@@ -218,12 +218,12 @@ export class EdgeLine extends LineElement {
   };
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly defaultRoutes = LineElement.defaultRoutes;
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly descriptors = /* #__PURE__ */ {
     _scriptable: true,

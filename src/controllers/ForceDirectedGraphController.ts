@@ -153,12 +153,12 @@ export interface IRadialForce {
 
 export class ForceDirectedGraphController extends GraphController {
   /**
-   * @internal
+   * @hidden
    */
   declare options: IForceDirectedControllerOptions;
 
   /**
-   * @internal
+   * @hidden
    */
   private readonly _simulation: Simulation<SimulationNodeDatum, undefined>;
 
@@ -204,7 +204,7 @@ export class ForceDirectedGraphController extends GraphController {
   }
 
   /**
-   * @internal
+   * @hidden
    */
   _copyPosition(): void {
     const nodes = this._cachedMeta._parsed as ITreeSimNode[];
@@ -344,7 +344,7 @@ export class ForceDirectedGraphController extends GraphController {
   static readonly id = 'forceDirectedGraph';
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly defaults: any = /* #__PURE__ */ merge({}, [
     GraphController.defaults,
@@ -367,7 +367,7 @@ export class ForceDirectedGraphController extends GraphController {
   ]);
 
   /**
-   * @internal
+   * @hidden
    */
   static readonly overrides: any = /* #__PURE__ */ merge({}, [
     GraphController.overrides,
