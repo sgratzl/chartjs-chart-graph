@@ -207,6 +207,8 @@ export class GraphController extends ScatterController {
     this.stopLayout();
   }
 
+  declare getContext: (index: number, active: boolean, mode: UpdateMode) => unknown;
+
   /**
    * @hidden
    */
@@ -215,13 +217,32 @@ export class GraphController extends ScatterController {
       _cachedDataOpts: this._cachedDataOpts,
       dataElementType: this.dataElementType,
       _sharedOptions: this._sharedOptions,
+      // getDataset: this.getDataset,
+      // getParsed: this.getParsed,
     };
     this._cachedDataOpts = {};
     this.dataElementType = this.edgeElementType;
     this._sharedOptions = this._edgeSharedOptions;
+
+    const dataset = this.getDataset();
     const meta = this._cachedMeta;
-    const nodes = meta.data;
+    const nodeElements = meta.data;
     const data = (this._cachedMeta as unknown as IExtendedChartMeta)._parsedEdges;
+
+    // get generic context to prefill cache
+    this.getContext(-1, false, mode);
+    this.getDataset = () => {
+      return new Proxy(dataset, {
+        get(obj: any, prop: string) {
+          return prop === 'data' ? obj.edges ?? [] : obj[prop];
+        },
+      });
+    };
+    this.getParsed = (index: number) => {
+      return data[index] as any;
+    };
+    // patch meta to store edges
+    meta.data = (meta as any).edges;
 
     const reset = mode === 'reset';
 
@@ -253,11 +274,11 @@ export class GraphController extends ScatterController {
       const parsed = data[index];
 
       const properties: any = {
-        source: nodes[parsed.source],
-        target: nodes[parsed.target],
+        source: nodeElements[parsed.source],
+        target: nodeElements[parsed.target],
         points: Array.isArray(parsed.points) ? parsed.points.map((p) => copyPoint(p)) : [],
       };
-      properties.points._source = nodes[parsed.source];
+      properties.points._source = nodeElements[parsed.source];
       if (includeOptions) {
         if (sharedOptions !== dummyShared) {
           properties.options = sharedOptions;
@@ -271,6 +292,10 @@ export class GraphController extends ScatterController {
 
     this._edgeSharedOptions = this._sharedOptions;
     Object.assign(this, bak);
+    delete (this as any).getDataset;
+    delete (this as any).getParsed;
+    // patch meta to store edges
+    meta.data = nodeElements;
   }
 
   /**
