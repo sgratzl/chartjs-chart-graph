@@ -234,7 +234,7 @@ export class GraphController extends ScatterController {
     this.getDataset = () => {
       return new Proxy(dataset, {
         get(obj: any, prop: string) {
-          return prop === 'data' ? obj.edges : obj[prop];
+          return prop === 'data' ? obj.edges ?? [] : obj[prop];
         },
       });
     };
