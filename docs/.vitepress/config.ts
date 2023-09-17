@@ -31,6 +31,7 @@ export default defineConfig({
           { text: 'Tree with Labels', link: '/examples/label' },
           { text: 'Directed Tree', link: '/examples/directed' },
           { text: 'Tree Orientations', link: '/examples/orientation' },
+          { text: 'Fully Linked', link: '/examples/linked' },
         ],
       },
       {
