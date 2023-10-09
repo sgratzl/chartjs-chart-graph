@@ -162,6 +162,8 @@ export class ForceDirectedGraphController extends GraphController {
    */
   private readonly _simulation: Simulation<SimulationNodeDatum, undefined>;
 
+  private _animTimer: number = -1;
+
   constructor(chart: Chart, datasetIndex: number) {
     super(chart, datasetIndex);
     this._simulation = forceSimulation()
@@ -170,10 +172,12 @@ export class ForceDirectedGraphController extends GraphController {
         this.chart.render();
       })
       .on('end', () => {
-        this._copyPosition();
-        this.chart.render();
-        // trigger a full update
-        this.chart.update('default');
+        if (this.chart.canvas && this._animTimer !== -2) {
+          this._copyPosition();
+          this.chart.render();
+          // trigger a full update
+          this.chart.update('default');
+        }
       });
     const sim = this.options.simulation;
 
@@ -201,6 +205,14 @@ export class ForceDirectedGraphController extends GraphController {
       this._simulation.force(key, f);
     });
     this._simulation.stop();
+  }
+
+  _destroy() {
+    if (this._animTimer >= 0) {
+      cancelAnimationFrame(this._animTimer);
+    }
+    this._animTimer = -2;
+    return super._destroy();
   }
 
   /**
@@ -324,10 +336,15 @@ export class ForceDirectedGraphController extends GraphController {
       this._copyPosition();
       if (this.options.simulation.autoRestart) {
         this._simulation.restart();
-      } else {
-        requestAnimationFrame(() => this.chart.update());
+      } else if (this.chart.canvas != null && this._animTimer !== -2) {
+        const chart = this.chart;
+        this._animTimer = requestAnimationFrame(() => {
+          if (chart.canvas) {
+            chart.update();
+          }
+        });
       }
-    } else if (this.options.simulation.autoRestart) {
+    } else if (this.options.simulation.autoRestart && this.chart.canvas != null && this._animTimer !== -2) {
       this._simulation.alpha(1).restart();
     }
   }
