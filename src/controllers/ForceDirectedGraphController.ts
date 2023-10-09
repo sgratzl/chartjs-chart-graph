@@ -168,8 +168,12 @@ export class ForceDirectedGraphController extends GraphController {
     super(chart, datasetIndex);
     this._simulation = forceSimulation()
       .on('tick', () => {
-        this._copyPosition();
-        this.chart.render();
+        if (this.chart.canvas && this._animTimer !== -2) {
+          this._copyPosition();
+          this.chart.render();
+        } else {
+          this._simulation.stop();
+        }
       })
       .on('end', () => {
         if (this.chart.canvas && this._animTimer !== -2) {
