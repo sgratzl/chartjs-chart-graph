@@ -199,8 +199,8 @@ export class GraphController extends ScatterController {
   /**
    * @hidden
    */
-  destroy(): void {
-    (ScatterController.prototype as any).destroy.call(this);
+  _destroy(): void {
+    (ScatterController.prototype as any)._destroy.call(this);
     if (this._edges) {
       unlistenArrayEvents(this._edges, this._edgeListener);
     }

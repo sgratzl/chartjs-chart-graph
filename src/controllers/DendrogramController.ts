@@ -39,6 +39,8 @@ export class DendrogramController extends GraphController {
    */
   declare options: { tree: ITreeOptions };
 
+  private _animTimer: number = -1;
+
   /**
    * @hidden
    */
@@ -47,6 +49,14 @@ export class DendrogramController extends GraphController {
     // eslint-disable-next-line no-param-reassign
     properties._orientation = this.options.tree.orientation;
     super.updateEdgeElement(line, index, properties, mode);
+  }
+
+  _destroy() {
+    if (this._animTimer >= 0) {
+      cancelAnimationFrame(this._animTimer);
+    }
+    this._animTimer = -2;
+    return super._destroy();
   }
 
   /**
@@ -125,7 +135,14 @@ export class DendrogramController extends GraphController {
 
     layout(root).each((orientation[options.orientation] || orientation.horizontal) as any);
 
-    requestAnimationFrame(() => this.chart.update());
+    const chart = this.chart;
+    if (this._animTimer !== -2) {
+      this._animTimer = requestAnimationFrame(() => {
+        if (chart.canvas) {
+          chart.update();
+        }
+      });
+    }
   }
 
   static readonly id: string = 'dendrogram';
