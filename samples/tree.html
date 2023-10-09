@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <script src=" https://cdn.jsdelivr.net/npm/chart.js@~4.3.0"></script>
+    <script src="../build/index.umd.js"></script>
+  </head>
+
+  <body>
+    <div style="width: 75%">
+      <canvas id="canvas"></canvas>
+    </div>
+    <button id="destroy">Destroy</button>
+    <script>
+      const chart = new Chart(document.getElementById('canvas').getContext('2d'), {
+        type: 'forceDirectedGraph',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              pointBackgroundColor: 'steelblue',
+              pointRadius: 5,
+              data: [],
+              edges: [],
+            },
+          ],
+        },
+        options: {
+          legend: {
+            display: false,
+          },
+        },
+      });
+      const destroy = document.getElementById('destroy');
+      destroy.onclick = () => {
+        chart.destroy();
+        console.log('ddd');
+      };
+    </script>
+  </body>
+</html>
