@@ -1,6 +1,7 @@
 import {
   defaults,
   Chart,
+  Color,
   ScatterController,
   registry,
   LinearScale,
@@ -660,8 +661,15 @@ export interface IGraphEdgeDataPoint {
   target: number | string;
 }
 
+export interface EdgePrefixedOptions {
+  edgeLineBorderDash: number[];
+  edgeLineBorderWidth: number;
+  edgeLineBorderColor: Color;
+}
+
 export interface IGraphChartControllerDatasetOptions
   extends ControllerDatasetOptions,
+    ScriptableAndArrayOptions<EdgePrefixedOptions, ScriptableContext<'graph'>>,
     ScriptableAndArrayOptions<PointPrefixedOptions, ScriptableContext<'graph'>>,
     ScriptableAndArrayOptions<PointPrefixedHoverOptions, ScriptableContext<'graph'>>,
     ScriptableAndArrayOptions<IEdgeLineOptions, ScriptableContext<'graph'>>,
