@@ -20,7 +20,7 @@ import {
   CoreChartOptions,
 } from 'chart.js';
 import { merge, clipArea, unclipArea, listenArrayEvents, unlistenArrayEvents } from 'chart.js/helpers';
-import { EdgeLine, IEdgeLineOptions } from '../elements';
+import { EdgeLine, IEdgeLineOptions, IEdgePrefixedOptions } from '../elements';
 import interpolatePoints from './interpolatePoints';
 import patchController from './patchController';
 
@@ -662,6 +662,7 @@ export interface IGraphEdgeDataPoint {
 
 export interface IGraphChartControllerDatasetOptions
   extends ControllerDatasetOptions,
+    ScriptableAndArrayOptions<IEdgePrefixedOptions, ScriptableContext<'graph'>>,
     ScriptableAndArrayOptions<PointPrefixedOptions, ScriptableContext<'graph'>>,
     ScriptableAndArrayOptions<PointPrefixedHoverOptions, ScriptableContext<'graph'>>,
     ScriptableAndArrayOptions<IEdgeLineOptions, ScriptableContext<'graph'>>,

@@ -1,5 +1,6 @@
 import {
   ChartType,
+  Color,
   LineElement,
   LineOptions,
   PointElement,
@@ -43,6 +44,12 @@ export interface IEdgeLineOptions extends LineOptions {
   directed: boolean;
   arrowHeadSize: number;
   arrowHeadOffset: number;
+}
+
+export interface IEdgePrefixedOptions {
+  edgeLineBorderDash: number[];
+  edgeLineBorderWidth: number;
+  edgeLineBorderColor: Color;
 }
 
 export interface IEdgeLineProps extends LineOptions {
