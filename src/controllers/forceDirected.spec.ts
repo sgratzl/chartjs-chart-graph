@@ -3,7 +3,7 @@ import createChart from '../__tests__/createChart';
 import { ForceDirectedGraphController } from './ForceDirectedGraphController';
 import data from './__tests__/miserables';
 import { EdgeLine } from '../elements';
-
+import { describe, beforeAll, test } from 'vitest';
 describe('dendrogram', () => {
   beforeAll(() => {
     registry.addControllers(ForceDirectedGraphController);

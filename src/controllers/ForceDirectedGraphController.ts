@@ -258,9 +258,8 @@ export class ForceDirectedGraphController extends GraphController {
 
     nodes.forEach((node) => {
       if (node._sim) {
-        // eslint-disable-next-line no-param-reassign
         node.x = rescaleX(node._sim.x ?? 0);
-        // eslint-disable-next-line no-param-reassign
+
         node.y = rescaleY(node._sim.y ?? 0);
       }
     });
@@ -284,7 +283,7 @@ export class ForceDirectedGraphController extends GraphController {
     const nodes = (this._cachedMeta._parsed as ITreeSimNode[]).map((node, i) => {
       const simNode: ITreeSimNode['_sim'] = { ...node };
       simNode.index = i;
-      // eslint-disable-next-line no-param-reassign
+
       node._sim = simNode;
       if (!node.reset) {
         return simNode;
@@ -308,7 +307,7 @@ export class ForceDirectedGraphController extends GraphController {
     const nodes = (meta._parsed as ITreeSimNode[]).map((node, i) => {
       const simNode: ITreeSimNode['_sim'] = { ...node };
       simNode.index = i;
-      // eslint-disable-next-line no-param-reassign
+
       node._sim = simNode;
       if (simNode.x === null) {
         delete simNode.x;
@@ -317,7 +316,6 @@ export class ForceDirectedGraphController extends GraphController {
         delete simNode.y;
       }
       if (simNode.x == null && simNode.y == null) {
-        // eslint-disable-next-line no-param-reassign
         node.reset = true;
       }
       return simNode;

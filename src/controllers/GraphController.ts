@@ -234,7 +234,7 @@ export class GraphController extends ScatterController {
     this.getDataset = () => {
       return new Proxy(dataset, {
         get(obj: any, prop: string) {
-          return prop === 'data' ? obj.edges ?? [] : obj[prop];
+          return prop === 'data' ? (obj.edges ?? []) : obj[prop];
         },
       });
     };
@@ -259,8 +259,8 @@ export class GraphController extends ScatterController {
     };
 
     function copyPoint(point: { x: number; y: number; angle?: number }) {
-      const x = reset ? base.x : xScale?.getPixelForValue(point.x, 0) ?? 0;
-      const y = reset ? base.y : yScale?.getPixelForValue(point.y, 0) ?? 0;
+      const x = reset ? base.x : (xScale?.getPixelForValue(point.x, 0) ?? 0);
+      const y = reset ? base.y : (yScale?.getPixelForValue(point.y, 0) ?? 0);
       return {
         x,
         y,
@@ -301,7 +301,7 @@ export class GraphController extends ScatterController {
   /**
    * @hidden
    */
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+
   updateEdgeElement(edge: EdgeLine, index: number, properties: any, mode: UpdateMode): void {
     super.updateElement(edge as unknown as Element<AnyObject, AnyObject>, index, properties, mode);
   }
@@ -309,12 +309,12 @@ export class GraphController extends ScatterController {
   /**
    * @hidden
    */
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+
   updateElement(point: Element<AnyObject, AnyObject>, index: number, properties: any, mode: UpdateMode): void {
     if (mode === 'reset') {
       // start in center also in x
       const { xScale } = this._cachedMeta;
-      // eslint-disable-next-line no-param-reassign
+
       properties.x = xScale?.getBasePixel() ?? 0;
     }
     super.updateElement(point, index, properties, mode);
@@ -345,7 +345,6 @@ export class GraphController extends ScatterController {
       return index;
     }
 
-    // eslint-disable-next-line no-console
     console.warn('cannot resolve edge ref', ref);
     return -1;
   }
@@ -501,7 +500,6 @@ export class GraphController extends ScatterController {
     meta.edges = metaData;
 
     for (let i = 0; i < edges.length; i += 1) {
-      // eslint-disable-next-line new-cap
       metaData[i] = new this.edgeElementType();
     }
   }
@@ -515,7 +513,6 @@ export class GraphController extends ScatterController {
     const metaData = meta.edges || (meta.edges = []);
 
     for (let i = 0; i < edges.length; i += 1) {
-      // eslint-disable-next-line new-cap
       metaData[i] = metaData[i] || new this.edgeElementType();
     }
     if (edges.length < metaData.length) {
@@ -549,7 +546,6 @@ export class GraphController extends ScatterController {
   _insertEdgeElements(start: number, count: number): void {
     const elements = [];
     for (let i = 0; i < count; i += 1) {
-      // eslint-disable-next-line new-cap
       elements.push(new this.edgeElementType());
     }
     (this._cachedMeta as unknown as IExtendedChartMeta).edges.splice(start, 0, ...elements);
@@ -557,17 +553,14 @@ export class GraphController extends ScatterController {
     this._scheduleResyncLayout();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   reLayout(): void {
     // hook
   }
 
-  // eslint-disable-next-line class-methods-use-this
   resetLayout(): void {
     // hook
   }
 
-  // eslint-disable-next-line class-methods-use-this
   stopLayout(): void {
     // hook
   }
@@ -585,7 +578,6 @@ export class GraphController extends ScatterController {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   resyncLayout(): void {
     // hook
   }

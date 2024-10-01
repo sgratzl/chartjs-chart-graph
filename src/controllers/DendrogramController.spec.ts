@@ -3,7 +3,7 @@ import createChart from '../__tests__/createChart';
 import { DendrogramController } from './DendrogramController';
 import nodes from './__tests__/tree';
 import { EdgeLine } from '../elements';
-
+import { describe, beforeAll, test } from 'vitest';
 describe('dendrogram', () => {
   beforeAll(() => {
     registry.addControllers(DendrogramController);
