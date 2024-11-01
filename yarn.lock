@@ -5974,12 +5974,12 @@ __metadata:
   linkType: hard
 
 "vue-chartjs@npm:^5.3.1":
-  version: 5.3.1
-  resolution: "vue-chartjs@npm:5.3.1"
+  version: 5.3.2
+  resolution: "vue-chartjs@npm:5.3.2"
   peerDependencies:
     chart.js: ^4.1.1
     vue: ^3.0.0-0 || ^2.7.0
-  checksum: 10c0/a5788cd62b8e662207c9762794e542f84144e777fd0a907eead1ece7301c74b549f9f5cf402ce972b78a8dbed41baee6603dcc57d3eb11257a663c0c17ad6035
+  checksum: 10c0/e07d6766d058ecb11798ce3764105db2878c77bb6c887bf634644b5bf763e881e749b0d1a2981281126c889206b7fbe3b8db43ede275f951a84ec6087a83ff4e
   languageName: node
   linkType: hard
 
