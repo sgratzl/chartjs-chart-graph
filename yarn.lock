@@ -5674,11 +5674,11 @@ __metadata:
   linkType: hard
 
 "typedoc-vitepress-theme@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "typedoc-vitepress-theme@npm:1.0.2"
+  version: 1.1.0
+  resolution: "typedoc-vitepress-theme@npm:1.1.0"
   peerDependencies:
-    typedoc-plugin-markdown: ">=4.1.0"
-  checksum: 10c0/93e3a26cee2d01f7f5d4e2d6c9ec3b06d3024cb426cb231ea7b7539ef185356484a34141ca4fedce712eb239e943c6a7edd9d8dd5235d21c71705f97950aa9d5
+    typedoc-plugin-markdown: ">=4.3.0"
+  checksum: 10c0/6398ea460015beab30b4ca4bf869f4cfd9f1a2c5e3ea7470d8d8ac525a6853e04ff145b42a58451f0c53f59792f3f0971ba9a1228cc613fd95e1da40c213ea2f
   languageName: node
   linkType: hard
 
